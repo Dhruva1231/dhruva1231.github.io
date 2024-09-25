@@ -78,7 +78,7 @@
     <section id="simple-embed">
         <h2 class="section-title">Simple 3D Model Embedding</h2>
         <div class="model-container">
-            <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+            <model-viewer src="https://drive.google.com/uc?export=download&id=1JaizP9jQL1bOLXiY4mJtRSkK2-Y0-ss4"
                           alt="A 3D model of an astronaut" 
                           auto-rotate camera-controls ar>
             </model-viewer>
@@ -106,7 +106,7 @@
 
         // Load 3D Model (GLTF)
         const loader = new THREE.GLTFLoader();
-        loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', function(gltf) {
+        loader.load('https://drive.google.com/uc?export=download&id=1JaizP9jQL1bOLXiY4mJtRSkK2-Y0-ss4', function(gltf) {
             scene.add(gltf.scene);
             renderer.render(scene, camera);
         }, undefined, function(error) {
