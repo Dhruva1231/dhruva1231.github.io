@@ -3,24 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>3D Model Viewer</title>
+    <title>Dhruva's Portfolio</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar Styles */
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        /* Projects Grid */
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .project-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
         model-viewer {
             width: 100%;
-            height: 500px;
-            display: block;
+            height: 300px;
             margin: auto;
+        }
+
+        /* Table Styles for Awards */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-asd
-    <!-- Embed the custom GLB model from Dropbox -->
-    <model-viewer src="compressed.glb"
-                  alt="3D Model" auto-rotate camera-controls>
-    </model-viewer>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#projects">Projects</a>
+        <a href="#awards">Awards</a>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home">
+        <h2>Welcome to Dhruva's Portfolio</h2>
+        <p>This is the home of Dhruva's achievements and innovations in the fields of robotics, invention, and technology.</p>
+        <img src="https://via.placeholder.com/1000x400" alt="Filler Image" style="width:100%;">
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="projects">
+            <!-- Project 1 -->
+            <div class="project-card">
+                <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls></model-viewer>
+                <h3>Project 1: Astronaut Model</h3>
+                <p>Description: A 3D astronaut model displayed using <code>model-viewer</code>.</p>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+                <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls></model-viewer>
+                <h3>Project 2: Mars Rover Model</h3>
+                <p>Description: A Mars rover displayed using <code>model-viewer</code>.</p>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card">
+                <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls></model-viewer>
+                <h3>Project 3: Robot Arm Model</h3>
+                <p>Description: A robotic arm model shown using <code>model-viewer</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Awards Section -->
+    <section id="awards">
+        <h2>Awards</h2>
+        <table>
+            <tr>
+                <th>Grade</th>
+                <th>Awards</th>
+            </tr>
+            <tr>
+                <td>11th Grade</td>
+                <td>
+                    <strong>General</strong><br>
+                    Multiple recognition from Lee County School Board<br>
+                    Multiple media appearances representing robotics team<br>
+                    Nominated for News-Press Student of the Week by FMHS<br>
+                    <strong>Invention Convention US Nationals</strong><br>
+                    3rd place for 11th grade<br>
+                    Transportation Industry award<br>
+                    Patent application award ($10,000 value)<br>
+                    Invitation to Invention Convention Americas<br>
+                    <strong>National STEM Festival</strong><br>
+                    National STEM Champion<br>
+                    Letter from President Obama<br>
+                    All expenses paid trip to Washington D.C.<br>
+                    <strong>Robotics</strong><br>
+                    Regional League Championship<br>
+                    1st place Inspire award<br>
+                    FL State Championship - 1st place Inspire award<br>
+                    World Championship - 2nd place Connect award<br>
+                    Dean’s List Finalist<br>
+                    <strong>Regional Inventor's Fair</strong><br>
+                    1st place for 11th grade, Grand Award for High School Division<br>
+                    FGCU scholarship, Transportation Award<br>
+                </td>
+            </tr>
+            <!-- Add other grades here similarly -->
+        </table>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 Dhruva's Portfolio</p>
+    </footer>
 
 </body>
 </html>
