@@ -90,6 +90,58 @@
             background-color: #f9f9f9;
         }
 
+        /* Hover Effect and Tooltip for Date */
+        .date {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .date:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Tooltip */
+        .date .tooltip {
+            visibility: hidden;
+            width: 180px;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Show above the date */
+            left: 50%;
+            margin-left: -90px;
+
+            /* Fade in tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .date .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%; /* Arrow on the top */
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: black transparent transparent transparent;
+        }
+
+        .date:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
         /* Footer */
         footer {
             background-color: #333;
@@ -157,70 +209,37 @@
 
             <!-- 11th Grade Awards -->
             <tr>
-                <td>11th Grade <br> (Date Placeholder)</td>
+                <td><span class="date">11th Grade<span class="tooltip">Year: 2024</span></span></td>
                 <td>Multiple recognition from Lee County School Board</td>
                 <td>Recognized for achievements in robotics and invention.</td>
             </tr>
             <tr>
-                <td>11th Grade <br> (Date Placeholder)</td>
+                <td><span class="date">11th Grade<span class="tooltip">Year: 2024</span></span></td>
                 <td>Media Appearances</td>
                 <td>Multiple media appearances representing robotics team.</td>
             </tr>
             <tr>
-                <td>11th Grade <br> (Date Placeholder)</td>
+                <td><span class="date">11th Grade<span class="tooltip">Year: 2024</span></span></td>
                 <td>News-Press Student of the Week Nomination</td>
                 <td>Nominated by FMHS for outstanding student achievements.</td>
             </tr>
             <tr>
-                <td>11th Grade <br> (Date Placeholder)</td>
+                <td><span class="date">11th Grade<span class="tooltip">Year: 2024</span></span></td>
                 <td>Invention Convention US Nationals</td>
                 <td>3rd place for 11th grade, Transportation Industry Award, Patent application award ($10,000 value).</td>
             </tr>
             <tr>
-                <td>11th Grade <br> (Date Placeholder)</td>
+                <td><span class="date">11th Grade<span class="tooltip">Year: 2024</span></span></td>
                 <td>National STEM Festival</td>
                 <td>National STEM Champion, Letter from President Obama, All expenses paid trip to Washington D.C.</td>
             </tr>
             <tr>
-                <td>11th Grade <br> (Date Placeholder)</td>
+                <td><span class="date">11th Grade<span class="tooltip">Year: 2024</span></span></td>
                 <td>Robotics - Regional League Championship</td>
                 <td>1st place Inspire award, Winning Alliance 1st pick.</td>
             </tr>
 
-            <!-- 10th Grade Awards -->
-            <tr>
-                <td>10th Grade <br> (Date Placeholder)</td>
-                <td>Dean’s List Semi-finalist</td>
-                <td>Awarded for excellence in robotics and leadership.</td>
-            </tr>
-            <tr>
-                <td>10th Grade <br> (Date Placeholder)</td>
-                <td>Invention Convention US Nationals</td>
-                <td>1st place for 10th grade, Transportation Industry award.</td>
-            </tr>
-            <tr>
-                <td>10th Grade <br> (Date Placeholder)</td>
-                <td>International Science and Engineering Fair (ISEF)</td>
-                <td>Finalist for innovative science project presentation.</td>
-            </tr>
-
-            <!-- 9th Grade Awards -->
-            <tr>
-                <td>9th Grade <br> (Date Placeholder)</td>
-                <td>Robotics - Winning Alliance</td>
-                <td>Winning Alliance at World Championship, State Championship Inspire award winner.</td>
-            </tr>
-            <tr>
-                <td>9th Grade <br> (Date Placeholder)</td>
-                <td>Henry Ford National Invention Convention</td>
-                <td>1st place, Most Energy Sustainable Award, Invitation to Global Invention Convention.</td>
-            </tr>
-            <tr>
-                <td>9th Grade <br> (Date Placeholder)</td>
-                <td>Regional Inventor's Fair</td>
-                <td>1st place for 9th Grade, FPL Award - $500 Cash Award.</td>
-            </tr>
-
+            <!-- Add more rows for other grades as needed -->
         </table>
     </section>
 
