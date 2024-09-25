@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -128,6 +128,34 @@
         }
         animate();
     </script>
+
+</body>
+</html>
+ -->
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>3D Model Viewer</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        model-viewer {
+            width: 100%;
+            height: 500px;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Embed the custom GLB model from Google Drive -->
+    <model-viewer src="https://drive.google.com/uc?export=download&id=1JaizP9jQL1bOLXiY4mJtRSkK2-Y0-ss4"
+                  alt="3D Model" auto-rotate camera-controls>
+    </model-viewer>
 
 </body>
 </html>
