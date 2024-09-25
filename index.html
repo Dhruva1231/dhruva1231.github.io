@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dhruva's Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>3D Model Portfolio</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
-        /* Basic Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -29,19 +28,12 @@
         nav {
             display: flex;
             justify-content: center;
-            margin: 0;
         }
 
         nav a {
             color: white;
             text-decoration: none;
             padding: 14px 20px;
-            text-transform: uppercase;
-        }
-
-        nav a:hover {
-            background-color: #555;
-            transition: background-color 0.3s;
         }
 
         section {
@@ -49,78 +41,26 @@
             margin-top: 70px;
         }
 
-        .about {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            margin: auto;
+        .section-title {
+            text-align: center;
+            font-size: 2em;
         }
 
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .project-card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .project-image {
-            width: 100%;
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .project-content {
+        .model-container {
+            text-align: center;
             padding: 20px;
         }
 
-        .contact-form {
-            max-width: 600px;
-            margin: auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .contact-form label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        .contact-form input,
-        .contact-form textarea {
+        model-viewer {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            height: 500px;
+            max-width: 700px;
+            margin: auto;
+            display: block;
         }
 
-        .contact-form button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .contact-form button:hover {
-            background-color: #555;
+        canvas {
+            display: block;
         }
     </style>
 </head>
@@ -129,66 +69,65 @@
     <!-- Header and Navigation -->
     <header>
         <nav>
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
+            <a href="#simple-embed">Simple 3D Embed</a>
+            <a href="#three-js">Three.js Example</a>
         </nav>
     </header>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <h1>About Me</h1>
-        <p>Hi, I'm Dhruva, an inventor, robotics enthusiast, and engineer. I enjoy creating technologies that positively impact people's lives, whether it's a robotic arm for ALS patients or traffic systems for smarter cities. With experience in robotics, AI, and app development, my goal is to innovate solutions that bridge the gap between technology and society.</p>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
-        <h2>My Projects</h2>
-        <div class="project-card">
-            <div class="project-image" style="background-image: url('project1.jpg');"></div>
-            <div class="project-content">
-                <h3>Transcend Traffic System</h3>
-                <p>An intelligent traffic management system that reduces delays by 78% and improves road visibility up to 1000 meters.</p>
-            </div>
-        </div>
-
-        <div class="project-card">
-            <div class="project-image" style="background-image: url('project2.jpg');"></div>
-            <div class="project-content">
-                <h3>A.I.D App</h3>
-                <p>A disaster relief app connecting volunteers and victims in real-time to assist during natural disasters.</p>
-            </div>
-        </div>
-
-        <div class="project-card">
-            <div class="project-image" style="background-image: url('project3.jpg');"></div>
-            <div class="project-content">
-                <h3>Ken's Robotic Arm</h3>
-                <p>A robotic arm designed to help ALS patients regain some functionality for everyday tasks.</p>
-            </div>
+    <!-- Section 1: Simple 3D Model Embedding with model-viewer -->
+    <section id="simple-embed">
+        <h2 class="section-title">Simple 3D Model Embedding</h2>
+        <div class="model-container">
+            <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                          alt="A 3D model of an astronaut" 
+                          auto-rotate camera-controls ar>
+            </model-viewer>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <h2>Contact Me</h2>
-        <div class="contact-form">
-            <form action="mailto:youremail@example.com" method="POST" enctype="text/plain">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="email">Your Email</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="message">Your Message</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-
-                <button type="submit">Send Message</button>
-            </form>
+    <!-- Section 2: Advanced 3D Model with Three.js -->
+    <section id="three-js">
+        <h2 class="section-title">Advanced 3D Model with Three.js</h2>
+        <div class="model-container">
+            <canvas id="threejs-canvas"></canvas>
         </div>
     </section>
 
-    <!-- Link to External JavaScript File -->
-    <script src="script.js"></script>
+    <!-- Three.js and 3D Model Loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        // Scene, Camera, and Renderer setup for Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threejs-canvas') });
+        renderer.setSize(window.innerWidth, 500); // Set the size of the canvas
+        document.body.appendChild(renderer.domElement);
+
+        // Load 3D Model (GLTF)
+        const loader = new THREE.GLTFLoader();
+        loader.load('https://modelviewer.dev/shared-assets/models/Astronaut.glb', function(gltf) {
+            scene.add(gltf.scene);
+            renderer.render(scene, camera);
+        }, undefined, function(error) {
+            console.error(error);
+        });
+
+        // Light
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5).normalize();
+        scene.add(light);
+
+        // Camera positioning
+        camera.position.z = 5;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+
 </body>
 </html>
