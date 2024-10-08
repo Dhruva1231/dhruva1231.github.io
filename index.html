@@ -29,33 +29,13 @@
     
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
-.project-card-outline {
-    display: flex;
-    flex-direction: column; /* Stacks children vertically */
-    align-items: center; /* Center-aligns children horizontally */
-    width: 100%; /* Optional: set a max width for the container */
-    border: 1px solid #ccc; /* Optional: adds a border for better visibility */
-    padding: 10px; /* Optional: adds padding around the container */
-}
 
-.project-card {
-    display: flex;
-    flex-direction: column; /* Keeps text in a column format */
-    width: 100%;
-    margin-bottom: 10px; /* Adds spacing below the card text */
-}
-
-.project-link {
-    text-decoration: none; /* Removes underline from link */
-    color: inherit; /* Inherits color from parent */
-}
-
-model-viewer {
-    width: 100%; /* Ensures model takes the full width */
-    height: 300px; /* Adjust height as needed */
-    max-height: 400px; /* Limits max height */
-    object-fit: contain; /* Keeps model proportions */
-}
+    model-viewer {
+        width: 100%; /* Ensures model takes the full width */
+        height: 300px; /* Adjust height as needed */
+        max-height: 400px; /* Limits max height */
+        object-fit: contain; /* Keeps model proportions */
+    }
 
 
 
@@ -723,12 +703,15 @@ model-viewer {
                                 <div class="text-projectcard-description">
                                     <span class="text-projectcard-description-company">Google, &#x27;22</span> — fortnite a future of playtesting for all developers.
                                 </div>
+                                <p>test1</p>
                             </a>
+                            <p>test2</p>
                         </div>
+                        <p>test3</p>
                     </div>
-                    
+                    <p>test4</p>
+                    <model-viewer src="compressed.glb" auto-rotate camera-controls style="width: 100%; height: 700px; max-height: 700px;"></model-viewer>
                     <!-- 3D model placed within the same container but outside of the link -->
-                    <model-viewer src="compressed.glb" auto-rotate camera-controls style="width: 100%; height: 300px; max-height: 400px;"></model-viewer>
                 </div>
                 
                 
