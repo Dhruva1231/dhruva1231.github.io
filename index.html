@@ -36,7 +36,20 @@
         max-height: 400px; /* Limits max height */
         object-fit: contain; /* Keeps model proportions */
     }
+    .model-container:hover {
+    transform: translateY(0); /* Ensure it stays in place on hover */
+}
 
+.model-viewer {
+    display: block; /* Ensures the model viewer behaves like a block element */
+    transition: all 0.3s ease; /* Adds smooth transition for other properties */
+}
+
+.model-viewer:hover {
+    /* Optional: Add hover effects for the model viewer, if needed */
+    /* e.g., transform: scale(1.05); Uncomment if you want a slight zoom */
+    transform: scale(1); /* Ensure the model stays at the same scale */
+}
 
 
         @media (min-width:992px) {
@@ -774,6 +787,8 @@
                         <div class="project-card-colour thn"></div>
                     </a>
                 </div>
+
+                
                 <div class="project-card-outline">
                     <div data-w-id="799aa54d-e1f4-ce89-fcc5-18fd48416d98" class="glare-item-top outer-edge"></div><a
                         data-w-id="799aa54d-e1f4-ce89-fcc5-18fd48416d99" href="/spotlight" target="_blank"
