@@ -29,27 +29,34 @@
     
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
-        .project-card-outline {
-            display: flex;
-            flex-direction: column; /* Aligns content vertically */
-            align-items: center; /* Centers content horizontally */
-        }
+.project-card-outline {
+    display: flex;
+    flex-direction: column; /* Stacks children vertically */
+    align-items: center; /* Center-aligns children horizontally */
+    width: 100%; /* Optional: set a max width for the container */
+    border: 1px solid #ccc; /* Optional: adds a border for better visibility */
+    padding: 10px; /* Optional: adds padding around the container */
+}
 
-        .project-content {
-            display: flex;
-            flex-direction: column; /* Ensures text and model stay vertically stacked */
-            width: 100%;
-        }
+.project-card {
+    display: flex;
+    flex-direction: column; /* Keeps text in a column format */
+    width: 100%;
+    margin-bottom: 10px; /* Adds spacing below the card text */
+}
 
-        .projectcard-top {
-            margin-bottom: 10px; /* Adds some space between the text and the 3D model */
-        }
+.project-link {
+    text-decoration: none; /* Removes underline from link */
+    color: inherit; /* Inherits color from parent */
+}
 
-        model-viewer {
-            width: 100%;
-            max-height: 400px; /* Adjust the height to ensure it fits within the card */
-            object-fit: contain; /* Keeps the 3D model in proper proportions */
-        }
+model-viewer {
+    width: 100%; /* Ensures model takes the full width */
+    height: 300px; /* Adjust height as needed */
+    max-height: 400px; /* Limits max height */
+    object-fit: contain; /* Keeps model proportions */
+}
+
 
 
         @media (min-width:992px) {
@@ -703,27 +710,27 @@
                     </a>
                 </div>
                 <div class="project-card-outline">
-                    <div data-w-id="cb198c5c-8f1f-0bfc-7f66-0461e3dc703b" class="glare-item-top outer-edge"></div>
+                    <div class="glare-item-top outer-edge"></div>
                     
-                    <!-- Hyperlink only wraps around text content -->
-                    <a data-w-id="cb198c5c-8f1f-0bfc-7f66-0461e3dc703c" href="/test-hub-next" class="project-card w-inline-block">
-                        <div data-w-id="cb198c5c-8f1f-0bfc-7f66-0461e3dc703d" class="glare-item-top inner-edge"></div>
+                    <div class="project-card w-inline-block">
                         <div class="projectcard-top">
-                            <div class="projectcard-title-row">
-                                <div class="text-projectcard-title">Test Hub Next</div>
-                                <img src="https://cdn.prod.website-files.com/63dcb6e1a80e9454b630f4c4/641284285486aaab07feafaa_icon-arrow-project.svg" 
-                                     loading="lazy" alt="" class="icon-projectcard-arrow" />
-                            </div>
-                            <div class="text-projectcard-description">
-                                <span class="text-projectcard-description-company">Google, &#x27;22</span> — battlepass a future of playtesting for all developers.
-                            </div>
+                            <a href="/test-hub-next" class="project-link"> <!-- Link only around text -->
+                                <div class="projectcard-title-row">
+                                    <div class="text-projectcard-title">Test Hub Next</div>
+                                    <img src="https://cdn.prod.website-files.com/63dcb6e1a80e9454b630f4c4/641284285486aaab07feafaa_icon-arrow-project.svg" 
+                                         loading="lazy" alt="" class="icon-projectcard-arrow" />
+                                </div>
+                                <div class="text-projectcard-description">
+                                    <span class="text-projectcard-description-company">Google, &#x27;22</span> — fortnite a future of playtesting for all developers.
+                                </div>
+                            </a>
                         </div>
-                    </a>
+                    </div>
                     
-                    <!-- 3D model placed outside of hyperlink but inside the same container -->
-                    <model-viewer src="compressed.glb" auto-rotate camera-controls></model-viewer>
-                    
+                    <!-- 3D model placed within the same container but outside of the link -->
+                    <model-viewer src="compressed.glb" auto-rotate camera-controls style="width: 100%; height: 300px; max-height: 400px;"></model-viewer>
                 </div>
+                
                 
                 
                 <div class="project-card-outline">
