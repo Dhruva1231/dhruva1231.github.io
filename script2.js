@@ -1,3 +1,5 @@
+alert('working');
+
 // Ensure the DOM is fully loaded before running the script
 document.addEventListener('DOMContentLoaded', function () {
     const modelViewer = document.querySelector('.model-container model-viewer');
