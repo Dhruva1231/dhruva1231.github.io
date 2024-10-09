@@ -19089,7 +19089,52 @@ Webflow.require('ix2').init({
 			}],
 			"useFirstGroupAsInitialState": true,
 			"createdOn": 1690698275475
-		}
+		},
+        "a-78": {
+        "id": "a-78",
+        "title": "model-viewer-hover",
+        "actionItemGroups": [{
+            "actionItems": [{
+                "id": "a-78-n",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                    "delay": 0,
+                    "easing": "outQuint",
+                    "duration": 500,
+                    "target": {
+                        "selector": ".model-container model-viewer",
+                        "selectorGuids": ["your-selector-guid"]
+                    },
+                    "yValue": -20,
+                    "xUnit": "px",
+                    "yUnit": "px",
+                    "zUnit": "px"
+                }
+            }]
+        }, {
+            "actionItems": [{
+                "id": "a-78-n-2",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                    "delay": 0,
+                    "easing": "outQuint",
+                    "duration": 500,
+                    "target": {
+                        "selector": ".model-container model-viewer",
+                        "selectorGuids": ["your-selector-guid"]
+                    },
+                    "yValue": 0,
+                    "xUnit": "px",
+                    "yUnit": "px",
+                    "zUnit": "px"
+                }
+            }]
+        }],
+        "useFirstGroupAsInitialState": true,
+        "createdOn": 1682891122610
+    }
+
+        
 	},
 	"site": {
 		"mediaQueries": [{
@@ -19110,15 +19155,4 @@ Webflow.require('ix2').init({
 			"max": 479
 		}]
 	}
-});
-
-const modelViewer = document.querySelector('.model-container model-viewer');
-
-// Add hover event listeners
-modelViewer.addEventListener('mouseenter', () => {
-    modelViewer.style.transform = 'translateY(-24px)'; // Move up on hover
-});
-
-modelViewer.addEventListener('mouseleave', () => {
-    modelViewer.style.transform = 'translateY(0)'; // Reset position when hover ends
 });
