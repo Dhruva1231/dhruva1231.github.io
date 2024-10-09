@@ -30,9 +30,22 @@
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
 
+    .model-container {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        height: 800px; /* Keep the height you specified */
+        width: 100%;
+        background-image: url('https://cdn.prod.website-files.com/63dcb6e1a80e9454b630f4c4/643ecb1ff3e9aa457d70f041_thn-banner-mobile-p-1600.png');
+        background-size: cover;
+        background-position: center;
+    }
+
+
     model-viewer {
         width: 100%; /* Ensures model takes the full width */
         height: 300px; /* Adjust height as needed */
+        max-height: 400px; /* Limits max height */
         object-fit: contain; /* Keeps model proportions */
     }
 
