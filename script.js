@@ -19091,48 +19091,48 @@ Webflow.require('ix2').init({
 			"createdOn": 1690698275475
 		},
         "a-78": {
-        "id": "a-78",
-        "title": "model-viewer-hover",
-        "actionItemGroups": [{
-            "actionItems": [{
-                "id": "a-78-n",
-                "actionTypeId": "TRANSFORM_MOVE",
-                "config": {
-                    "delay": 0,
-                    "easing": "outQuint",
-                    "duration": 500,
-                    "target": {
-                        "selector": ".model-container model-viewer",
-                        "selectorGuids": ["your-selector-guid"]
-                    },
-                    "yValue": -20,
-                    "xUnit": "px",
-                    "yUnit": "px",
-                    "zUnit": "px"
-                }
-            }]
-        }, {
-            "actionItems": [{
-                "id": "a-78-n-2",
-                "actionTypeId": "TRANSFORM_MOVE",
-                "config": {
-                    "delay": 0,
-                    "easing": "outQuint",
-                    "duration": 500,
-                    "target": {
-                        "selector": ".model-container model-viewer",
-                        "selectorGuids": ["your-selector-guid"]
-                    },
-                    "yValue": 0,
-                    "xUnit": "px",
-                    "yUnit": "px",
-                    "zUnit": "px"
-                }
-            }]
-        }],
-        "useFirstGroupAsInitialState": true,
-        "createdOn": 1682891122610
-    }
+    "id": "a-78",
+    "title": "model-viewer-hover",
+    "actionItemGroups": [{
+        "actionItems": [{
+            "id": "a-78-n",
+            "actionTypeId": "TRANSFORM_MOVE",
+            "config": {
+                "delay": 0,
+                "easing": "outQuint",
+                "duration": 500,
+                "target": {
+                    "selector": ".model-container model-viewer",
+                    "selectorGuids": ["cb198c5c-8f1f-0bfc-7f66-0461e3dc703c"]  // GUID from the parent <a> element
+                },
+                "yValue": -20,
+                "xUnit": "px",
+                "yUnit": "px",
+                "zUnit": "px"
+            }
+        }]
+    }, {
+        "actionItems": [{
+            "id": "a-78-n-2",
+            "actionTypeId": "TRANSFORM_MOVE",
+            "config": {
+                "delay": 0,
+                "easing": "outQuint",
+                "duration": 500,
+                "target": {
+                    "selector": ".model-container model-viewer",
+                    "selectorGuids": ["cb198c5c-8f1f-0bfc-7f66-0461e3dc703c"]  // GUID from the parent <a> element
+                },
+                "yValue": 0,
+                "xUnit": "px",
+                "yUnit": "px",
+                "zUnit": "px"
+            }
+        }]
+    }],
+    "useFirstGroupAsInitialState": true,
+    "createdOn": 1682891122610
+}
 
         
 	},
