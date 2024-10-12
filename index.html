@@ -655,12 +655,12 @@
             <div class="hero-noise"></div>
         </div>
 
+
         <div data-w-id="3810876f-88a5-c72e-2e50-9f9ee6af2d4a" class="section-projects">
             <div data-w-id="f0e1f336-2513-8fe9-5ccf-c79169a260b6" class="container-projects">
                 <div class="project-card-outline">
-                    <div data-w-id="cb1aca79-f57e-5d16-57ab-621b3d07b7f1" class="glare-item-top outer-edge"></div><a
-                        data-w-id="81bb28b3-0cac-8b9c-c382-04fd4917df75" href="/project-ken"
-                        class="project-card w-inline-block">
+                    <div data-w-id="cb1aca79-f57e-5d16-57ab-621b3d07b7f1" class="glare-item-top outer-edge"></div>
+                    <a data-w-id="81bb28b3-0cac-8b9c-c382-04fd4917df75" class="project-card w-inline-block">
                         <div data-w-id="b0c475d0-ac61-3f6b-c975-29615a853f93" class="glare-item-top inner-edge"></div>
                         <div class="projectcard-top">
                             <div class="projectcard-title-row">
@@ -684,7 +684,6 @@
                     <div data-w-id="cb198c5c-8f1f-0bfc-7f66-0461e3dc703b" class="glare-item-top outer-edge">
 
                     </div>
-                    <a data-w-id="cb198c5c-8f1f-0bfc-7f66-0461e3dc703c" href="https://www.nbcchicago.com/weather/hurricane-milton-approaches-limits-of-what-earths-atmosphere-can-produce/3567381/" class="project-card w-inline-block">
                         <div data-w-id="cb198c5c-8f1f-0bfc-7f66-0461e3dc703d" class="glare-item-top inner-edge">
 
                         </div>
@@ -706,7 +705,6 @@
                         <div class="project-card-colour thn">
                             
                         </div>
-                    </a>
                 </div>
 
 
@@ -778,12 +776,12 @@
                             <div class="text-projectcard-description"><span
                                     class="text-projectcard-description-company">Adobe x Netflix Creative Jam, &#x27;21
                                 </span>— Making entertainment more uniting.</div>
-                        </div><img
+                        </div>
+                        <img
                             src="https://cdn.prod.website-files.com/63dcb6e1a80e9454b630f4c4/6484164c1fe228802d311e8e_spotlight-tb.png"
                             loading="lazy"
                             sizes="(max-width: 479px) 80vw, (max-width: 767px) 84vw, (max-width: 991px) 75vw, (max-width: 1439px) 727.1796875px, (max-width: 1919px) 865.78125px, 1193.3828125px"
-                            srcset="https://dhruvasharma.com/ASDiagnosetest.svg 500w, https://dhruvasharma.com/ASDiagnosetest.svg 800w, https://dhruvasharma.com/ASDiagnosetest.svg 1080w, https://dhruvasharma.com/ASDiagnosetest.svg 1600w, https://dhruvasharma.com/ASDiagnosetest.svg 1728w"
-                            alt="" class="project-thumbnail" />
+                            srcset="https://dhruvasharma.com/ASDiagnosetest.svg 500w, https://dhruvasharma.com/ASDiagnosetest.svg 800w, https://dhruvasharma.com/ASDiagnosetest.svg 1080w, https://dhruvasharma.com/ASDiagnosetest.svg 1600w, https://dhruvasharma.com/ASDiagnosetest.svg 1728w" alt="" class="project-thumbnail" />
                         <div class="project-card-colour spotlight"></div>
                     </a>
                 </div>
@@ -812,6 +810,41 @@
                 </div>
             </div>
         </div>
+
+        <script>
+
+const container = document.querySelector('.container-projects');
+let isDown = false; // Track if the mouse button is down
+let startX; // Initial mouse X position
+let scrollLeft; // Initial scroll position
+
+container.addEventListener('mousedown', (e) => {
+    isDown = true;
+    container.classList.add('active'); // Optional: Add a class to change styles when active
+    startX = e.pageX - container.offsetLeft; // Calculate initial X position
+    scrollLeft = container.scrollLeft; // Save current scroll position
+});
+
+container.addEventListener('mouseleave', () => {
+    isDown = false; // Reset the isDown flag
+    container.classList.remove('active'); // Optional: Remove active class
+});
+
+container.addEventListener('mouseup', () => {
+    isDown = false; // Reset the isDown flag
+    container.classList.remove('active'); // Optional: Remove active class
+});
+
+container.addEventListener('mousemove', (e) => {
+    if (!isDown) return; // If mouse is not down, exit the function
+    e.preventDefault(); // Prevent default drag behavior
+    const x = e.pageX - container.offsetLeft; // Current mouse position
+    const walk = (x - startX) * 2; // Calculate distance to scroll (adjust multiplier as needed)
+    container.scrollLeft = scrollLeft - walk; // Update scroll position
+});
+
+        </script>
+    
         <div data-w-id="ee1e9c3e-a1c6-2190-15b3-1daea0409ed7" class="section-footer">
             <div class="container-footer">
                 <div class="footer-top-wrapper"><img
