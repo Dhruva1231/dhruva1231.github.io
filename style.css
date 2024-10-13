@@ -246,12 +246,8 @@ html {
   .w-inline-block {
     max-width: 100%;
     display: inline-block;
-    pointer-events: none; 
   }
   
-  .project-card {
-    user-select: none; /* Prevents text selection on project cards */
-}
   .w-clearfix:before, .w-clearfix:after {
     content: " ";
     grid-area: 1 / 1 / 2 / 2;
@@ -2060,6 +2056,7 @@ html {
   :root {
     --background: #131112;
     --on-background: #BBDEF0;
+    --width-multiplier: 0.6; /* You can adjust this variable later */
   }
   
   .body {
@@ -2458,124 +2455,39 @@ html {
   }
   
   .section-projects {
-    grid-row-gap: 80px;
+    display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 24px;
     padding-bottom: 200px;
+    position: relative;
+}
+
+.container-projects {
+    display: flex;
+    flex-direction: column;   /* Stack the rows vertically */
+    gap: 48px;                /* Space between rows */
+    width: 100%;
+    max-width: 1200px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;   /* Center the row items */
+    gap: 48px;                 /* Space between the items in each row */
+}
+
+
+  
+  .section-hero {
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 160px;
+    padding-bottom: 4px;
     display: flex;
     position: relative;
-    grid-row-gap: 40px;
-    padding: 0 16px 80px;
-
-    padding-top: 48px;
-    padding-left: 24px;
-    padding-right: 24px;
-
-    align-items: stretch;
-    padding-left: 48px;
-    padding-right: 48px;
-    padding-top: 64px;
+    overflow: hidden;
   }
-
-  .container-projects {
-    display: flex;
-    flex-direction: row;      /* Set items in a row */
-    overflow-x: auto;         /* Enable horizontal scroll */
-    overflow-y: hidden;       /* Hide vertical scroll */
-    scroll-behavior: smooth;  /* Optional smooth scrolling */
-    white-space: nowrap;      /* Prevent wrapping of items */
-    gap: 20px;                /* Add space between project cards */
-    padding: 10px;            /* Padding around the container */
-    width: 100%;              /* Ensure the container takes full width */
-    box-sizing: border-box;   /* Include padding in width calculation */
-    grid-row-gap: 80px;
-    grid-row-gap: 40px;
-}
-
-.container-projects {
-  overflow-x: auto;         /* Enable horizontal scroll */
-  overflow-y: hidden;       /* Hide vertical scroll */
-  scroll-behavior: smooth;  /* Optional smooth scrolling */
-  white-space: nowrap;      /* Prevent wrapping of items */
-  padding: 10px;            /* Padding around the container */
-  width: 100%;              /* Ensure the container takes full width */
-  box-sizing: border-box;   /* Include padding in width calculation */
-  scrollbar-width: none;    /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer and Edge */
-}
-
-/* For Webkit browsers (Chrome, Safari) */
-.container-projects::-webkit-scrollbar {
-  display: none; /* Hide scrollbar */
-}
-.container-projects {
-  transition: scroll-behavior 0.3s ease; /* Add smooth transition */
-}
-
-
-.project-card-outline {
-  flex: 0 0 auto;
-  outline-offset: -1px;
-  background-color: #f2f2f20a;
-  border-radius: 24px;
-  outline: 1px solid #f2f2f20d;
-  padding: 8px;
-  position: relative;
-  box-shadow: 0 40px 80px #00000080;
-  border-radius: 36px;
-  padding: 12px;
-  width: 45vw;              /* Width relative to the viewport width */
-  min-height: 80vh;        /* Minimum height relative to the viewport height */
-  max-height: 80vh;        /* Allow the card to grow with content */
-  overflow: hidden;        /* Avoid content overflow */
-  display: flex;           /* Use flexbox to align items */
-  flex-direction: column;  /* Stack items vertically */
-}
-
-/* Adjust image/video styling */
-.project-thumbnail {
-  width: 100%;               /* Ensure full width */
-  height: auto;             /* Keep aspect ratio */
-  display: block;           /* Ensures no extra space below images */
-  margin: 0;               /* Remove all margins */
-  padding: 0;              /* Remove all padding */
-}
-
-/* Adjust the project card top section */
-.projectcard-top {
-  display: flex;           /* Use flexbox for inner content */
-  flex-direction: column;  /* Stack elements vertically */
-  justify-content: flex-start; /* Align items at the start */
-  margin-top: 8px;        /* Adjust spacing above the text if needed */
-}
-
-/* Responsive text sizing */
-.text-projectcard-title {
-  font-size: calc(1rem + 0.5vw);  /* Responsive text sizing */
-  margin-bottom: 4px;      /* Add a small margin below title */
-}
-
-.text-projectcard-description {
-  font-size: calc(0.8rem + 0.3vw); /* Responsive description text */
-}
-
-/* Larger screens */
-@media (min-width: 2024px) {
-  .project-card-outline {
-    width: 30vw;
-    min-height: 25vh;
-    max-height: 25vh;
-  }
-}
-
-/* Smaller screens */
-@media (max-width: 768px) {
-  .project-card-outline {
-    width: 80vw;
-    min-height: 25vh;
-  }
-}
 
 
   .section-nav-mobile, .nav-menu-button {
@@ -3753,7 +3665,7 @@ html {
     position: fixed;
     inset: 0% auto 0% 0%;
   }
-
+  
 
   .project-card {
     grid-row-gap: 56px;
@@ -3763,6 +3675,7 @@ html {
     border-radius: 16px;
     flex-direction: column;
     height: 588px;
+    height: calc(588px * var(--width-multiplier));
     padding-top: 32px;
     padding-left: 28px;
     padding-right: 28px;
@@ -4326,6 +4239,8 @@ html {
   }
   
   @media screen and (min-width: 1440px) {
+    
+
     .container-hero-image {
       width: 1044px;
     }
@@ -4372,8 +4287,14 @@ html {
     .icon-location-portrait {
       width: 22px;
     }
-  
 
+    /* container proj 1440 */
+    .container-projects {
+      width: calc(1044px * var(--width-multiplier));
+      max-width: 1440px;
+      margin: auto;
+      /* width: 1044px; */
+    }
   
     .section-banner.stadiabt, .section-banner.spotlight, .section-banner.thn, .section-banner.rbc {
       padding-top: 120px;
@@ -4501,9 +4422,13 @@ html {
       grid-column-gap: 16px;
     }
   
+
+    /* proj card 1440 */
     .project-card {
       grid-row-gap: 64px;
-      height: 696px;
+      /* height: 696px; */
+      width: calc(1044px * var(--width-multiplier));
+      height: calc(696px * var(--width-multiplier));
       padding-top: 36px;
       padding-left: 32px;
       padding-right: 32px;
@@ -4731,8 +4656,17 @@ html {
     .icon-location-portrait {
       width: 24px;
     }
-
-
+  
+    .section-projects {
+      padding-top: 64px;
+    }
+  
+    /* .container-projects {
+      grid-row-gap: 80px;
+      width: calc(1080px * var(--width-multiplier));
+      width: 1080px;
+    } */
+  
     .section-banner {
       padding-top: 136px;
     }
@@ -5145,10 +5079,17 @@ html {
       grid-row-gap: 24px;
     }
   
+    .project-card-outline {
+      border-radius: 36px;
+      padding: 12px;
+    }
+  
     .project-card {
       grid-row-gap: 88px;
       border-radius: 24px;
       height: 960px;
+      height: calc(960px * var(--width-multiplier));
+      width: calc(1080px * var(--width-multiplier));
       padding-top: 44px;
       padding-left: 44px;
       padding-right: 44px;
@@ -5380,7 +5321,16 @@ html {
     .icon-location-portrait {
       width: 20px;
     }
-
+  
+    /* .section-projects {
+      align-items: stretch;
+      padding-left: 48px;
+      padding-right: 48px;
+    } */
+  
+    /* .container-projects {
+      width: auto;
+    } */
   
     .section-banner.stadiabt {
       padding-left: 48px;
@@ -5477,6 +5427,7 @@ html {
     }
   
     .project-card {
+      width: auto;
       height: auto;
     }
   
@@ -5610,7 +5561,13 @@ html {
     .hero-text-content {
       grid-row-gap: 6vw;
     }
-
+  
+    /* .section-projects {
+      padding-top: 48px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+   */
     .section-nav-mobile {
       z-index: 10;
       background-image: linear-gradient(#101010cc, #0000);
@@ -6198,6 +6155,15 @@ html {
       margin-left: -2px;
       display: block;
     }
+  
+    /* .section-projects {
+      grid-row-gap: 40px;
+      padding: 0 16px 80px;
+    } */
+  
+    /* .container-projects {
+      grid-row-gap: 40px;
+    } */
   
     .section-nav-mobile {
       z-index: 10;
