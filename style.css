@@ -6137,6 +6137,9 @@ textarea.w-input, textarea.w-select {
     letter-spacing: -.25vw;
     font-size: 13vw;
     line-height: 12vw;
+    word-wrap: break-word;
+    white-space: normal;
+
   }
 
   .hero-fade {
