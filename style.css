@@ -4615,6 +4615,8 @@ textarea.w-input, textarea.w-select {
     letter-spacing: -3px;
     text-shadow: 0 5px 20px #0057ff33, 0 -5px 15px #ff5a0026, 0 0 30px #ffffff4d;
     font-size: 132px;
+    word-wrap: break-word;   /* Break words if they exceed the container */
+    white-space: normal;      /* Allow normal wrapping */
   }
 
   .text-hero.info-hero {
@@ -6019,7 +6021,7 @@ textarea.w-input, textarea.w-select {
   }
 }
 
-@media (max-width: 600px) {
+@media only screen and (orientation: portrait) {
   .row {
     flex-direction: column;
     align-items: center;
