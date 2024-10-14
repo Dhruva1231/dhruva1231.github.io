@@ -1,3 +1,83 @@
+.gridd {
+  margin: 0; /* Remove any margin from the parent container */
+  padding: 0; /* Remove any padding from the parent container */
+  display: flex; /* Enable flexbox for centering */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  gap: 30px;
+}
+
+.grid-container {
+  display: grid;
+  gap: 30px; /* Remove space between items */
+  width: 70%; /* Full width of the parent container */
+  max-width: 100%; /* Maximum width of the grid container */
+  margin: 0; /* Remove margin to eliminate gaps between containers */
+  /* border: red 2px solid; */
+}
+
+.one {
+  grid-template-columns: 2fr 3fr; /* First row: 70% 30% */
+}
+
+.two {
+  grid-template-columns: 2fr 2fr; /* Second row: 50% 50% */
+}
+
+.grid-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid #807e7e; /* Thick border for grid items */
+  border-radius: 20px; /* Rounded corners */
+  overflow: hidden; /* Hide overflow to crop images */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  padding: 10px; /* Add padding for better spacing */
+  position: relative; /* Position relative for shadow effect */
+  /* Remove background color to keep it transparent */
+  background-color: transparent; /* Ensure background is transparent */
+  transition: box-shadow 0.3s ease; /* Smooth shadow transition */
+}
+
+.grid-item img {
+  width: 100%; /* Fill the width of the grid item */
+  height: auto; /* Automatically adjust height */
+  object-fit: cover; /* Crop the image to fill the box while maintaining aspect ratio */
+  border-radius: 15px; /* Round image corners */
+  /* border: blue 2px solid; */
+}
+
+.video-container {
+  position: relative;
+  width: 100%; /* Full width of the grid item */
+  padding-top: 56.25%; /* 16:9 Aspect Ratio (height = 56.25% of width) */
+  /* border: blue 2px solid;  */
+}
+
+.video-container video {
+  position: absolute; /* Position video inside container */
+  top: 0;
+  left: 0;
+  width: 100%; /* Fill the width of the container */
+  height: 100%; /* Fill the height of the container */
+  object-fit: cover; /* Crop video to fill the box while maintaining aspect ratio */
+  border-radius: 15px; /* Round video corners */
+}
+
+.progression {
+  margin: 0; /* Remove any margin from the progression container */
+  padding: 20px; /* Add some padding for space inside the container */
+  border-radius: 10px; /* Rounded corners for the container */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.progression {
+  margin: 0; /* Remove any margin from the progression container */
+  padding: 20px; /* Adjust padding if needed */
+}
+
+
+
 html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
