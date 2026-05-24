@@ -1,19 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Downloading Resume...</title>
-  <script>
-    fetch('/ResumeDhruvaSharma.pdf')
-      .then(res => res.blob())
-      .then(blob => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'ResumeDhruvaSharma.pdf';
-        a.click();
-      });
-  </script>
-</head>
+<head><title>Downloading Resume...</title></head>
 <body>
-  <a href="/ResumeDhruvaSharma.pdf" download="ResumeDhruvaSharma.pdf">Click here if download doesn't start</a>
+  <a id="dl" href="/ResumeDhruvaSharma.pdf" download="ResumeDhruvaSharma.pdf">Click to download</a>
+  <script>
+    document.getElementById('dl').click();
+  </script>
 </body>
 </html>
