@@ -11,6 +11,9 @@ FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 
 def decrypt(b64_data: str, passphrase: str) -> str:
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     data = base64.b64decode(b64_data.strip())
     salt, iv, ct = data[:16], data[16:28], data[28:]
     key = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000).derive(passphrase.encode())
