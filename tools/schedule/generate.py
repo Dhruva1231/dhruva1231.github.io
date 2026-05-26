@@ -62,11 +62,23 @@ def parse(text):
                       "color": categorize(p[0] if p else "")})
     return items
 
+def parse_dual(text):
+    """Split text on === TOMORROW === marker, return (today_blocks, tomorrow_blocks)."""
+    parts = re.split(r'^\s*===\s*TOMORROW\s*===\s*$', text, flags=re.MULTILINE | re.IGNORECASE)
+    today_text = re.sub(r'^\s*===\s*TODAY\s*===\s*$', '', parts[0], flags=re.MULTILINE | re.IGNORECASE)
+    tomorrow_text = parts[1] if len(parts) > 1 else ""
+    return parse(today_text), parse(tomorrow_text)
 
-def render(blocks):
+
+def render(blocks, label=None):
     img = Image.new("RGB", (W, H), color="#0d0d0f")
     d = ImageDraw.Draw(img)
     start_y, pad_x, natural = 740, 48, 150
+    # Day label above schedule
+    if label:
+        lf = _load_font(32, bold=False)
+        text_w = d.textlength(label.lower(), font=lf)
+        d.text(((W - text_w) // 2, start_y - 58), label.lower(), font=lf, fill="#555555")
     available = (H - 80) - start_y
     n = max(len(blocks), 1)
     row_h = max(110, available // n) if n * natural > available else natural
