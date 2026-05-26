@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>encrypt schedule</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #0a0a0c; color: #e8e6e0;
+    min-height: 100vh; padding: 24px;
+    line-height: 1.5;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 8px; }
+  .sub { font-size: 13px; color: #888783; margin-bottom: 24px; }
+  label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #555550; margin: 20px 0 8px; }
+  textarea, input {
+    width: 100%; background: #111114; border: 0.5px solid #23232a;
+    border-radius: 8px; padding: 14px; color: #e8e6e0;
+    font-family: ui-monospace, monospace; font-size: 13px;
+  }
+  textarea { min-height: 200px; resize: vertical; }
+  button {
+    background: #d85a30; color: #fff; border: none;
+    padding: 12px 20px; border-radius: 8px;
+    font-weight: 600; font-size: 13px; cursor: pointer;
+    margin-top: 16px; margin-right: 8px;
+  }
+  button.secondary { background: #23232a; color: #e8e6e0; }
+  canvas { width: 100%; height: auto; border-radius: 12px; margin-top: 12px; border: 0.5px solid #23232a; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .status { font-size: 12px; color: #1D9E75; margin-left: 8px; }
+  .err { color: #d85a30; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>schedule — encrypt &amp; publish</h1>
+  <p class="sub">paste plaintext, preview, then encrypt with your passphrase. paste the output into <code>schedule.enc</code> on GitHub.</p>
+
+  <label>plaintext</label>
+  <textarea id="plain" spellcheck="false"></textarea>
+
+  <label>preview</label>
+  <canvas id="canvas" width="1179" height="2556"></canvas>
+
+  <label>passphrase</label>
+  <div class="row">
+    <input type="password" id="pass" placeholder="enter passphrase" autocomplete="current-password" />
+    <label style="display:flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0;font-size:12px;color:#888;">
+      <input type="checkbox" id="remember" style="width:auto;" /> remember on this device
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="encrypt">Encrypt</button>
+    <button class="secondary" id="copy">Copy ciphertext</button>
+    <span id="status" class="status"></span>
+  </div>
+
+  <label>ciphertext (base64)</label>
+  <textarea id="output" readonly style="min-height:120px;"></textarea>
+</div>
+
+<script>
+const DEFAULT = `Wake + breakfast | 11:00 AM | Banana, coffee, downstairs
+! ESPM — quizzes | 12:00 PM | due tmrw 4pm EST`;
+
+const plain = document.getElementById('plain');
+const pass = document.getElementById('pass');
+const remember = document.getElementById('remember');
+const output = document.getElementById('output');
+const status = document.getElementById('status');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+plain.value = localStorage.getItem('schedule_plain') || DEFAULT;
+if (localStorage.getItem('schedule_pass')) { pass.value = localStorage.getItem('schedule_pass'); remember.checked = true; }
+
+function categorize(t) {
+  t = t.toLowerCase();
+  if (/piano/.test(t)) return '#EF9F27';
+  if (/espm|history|hist\s|7a/.test(t)) return '#1D9E75';
+  if (/cs\s?\d|61c|188|161|16a|lecture/.test(t)) return '#7F77DD';
+  if (/lunch|dinner|breakfast|wake|shower|ready|sleep|coffee/.test(t)) return '#888888';
+  if (/mood|creative|design|art/.test(t)) return '#D4537E';
+  if (/investor|call|meeting|zoom|interview/.test(t)) return '#D85A30';
+  return '#888888';
+}
+
+function parse(text) {
+  return text.split('\n').map(s => s.trim()).filter(Boolean).map(line => {
+    let urgent = false;
+    if (line.startsWith('!')) { urgent = true; line = line.slice(1).trim(); }
+    const parts = line.split('|').map(s => s.trim());
+    if (!urgent && /DO NOT MISS|priority|deadline|urgent/i.test(line)) urgent = true;
+    return { label: parts[0]||'', time: parts[1]||'', detail: parts[2]||'', urgent, color: categorize(parts[0]||'') };
+  });
+}
+
+function roundRect(x,y,w,h,r,fill) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  ctx.fillStyle = fill; ctx.fill();
+}
+
+function render() {
+  const blocks = parse(plain.value);
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0d0d0f'; ctx.fillRect(0,0,W,H);
+  const startY = 740, padX = 48, natural = 150;
+  const available = (H - 80) - startY;
+  const n = Math.max(blocks.length, 1);
+  const rowH = n * natural > available ? Math.max(110, Math.floor(available / n)) : natural;
+  const scale = Math.max(0.85, rowH / natural);
+  const timeSize = Math.round(30 * scale), labelSize = Math.round(38 * scale), detailSize = Math.round(28 * scale);
+  ctx.textBaseline = 'top';
+  blocks.forEach((b, i) => {
+    const y = startY + i * rowH;
+    roundRect(padX, y, W - 2*padX, rowH - 12, 24, b.urgent ? '#1f1008' : '#141418');
+    ctx.fillStyle = b.color;
+    ctx.beginPath(); ctx.arc(padX+52, y+(rowH-12)/2, 12, 0, Math.PI*2); ctx.fill();
+    const ip = Math.round(22*scale);
+    ctx.fillStyle = '#666'; ctx.font = `${timeSize}px -apple-system,sans-serif`;
+    ctx.fillText(b.time, padX+84, y+ip);
+    ctx.fillStyle = '#fff'; ctx.font = `600 ${labelSize}px -apple-system,sans-serif`;
+    ctx.fillText(b.label, padX+84, y+ip+timeSize+8);
+    if (b.detail) {
+      ctx.fillStyle = b.urgent ? '#cc4400' : '#555';
+      ctx.font = `${detailSize}px -apple-system,sans-serif`;
+      ctx.fillText(b.detail, padX+84, y+ip+timeSize+labelSize+14+8);
+    }
+  });
+}
+
+plain.addEventListener('input', () => { localStorage.setItem('schedule_plain', plain.value); render(); });
+render();
+
+async function encryptText(plaintext, passphrase) {
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const km = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt, iterations:100000, hash:'SHA-256' },
+    km, { name:'AES-GCM', length:256 }, false, ['encrypt']);
+  const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, enc.encode(plaintext));
+  const combined = new Uint8Array(salt.length + iv.length + ct.byteLength);
+  combined.set(salt, 0); combined.set(iv, salt.length); combined.set(new Uint8Array(ct), salt.length + iv.length);
+  return btoa(String.fromCharCode(...combined));
+}
+
+document.getElementById('encrypt').addEventListener('click', async () => {
+  if (!pass.value) { status.textContent = 'enter passphrase'; status.className = 'status err'; return; }
+  try {
+    const b64 = await encryptText(plain.value, pass.value);
+    output.value = b64;
+    status.textContent = '✓ encrypted'; status.className = 'status';
+    if (remember.checked) localStorage.setItem('schedule_pass', pass.value);
+    else localStorage.removeItem('schedule_pass');
+  } catch (e) { status.textContent = 'error: ' + e.message; status.className = 'status err'; }
+});
+
+document.getElementById('copy').addEventListener('click', async () => {
+  if (!output.value) return;
+  await navigator.clipboard.writeText(output.value);
+  status.textContent = '✓ copied'; status.className = 'status';
+});
+</script>
+</body>
+</html>
