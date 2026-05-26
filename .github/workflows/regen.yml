@@ -1,0 +1,39 @@
+name: Regenerate schedule wallpaper
+
+on:
+  push:
+    paths:
+      - 'tools/schedule/schedule.enc'
+      - 'tools/schedule/generate.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install Pillow cryptography
+
+      - name: Generate
+        working-directory: tools/schedule
+        env:
+          SCHEDULE_PASSPHRASE: ${{ secrets.SCHEDULE_PASSPHRASE }}
+        run: python generate.py
+
+      - name: Commit PNG
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/schedule/schedule.png
+          git diff --staged --quiet || git commit -m "regen schedule.png"
+          git push
