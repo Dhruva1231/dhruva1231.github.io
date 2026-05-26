@@ -6,8 +6,22 @@ from PIL import Image, ImageDraw, ImageFont
 W, H = 1179, 2556
 INPUT = Path("schedule.enc")
 OUTPUT = Path("schedule.png")
-FONT_REG  = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+FONT_CANDIDATES_REG = [
+    ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 0),
+    ("/System/Library/Fonts/Helvetica.ttc", 0),
+    ("/System/Library/Fonts/Supplemental/Arial.ttf", 0),
+]
+FONT_CANDIDATES_BOLD = [
+    ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 0),
+    ("/System/Library/Fonts/Helvetica.ttc", 1),
+    ("/System/Library/Fonts/Supplemental/Arial Bold.ttf", 0),
+]
+
+def _load_font(size, bold=False):
+    for path, idx in (FONT_CANDIDATES_BOLD if bold else FONT_CANDIDATES_REG):
+        if os.path.exists(path):
+            return ImageFont.truetype(path, size, index=idx)
+    raise RuntimeError("no suitable font found")
 
 
 def decrypt(b64_data: str, passphrase: str) -> str:
@@ -57,9 +71,10 @@ def render(blocks):
     n = max(len(blocks), 1)
     row_h = max(110, available // n) if n * natural > available else natural
     s = max(0.85, row_h / natural)
-    ft = ImageFont.truetype(FONT_REG, round(30*s))
-    fl = ImageFont.truetype(FONT_BOLD, round(38*s))
-    fd = ImageFont.truetype(FONT_REG, round(28*s))
+    ft = _load_font(round(30*s))
+    fl = _load_font(round(38*s), bold=True)
+    fd = _load_font(round(28*s))
+    
     ip, g1, g2 = round(22*s), round(8*s), round(14*s)
     th, lh = ft.size + 4, fl.size + 4
     for i, b in enumerate(blocks):
