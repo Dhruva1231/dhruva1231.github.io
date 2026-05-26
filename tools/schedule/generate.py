@@ -66,10 +66,14 @@ def render(blocks):
         y = start_y + i * row_h
         d.rounded_rectangle([pad_x, y, W-pad_x, y+row_h-12], radius=24,
                             fill="#1f1008" if b["urgent"] else "#141418")
-        cx, cy = pad_x + 52, y + (row_h-12) // 2
-        d.ellipse([cx-12, cy-12, cx+12, cy+12], fill=hex_to_rgb(b["color"]))
+# Label position
+        label_y = y + ip + th + g1
+        label_center_y = label_y + fl.size // 2
+        # Dot aligned to label center
+        cx = pad_x + 52
+        d.ellipse([cx-12, label_center_y-12, cx+12, label_center_y+12], fill=hex_to_rgb(b["color"]))
         d.text((pad_x+84, y+ip), b["time"], font=ft, fill="#666666")
-        d.text((pad_x+84, y+ip+th+g1), b["label"], font=fl, fill="#ffffff")
+        d.text((pad_x+84, label_y), b["label"], font=fl, fill="#ffffff")
         if b["detail"]:
             d.text((pad_x+84, y+ip+th+g1+lh+g2), b["detail"], font=fd,
                    fill="#cc4400" if b["urgent"] else "#555555")
