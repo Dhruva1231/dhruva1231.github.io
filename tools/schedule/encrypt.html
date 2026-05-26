@@ -118,22 +118,32 @@ function render() {
   const scale = Math.max(0.85, rowH / natural);
   const timeSize = Math.round(30 * scale), labelSize = Math.round(38 * scale), detailSize = Math.round(28 * scale);
   ctx.textBaseline = 'top';
-  blocks.forEach((b, i) => {
+blocks.forEach((b, i) => {
     const y = startY + i * rowH;
     roundRect(padX, y, W - 2*padX, rowH - 12, 24, b.urgent ? '#1f1008' : '#141418');
-    const ip = Math.round(22*scale);
-    const labelY = y + ip + timeSize + 8;
+    // Content height for vertical centering
+    const g1 = 12;  // gap between time and label
+    const g2 = 18;  // gap between label and detail
+    const contentH = timeSize + g1 + labelSize + (b.detail ? (g2 + detailSize) : 0);
+    const boxH = rowH - 12;
+    const topOffset = Math.max(0, (boxH - contentH) / 2);
+    // Text positions
+    const timeY = y + topOffset;
+    const labelY = timeY + timeSize + g1;
     const labelCenterY = labelY + labelSize / 2;
+    const detailY = labelY + labelSize + g2;
+    // Dot
     ctx.fillStyle = b.color;
     ctx.beginPath(); ctx.arc(padX+52, labelCenterY, 12, 0, Math.PI*2); ctx.fill();
+    // Text
     ctx.fillStyle = '#666'; ctx.font = `${timeSize}px -apple-system,sans-serif`;
-    ctx.fillText(b.time, padX+84, y+ip);
+    ctx.fillText(b.time, padX+84, timeY);
     ctx.fillStyle = '#fff'; ctx.font = `600 ${labelSize}px -apple-system,sans-serif`;
     ctx.fillText(b.label, padX+84, labelY);
     if (b.detail) {
       ctx.fillStyle = b.urgent ? '#cc4400' : '#555';
       ctx.font = `${detailSize}px -apple-system,sans-serif`;
-      ctx.fillText(b.detail, padX+84, y+ip+timeSize+labelSize+14+8);
+      ctx.fillText(b.detail, padX+84, detailY);
     }
   });
 }
