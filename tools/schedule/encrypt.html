@@ -121,13 +121,15 @@ function render() {
   blocks.forEach((b, i) => {
     const y = startY + i * rowH;
     roundRect(padX, y, W - 2*padX, rowH - 12, 24, b.urgent ? '#1f1008' : '#141418');
-    ctx.fillStyle = b.color;
-    ctx.beginPath(); ctx.arc(padX+52, y+(rowH-12)/2, 12, 0, Math.PI*2); ctx.fill();
     const ip = Math.round(22*scale);
+    const labelY = y + ip + timeSize + 8;
+    const labelCenterY = labelY + labelSize / 2;
+    ctx.fillStyle = b.color;
+    ctx.beginPath(); ctx.arc(padX+52, labelCenterY, 12, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = '#666'; ctx.font = `${timeSize}px -apple-system,sans-serif`;
     ctx.fillText(b.time, padX+84, y+ip);
     ctx.fillStyle = '#fff'; ctx.font = `600 ${labelSize}px -apple-system,sans-serif`;
-    ctx.fillText(b.label, padX+84, y+ip+timeSize+8);
+    ctx.fillText(b.label, padX+84, labelY);
     if (b.detail) {
       ctx.fillStyle = b.urgent ? '#cc4400' : '#555';
       ctx.font = `${detailSize}px -apple-system,sans-serif`;
