@@ -63,20 +63,29 @@ def render(blocks):
     ip, g1, g2 = round(22*s), round(8*s), round(14*s)
     th, lh = ft.size + 4, fl.size + 4
     for i, b in enumerate(blocks):
-        y = start_y + i * row_h
-        d.rounded_rectangle([pad_x, y, W-pad_x, y+row_h-12], radius=24,
-                            fill="#1f1008" if b["urgent"] else "#141418")
-# Label position
-        label_y = y + ip + th + g1
-        label_center_y = label_y + fl.size // 2
-        # Dot aligned to label center
-        cx = pad_x + 52
-        d.ellipse([cx-12, label_center_y-12, cx+12, label_center_y+12], fill=hex_to_rgb(b["color"]))
-        d.text((pad_x+84, y+ip), b["time"], font=ft, fill="#666666")
-        d.text((pad_x+84, label_y), b["label"], font=fl, fill="#ffffff")
-        if b["detail"]:
-            d.text((pad_x+84, y+ip+th+g1+lh+g2), b["detail"], font=fd,
-                   fill="#cc4400" if b["urgent"] else "#555555")
+            y = start_y + i * row_h
+            d.rounded_rectangle([pad_x, y, W-pad_x, y+row_h-12], radius=24,
+                                fill="#1f1008" if b["urgent"] else "#141418")
+            # Content height for vertical centering
+            content_h = th + g1 + fl.size
+            if b["detail"]:
+                content_h += g2 + fd.size
+            box_h = row_h - 12
+            top_offset = max(0, (box_h - content_h) // 2)
+            # Text positions
+            time_y = y + top_offset
+            label_y = time_y + th + g1
+            label_center_y = label_y + fl.size // 2
+            detail_y = label_y + lh + g2
+            # Dot aligned to label center
+            cx = pad_x + 52
+            d.ellipse([cx-12, label_center_y-12, cx+12, label_center_y+12], fill=hex_to_rgb(b["color"]))
+            # Text
+            d.text((pad_x+84, time_y), b["time"], font=ft, fill="#666666")
+            d.text((pad_x+84, label_y), b["label"], font=fl, fill="#ffffff")
+            if b["detail"]:
+                d.text((pad_x+84, detail_y), b["detail"], font=fd,
+                       fill="#cc4400" if b["urgent"] else "#555555")
     return img
 
 
