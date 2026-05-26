@@ -2,9 +2,6 @@
 import os, re, base64
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 W, H = 1179, 2556
 INPUT = Path("schedule.enc")
