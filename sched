@@ -28,7 +28,8 @@ mv "$TXT.tmp" "$TXT" || die "Move failed."
 grn "Wrote schedule.txt  (today: $TODAY_N, tomorrow: $TOMO_N)"
 
 cd "$SCHED_DIR" || die "No $SCHED_DIR"
-OUT="$(python3 render_local.py ${SCHED_OFFSET:-0} 2>python3 render_local.py 2>&11)"; RC=$?
+OUT="$(python3 render_local.py ${SCHED_OFFSET:-0} 2>&1)"
+RC=$?
 printf '%s\n' "$OUT"
 [ $RC -eq 0 ] || die "render_local.py failed."
 

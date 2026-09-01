@@ -37,15 +37,19 @@ def decrypt(b64_data: str, passphrase: str) -> str:
 def hex_to_rgb(h): h = h.lstrip("#"); return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
 
+C_INPERSON = "#FDB515"
+C_FLEX     = "#5FD08A"
+C_ROUTINE  = "#5A7A9E"
+C_DEADLINE = "#E5484D"
+
+
 def categorize(t):
     t = t.lower()
-    if re.search(r"piano", t): return "#EF9F27"
-    if re.search(r"espm|history|hist\s|7a", t): return "#1D9E75"
-    if re.search(r"cs\s?\d|61c|188|161|16a|lecture", t): return "#7F77DD"
-    if re.search(r"lunch|dinner|breakfast|wake|shower|ready|sleep|coffee", t): return "#888888"
-    if re.search(r"mood|creative|design|art", t): return "#D4537E"
-    if re.search(r"investor|call|meeting|zoom|interview", t): return "#D85A30"
-    return "#888888"
+    if re.search(r"lunch|dinner|breakfast|wake|shower|ready|sleep|coffee|wind down", t):
+        return C_ROUTINE
+    if re.search(r"lecture|discussion|section|office hours|exam|midterm|final", t):
+        return C_INPERSON
+    return C_FLEX
 
 
 def parse(text):
@@ -54,12 +58,19 @@ def parse(text):
         line = raw.strip()
         if not line: continue
         urgent = False
-        if line.startswith("!"): urgent = True; line = line[1:].strip()
+        forced = None
+        while line and line[0] in "!@~+":
+            c = line[0]
+            if c == "!": urgent = True; forced = C_DEADLINE
+            elif c == "@": forced = C_INPERSON
+            elif c == "~": forced = C_ROUTINE
+            elif c == "+": forced = C_FLEX
+            line = line[1:].strip()
         p = [x.strip() for x in line.split("|")]
         if not urgent and re.search(r"DO NOT MISS|priority|deadline|urgent", line, re.I): urgent = True
         items.append({"label": p[0] if p else "", "time": p[1] if len(p)>1 else "",
                       "detail": p[2] if len(p)>2 else "", "urgent": urgent,
-                      "color": categorize(p[0] if p else "")})
+                      "color": forced or categorize(p[0] if p else "")})
     return items
 
 def parse_dual(text):
