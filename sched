@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -uo pipefail
+REPO="$HOME/dev/dhruva1231.github.io"
+SCHED_DIR="$REPO/tools/schedule"
+TXT="$SCHED_DIR/schedule.txt"
+MSG="${1:-}"
+grn() { printf '\033[32m%s\033[0m\n' "$*"; }
+ylw() { printf '\033[33m%s\033[0m\n' "$*"; }
+die() { printf '\033[31mX %s\033[0m\n' "$*"; exit 1; }
+
+if [ -t 0 ]; then die "No schedule piped in."; fi
+INPUT="$(cat)"
+grep -q '^=== TODAY ===$'    <<< "$INPUT" || die "Missing TODAY marker."
+grep -q '^=== TOMORROW ===$' <<< "$INPUT" || die "Missing TOMORROW marker."
+TODAY_N=$(awk '/^=== TOMORROW ===$/{f=0} f && NF {c++} /^=== TODAY ===$/{f=1} END{print c+0}' <<< "$INPUT")
+TOMO_N=$(awk '/^=== TOMORROW ===$/{f=1; next} f && NF {c++} END{print c+0}' <<< "$INPUT")
+[ "$TODAY_N" -gt 0 ] || die "TODAY empty."
+[ "$TOMO_N"  -gt 0 ] || die "TOMORROW empty."
+[ "$TODAY_N" -le 14 ] || ylw "! TODAY has $TODAY_N blocks (>14 shrinks rows)."
+[ "$TOMO_N"  -le 14 ] || ylw "! TOMORROW has $TOMO_N blocks (>14 shrinks rows)."
+
+cd "$REPO" || die "Repo not found at $REPO"
+rm -f .git/index.lock .git/HEAD.lock 2>/dev/null
+git pull --rebase --autostash > /tmp/sched_pull.log 2>&1 || ylw "Pull issue (see /tmp/sched_pull.log)"
+
+printf '%s\n' "$INPUT" > "$TXT.tmp" || die "Write failed."
+mv "$TXT.tmp" "$TXT" || die "Move failed."
+grn "Wrote schedule.txt  (today: $TODAY_N, tomorrow: $TOMO_N)"
+
+cd "$SCHED_DIR" || die "No $SCHED_DIR"
+OUT="$(python3 render_local.py ${SCHED_OFFSET:-0} 2>python3 render_local.py 2>&11)"; RC=$?
+printf '%s\n' "$OUT"
+[ $RC -eq 0 ] || die "render_local.py failed."
+
+cd "$REPO" || exit 1
+[ -n "$MSG" ] || MSG="schedule $(date +%Y-%m-%d)"
+retry() {
+  local n=0
+  until [ $n -ge 3 ]; do
+    rm -f .git/index.lock 2>/dev/null
+    "$@" >/tmp/sched_git.log 2>&1 && return 0
+    grep -qi 'nothing to commit' /tmp/sched_git.log && { ylw "Nothing changed."; return 2; }
+    n=$((n+1)); ylw "  retry $n/3..."; sleep $((n*2))
+  done
+  tail -5 /tmp/sched_git.log; return 1
+}
+retry git add tools/schedule/schedule.png tools/schedule/schedule_tomorrow.png || die "git add failed."
+retry git commit -m "$MSG"; case $? in 0) ;; 2) grn "Up to date."; exit 0 ;; *) die "commit failed." ;; esac
+retry git push || die "push failed. Rerun: git push"
+grn "Pushed - $MSG"
+grn "Run the iOS Shortcut for the foc album."
