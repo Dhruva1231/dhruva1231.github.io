@@ -1,424 +1,692 @@
 <!doctype html>
+<!--
+  Thanksgiving '26 bulletin board.
+
+  Real photos: drop a file into thanksgivingtrip/photos/ named after the polaroid's id and push.
+  The page tries .jpg, then .jpeg, then .png, then .JPG, and falls back to the cartoon placeholder.
+  Filenames are case-sensitive on GitHub Pages.
+
+    photos/roadtrip-up.jpg     photos/newfound-gap.jpg   photos/gorge-floor.jpg
+    photos/atl.jpg             photos/andrews-bald.jpg   photos/rabun-bald.jpg
+    photos/tallulah-rim.jpg    photos/kuwohi.jpg         photos/pickleball.jpg
+    photos/black-rock.jpg      photos/elk.jpg            photos/drive-home.jpg
+    photos/steaks.jpg
+
+  iPhone photos are HEIC by default; browsers other than Safari can't show HEIC, so convert to JPG first
+  (e.g. `sips -s format jpeg IMG_1234.HEIC --out steaks.jpg`). Square-ish crops look best; anything works
+  because the picture is center-cropped to a square.
+
+  Captions, order, desktop positions and tilt live in the TRIP array in the script below.
+-->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Thanksgiving Trip</title>
-<meta name="description" content="Driving vs. flying from Fort Myers to Atlanta for Thanksgiving, Nov 20–24, 2026.">
+<title>Thanksgiving '26</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #fafaf7;
-  --surface: #ffffff;
-  --surface-2: #f2f1ec;
-  --text: #1c1b18;
-  --muted: #5d5a52;
-  --border: #e2e0d8;
-  --accent: #b4451f;
-  --accent-soft: #fbeae3;
-  --accent-text: #ffffff;
-  --warn: #8a5a00;
-  --warn-soft: #fbf0d9;
+  --cork: #c08a56;
+  --ink: #2b2c4a;
+  --paper: #fbf9f3;
+  --yarn: #b3262a;
+  --hand: Caveat, Kalam, "Bradley Hand", "Segoe Print", cursive;
+  --pw: clamp(180px, 19vw, 240px);
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .19 0 0 0 0 .08 0 0 0 1.25 -.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --flecks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .96 0 0 0 0 .8 0 0 0 0 .58 1.6 0 0 0 -1.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --blotch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .27 0 0 0 0 .12 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141412;
-    --surface: #1d1c1a;
-    --surface-2: #262522;
-    --text: #f1efe9;
-    --muted: #a9a59b;
-    --border: #35332f;
-    --accent: #f08a5d;
-    --accent-soft: #3a2219;
-    --accent-text: #1c1b18;
-    --warn: #f0c060;
-    --warn-soft: #352a12;
-    color-scheme: dark;
-  }
-}
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  background: var(--noise), var(--flecks), var(--blotch), var(--cork);
+  color: var(--ink);
+  font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
 }
-main { max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
-h1, h2, h3 { line-height: 1.2; margin: 0; }
-h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; }
-h2 { font-size: 1.25rem; font-weight: 700; margin: 40px 0 12px; }
-h3 { font-size: 1.05rem; font-weight: 600; }
-p { margin: 0 0 12px; }
-.muted { color: var(--muted); }
-.small { font-size: 0.875rem; }
-.num { font-variant-numeric: tabular-nums; }
+.cork { background: var(--noise), var(--flecks), var(--blotch), var(--cork); }
 
-header .sub { font-size: 1.05rem; margin-top: 6px; }
-.checked {
-  display: inline-block; margin-top: 10px; padding: 3px 10px;
-  border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 0.8rem;
+.vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 20;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(70,35,10,.28) 85%, rgba(50,22,5,.5) 100%);
 }
 
-/* Bottom line */
-.summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-.scard {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+#stage { position: relative; overflow: hidden; touch-action: manipulation; }
+#board {
+  position: relative;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  height: calc(var(--pw) * 5.2 + 260px);
+  transform-origin: 0 0;
+  transition: transform 700ms cubic-bezier(.65, 0, .35, 1);
 }
-.scard.fly { border-color: var(--accent); }
-.scard .label { font-weight: 600; font-size: 0.95rem; }
-.scard .big { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 2px; }
-.scard .time { color: var(--muted); }
-.verdict {
-  margin-top: 12px; padding: 12px 16px; border-radius: 12px; background: var(--accent-soft);
-}
-.points { margin: 14px 0 0; padding-left: 20px; }
-.points li { margin-bottom: 6px; }
+#board.moving { will-change: transform; }
 
-/* Timeline */
-.timeline { list-style: none; margin: 0; padding: 0; }
-.timeline li { position: relative; padding: 0 0 18px 28px; }
-.timeline li::before {
-  content: ""; position: absolute; left: 5px; top: 6px; width: 12px; height: 12px;
-  border-radius: 50%; background: var(--accent);
-}
-.timeline li:not(:last-child)::after {
-  content: ""; position: absolute; left: 10px; top: 20px; bottom: 0; width: 2px; background: var(--border);
-}
-.timeline .when { font-weight: 600; }
+/* Yarn + pushpins sit above the polaroids */
+#yarn { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 5; }
 
-/* Options */
-.options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.opt {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
-  display: flex; flex-direction: column; gap: 4px;
+/* Polaroids */
+.polaroid {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  margin-left: calc(var(--pw) / -2);
+  width: var(--pw);
+  padding: calc(var(--pw) * .055) calc(var(--pw) * .055) 0;
+  border: 0;
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+  cursor: zoom-in;
+  transform: rotate(var(--r));
+  box-shadow:
+    0 1px 1px rgba(40, 20, 5, .25),
+    0 8px 14px -6px rgba(40, 20, 5, .5),
+    0 22px 34px -14px rgba(40, 20, 5, .45);
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  transition: filter 500ms ease, box-shadow 200ms ease;
 }
-.opt.real { border: 2px solid var(--accent); }
-.opt .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.opt .cost { font-size: 1.5rem; font-weight: 700; }
-.tag {
-  font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+.polaroid:hover { box-shadow: 0 1px 1px rgba(40,20,5,.25), 0 12px 18px -6px rgba(40,20,5,.55), 0 30px 40px -14px rgba(40,20,5,.5); }
+.polaroid:focus { outline: none; }
+.polaroid:focus-visible { outline: 3px solid #fff7d6; outline-offset: 5px; box-shadow: 0 0 0 8px rgba(43, 44, 74, .55); }
+.photo { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; background: #2b2c3a; }
+.photo svg, .photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.photo img { object-fit: cover; object-position: center; }
+.photo::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,0) 40%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
 }
-.tag.real { background: var(--accent); color: var(--accent-text); }
-.tag.slow { background: var(--warn-soft); color: var(--warn); }
-.opt .vs { font-size: 0.875rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; }
-
-/* Toggles */
-.controls { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 4px 16px; }
-.control { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 0; }
-.control + .control, fieldset.control { border-top: 1px solid var(--border); }
-.control input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
-.control label { cursor: pointer; }
-fieldset.control { margin: 0; border-left: 0; border-right: 0; border-bottom: 0; padding: 10px 0; flex-wrap: wrap; }
-fieldset legend { float: left; width: 100%; font-weight: 500; margin-bottom: 8px; padding: 0; }
-.seg { display: flex; gap: 8px; width: 100%; }
-.seg label {
-  flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;
-  min-height: 44px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px;
-  font-size: 0.95rem;
+.polaroid.has-photo .photo svg { display: none; }
+.tab {
+  display: flex; align-items: center; justify-content: center;
+  height: calc(var(--pw) * .3);
+  padding: 0 4px;
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: calc(var(--pw) * .09);
+  line-height: 1.02;
 }
-.seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.seg input:checked + label { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
-.seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tab span { display: block; transform: rotate(-1.2deg); }
 
-/* Details */
-details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; }
-summary {
-  min-height: 48px; display: flex; align-items: center; padding: 10px 16px; cursor: pointer;
-  font-weight: 600; list-style: none;
+#board.zoomed .polaroid { cursor: zoom-in; }
+#board.zoomed .polaroid:not(.active) { filter: brightness(.62) saturate(.85); }
+#board.zoomed .polaroid.active { cursor: zoom-out; }
+#board.zoomed { cursor: zoom-out; }
+
+/* Paper note + sticky */
+.note {
+  position: absolute; left: 2.5%; top: 2.5%;
+  width: clamp(190px, 21vw, 280px);
+  padding: 26px 18px 16px;
+  background:
+    linear-gradient(#fffdf7, #fffdf7) 0 0 / 100% 22px no-repeat,
+    linear-gradient(to bottom, transparent 21px, rgba(214,92,92,.55) 21px, rgba(214,92,92,.55) 22px, transparent 22px) 0 0 / 100% 100% no-repeat,
+    repeating-linear-gradient(to bottom, #fffdf7 0 25px, rgba(120,150,200,.35) 25px 26px);
+  background-color: #fffdf7;
+  transform: rotate(-2.5deg);
+  box-shadow: 0 1px 1px rgba(40,20,5,.2), 0 10px 18px -8px rgba(40,20,5,.5);
+  font-family: var(--hand);
+  z-index: 3;
 }
-summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; margin-left: auto; font-size: 1.3rem; color: var(--muted); }
-details[open] summary::after { content: "−"; }
-.dbody { padding: 0 16px 16px; }
-.dbody ul { padding-left: 20px; margin: 0 0 12px; }
+.note h1 { margin: 0; font-size: clamp(1.6rem, 2.3vw, 2.1rem); font-weight: 700; line-height: 1.05; }
+.note p { margin: 6px 0 0; font-size: 1.4rem; line-height: 1.1; }
+.note .hint { font-size: 1.1rem; opacity: .65; margin-top: 10px; }
+.pinned::before {
+  content: ""; position: absolute; left: 50%; top: 6px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #fff 0 12%, var(--pin) 30%, var(--pin-dark) 100%);
+  box-shadow: 2px 3px 3px rgba(40,20,5,.45);
+}
+.note { --pin: #2f6fd1; --pin-dark: #1b3f7a; }
+.sticky {
+  --pin: #2f9e5a; --pin-dark: #1a5c34;
+  position: absolute; left: 30%; top: 79.5%;
+  width: clamp(140px, 13vw, 170px); aspect-ratio: 1 / 1;
+  margin-left: calc(clamp(140px, 13vw, 170px) / -2);
+  display: flex; align-items: center; justify-content: center;
+  padding: 22px 12px 12px;
+  background: linear-gradient(170deg, #fff1a0, #ffe36b);
+  color: var(--ink);
+  text-decoration: none;
+  text-align: center;
+  font-family: var(--hand);
+  font-size: 1.55rem; font-weight: 700; line-height: 1.05;
+  transform: rotate(4deg);
+  box-shadow: 0 1px 1px rgba(40,20,5,.2), 0 12px 16px -8px rgba(40,20,5,.5);
+  z-index: 3;
+}
+.sticky:hover { background: linear-gradient(170deg, #fff4b4, #ffe880); }
+.sticky:focus-visible { outline: 3px solid #fff7d6; outline-offset: 4px; }
 
-table { width: 100%; border-collapse: collapse; font-size: 0.925rem; }
-caption { text-align: left; color: var(--muted); font-size: 0.85rem; padding-bottom: 8px; }
-th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
-th { font-weight: 600; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
-td.r, th.r { text-align: right; }
-tr.pick td { background: var(--accent-soft); }
-tr.pick td:first-child { font-weight: 600; }
+/* Zoom controls */
+.zoombar {
+  position: fixed; top: 12px; right: 12px; z-index: 30;
+  display: flex; gap: 8px;
+  opacity: 0; transform: translateY(-8px); pointer-events: none;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.zoombar.show { opacity: 1; transform: none; pointer-events: auto; }
+.zoombar button {
+  min-width: 44px; min-height: 44px; padding: 0 14px;
+  border: 0; border-radius: 4px;
+  background: var(--paper); color: var(--ink);
+  font-family: var(--hand); font-size: 1.35rem; font-weight: 700; white-space: nowrap;
+  box-shadow: 0 6px 12px -4px rgba(40,20,5,.5);
+  cursor: pointer;
+}
+.zoombar button:focus-visible { outline: 3px solid #fff7d6; outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* Narrow screens: flight tables become stacked cards */
-@media (max-width: 600px) {
-  .summary, .options { grid-template-columns: 1fr; }
-  .scard { display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: 8px; padding: 12px 14px; }
-  .scard .label { grid-column: 1 / -1; }
-  .scard .big { font-size: 1.7rem; }
-  .scard .time { text-align: right; }
-  table.cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  table.cards, table.cards caption, table.cards tbody, table.cards tr, table.cards td { display: block; width: 100%; }
-  table.cards tr {
-    display: grid; grid-template-columns: 1fr auto; gap: 2px 12px;
-    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+/* Phone: zig-zag column */
+@media (max-width: 899px) {
+  :root { --pw: min(64vw, 330px); }
+  #board {
+    height: auto;
+    display: flex; flex-direction: column; align-items: flex-start;
+    padding: 0 0 90px;
   }
-  table.cards tr.pick { border-color: var(--accent); background: var(--accent-soft); }
-  table.cards tr.pick td { background: none; }
-  table.cards td { border: 0; padding: 0; text-align: left; }
-  table.cards td.air { font-weight: 600; }
-  table.cards td.price { text-align: right; font-weight: 700; grid-row: 1; grid-column: 2; }
-  table.cards td.times { grid-column: 1 / -1; }
-  table.cards td.dur, table.cards td.stops { color: var(--muted); font-size: 0.875rem; }
-  table.cards td.stops { grid-column: 2; text-align: right; }
+  .note {
+    position: relative; left: auto; top: auto;
+    width: calc(100% - min(36vw, 160px) - 44px);
+    margin: 22px 0 0 16px;
+    padding: 24px 14px 12px;
+  }
+  .note h1 { font-size: 1.7rem; }
+  .note p { font-size: 1.3rem; }
+  .sticky {
+    left: auto; right: 14px; top: 34px; margin-left: 0;
+    width: min(36vw, 160px);
+    font-size: 1.35rem;
+    padding: 20px 8px 8px;
+  }
+  .polaroid {
+    position: relative; left: auto; top: auto;
+    margin: 46px 0 0 calc(50% - var(--pw) / 2 - min(13vw, 90px));
+    flex: none;
+  }
+  .polaroid.alt { margin-left: calc(50% - var(--pw) / 2 + min(13vw, 90px)); }
+  .tab { font-size: max(16px, calc(var(--pw) * .09)); }
+  .zoombar { top: auto; bottom: 16px; right: 50%; transform: translate(50%, 8px); }
+  .zoombar.show { transform: translate(50%, 0); }
 }
 
-footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.875rem; }
-footer ul { padding-left: 20px; margin: 6px 0 12px; }
-a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  #board, .zoombar, .polaroid { transition: none; }
+}
 </style>
 </head>
 <body>
-<main>
+<div class="vignette" aria-hidden="true"></div>
 
-<header>
-  <h1>Thanksgiving trip: drive or fly?</h1>
-  <p class="sub muted">Fort Myers ↔ Atlanta · Nov 20–24, 2026</p>
-  <span class="checked">Prices checked Oct 24, 2026</span>
-</header>
-
-<section aria-labelledby="bl">
-  <h2 id="bl" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Bottom line</h2>
-  <div class="summary">
-    <div class="scard">
-      <div class="label">🚗 Drive the Giulia</div>
-      <div class="big num" data-out="aCost">~$200</div>
-      <div class="time">~20 hrs</div>
+<main id="stage">
+  <div id="board" class="cork">
+    <div class="note pinned">
+      <h1>Thanksgiving ’26 — boys’ trip</h1>
+      <p>Shiva · Dhruva · Dhira</p>
+      <p class="hint">tap a polaroid to zoom in</p>
     </div>
-    <div class="scard fly">
-      <div class="label">✈️ Fly nonstop + rental</div>
-      <div class="big num" data-out="bCost">~$1,225</div>
-      <div class="time">~8.5 hrs</div>
-    </div>
+    <a class="sticky pinned" href="/thanksgivingplanning">how we decided to drive →</a>
+    <svg id="yarn" aria-hidden="true"></svg>
   </div>
-  <p class="verdict">Flying costs <strong class="num" data-out="bExtra">~$1,025</strong> more and saves <strong>~11.5 hours</strong> (<strong class="num" data-out="bRate">~$90</strong> per hour saved).</p>
-  <ul class="points">
-    <li><strong>Driving is the cheapest by far:</strong> about <span data-out="aCost2">$200</span>, compared with about <span data-out="bCost2">$1,225</span> to fly nonstop and rent a car.</li>
-    <li>The “cheap” flights aren’t worth it. They cost more than driving and save little or no time, and the absolute cheapest is slower than driving.</li>
-    <li>So the real choice is <strong>drive</strong> or <strong>fly Delta nonstop + rental</strong>.</li>
-  </ul>
-</section>
-
-<section aria-labelledby="plan">
-  <h2 id="plan">The plan</h2>
-  <ol class="timeline">
-    <li><span class="when">Fri, Nov 20 · travel up</span><br>Dad (Shiva) and Dhira get from Fort Myers to Atlanta, either in the Giulia or on a flight from RSW. Dhruva flies in from SFO (that flight is booked either way and isn’t part of this comparison).</li>
-    <li><span class="when">Fri, Nov 20 – Tue, Nov 24 · in Atlanta</span><br>All three of us together. If we flew, we pick up a rental car at ATL; if we drove, we have the Giulia.</li>
-    <li><span class="when">Tue, Nov 24 · travel back</span><br>All three head back to Fort Myers the same way Dad and Dhira came up: drive the Giulia home, or fly ATL → RSW.</li>
-  </ol>
-  <p class="small muted">Left out because they’re the same either way: Dhruva’s SFO flight, the hotel, food, and driving or parking around Atlanta.</p>
-</section>
-
-<section aria-labelledby="opts">
-  <h2 id="opts">All four options</h2>
-  <div class="options">
-    <article class="opt real">
-      <div class="head"><h3>A. Drive the Giulia</h3><span class="tag real">The real choice</span></div>
-      <div class="cost num" data-out="aCost3">~$200</div>
-      <div class="muted">~20 hrs (10 up + 10 back)</div>
-      <p class="small">About $100 of premium gas each way. No rental needed.</p>
-      <div class="vs" data-out="aVs">Cheapest option. Wear on the car would add ~$145.</div>
-    </article>
-    <article class="opt real">
-      <div class="head"><h3>B. Fly nonstop (Delta)</h3><span class="tag real">The real choice</span></div>
-      <div class="cost num" data-out="bCost3">~$1,225</div>
-      <div class="muted">~8.5 hrs (4.3 up + 4.2 back)</div>
-      <p class="small"><span>$229 × 2 up</span>, <span data-out="bBack">$209 × 3 back (10:59p)</span>, plus a $140 rental.</p>
-      <div class="vs" data-out="bVs">+$1,025 vs. driving · saves ~11.5 hrs · ~$90/hr saved</div>
-    </article>
-    <article class="opt">
-      <div class="head"><h3>C. Cheapest reasonable flights</h3></div>
-      <div class="cost num">~$1,000 <span class="small muted">+ bag fees</span></div>
-      <div class="muted">~14.3 hrs (5.8 up + 8.5 back)</div>
-      <p class="small">Southwest via Orlando up ($220 × 2), Frontier 8:43a via Cleveland back ($140 × 3), plus rental.</p>
-      <div class="vs" data-out="cVs">+$800 vs. driving · saves ~5.7 hrs · ~$140/hr saved</div>
-    </article>
-    <article class="opt">
-      <div class="head"><h3>D. Absolute cheapest flights</h3><span class="tag slow">Slower than driving</span></div>
-      <div class="cost num">~$750 <span class="small muted">+ bag fees</span></div>
-      <div class="muted">~28 hrs (13.5 up + 14.4 back)</div>
-      <p class="small">Frontier with long layovers both ways ($146 × 2 up, $106 × 3 back), plus rental.</p>
-      <div class="vs" data-out="dVs">+$550 vs. driving · 8 hrs <em>slower</em> · never worth it</div>
-    </article>
-  </div>
-</section>
-
-<section aria-labelledby="tweak">
-  <h2 id="tweak">Try it</h2>
-  <div class="controls">
-    <div class="control">
-      <input type="checkbox" id="wear">
-      <label for="wear">Include wear on the Alfa <span class="muted">(+$145)</span></label>
-    </div>
-    <fieldset class="control">
-      <legend>Delta return flight on Nov 24</legend>
-      <div class="seg">
-        <input type="radio" name="ret" id="ret-late" value="209" checked>
-        <label for="ret-late">10:59p · $209 each</label>
-        <input type="radio" name="ret" id="ret-early" value="229">
-        <label for="ret-early">3:15p · $229 each</label>
-      </div>
-      <p class="small muted" style="margin:8px 0 0">The 10:59p lands after midnight; the 3:15p lands at 4:53p.</p>
-    </fieldset>
-  </div>
-</section>
-
-<section aria-labelledby="det">
-  <h2 id="det">Details</h2>
-
-  <details>
-    <summary>Flights up: RSW → ATL, Fri Nov 20</summary>
-    <div class="dbody">
-      <table class="cards">
-        <caption>Per person, one-way, taxes in, bags not included. 2 tickets (Dad and Dhira).</caption>
-        <thead><tr><th>Airline</th><th>Depart → Arrive</th><th>Duration</th><th>Stops</th><th class="r">Price</th></tr></thead>
-        <tbody>
-          <tr class="pick"><td class="air">Delta</td><td class="times">5:30a → 7:17a</td><td class="dur">1h 47m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">7:00a → 8:51a</td><td class="dur">1h 51m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">8:10a → 10:01a</td><td class="dur">1h 51m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">10:52a → 12:37p</td><td class="dur">1h 45m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">3:35p → 5:27p</td><td class="dur">1h 52m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">6:23p → 8:19p</td><td class="dur">1h 56m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">7:59p → 9:58p</td><td class="dur">1h 59m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Southwest</td><td class="times">7:25a → 10:45a</td><td class="dur">3h 20m</td><td class="stops">1 stop (MCO)</td><td class="price r">$220</td></tr>
-          <tr><td class="air">Southwest</td><td class="times">5:30p → 9:15p</td><td class="dur">3h 45m</td><td class="stops">1 stop (MCO)</td><td class="price r">$220</td></tr>
-          <tr><td class="air">American</td><td class="times">7:29p → 11:55p</td><td class="dur">4h 26m</td><td class="stops">1 stop (CLT)</td><td class="price r">$239</td></tr>
-          <tr><td class="air">Frontier</td><td class="times">12:19p → 11:19p</td><td class="dur">11h</td><td class="stops">1 stop (DTW, 5.5h layover)</td><td class="price r">$146</td></tr>
-          <tr><td class="air">Frontier</td><td class="times">8:21p → 7:33a +1</td><td class="dur">11h 12m</td><td class="stops">1 stop (CLE, 6.3h layover)</td><td class="price r">$146</td></tr>
-          <tr><td class="air">Frontier</td><td class="times">9:25p → 11:39a +1</td><td class="dur">14h 14m</td><td class="stops">1 stop (CVG, 9.9h layover)</td><td class="price r">$146</td></tr>
-        </tbody>
-      </table>
-      <p class="small muted" style="margin-top:8px">All Delta nonstops cost the same, so pick whichever time works.</p>
-    </div>
-  </details>
-
-  <details>
-    <summary>Flights back: ATL → RSW, Tue Nov 24</summary>
-    <div class="dbody">
-      <table class="cards">
-        <caption>Per person, one-way, taxes in, bags not included. 3 tickets (Dhruva, Dad and Dhira).</caption>
-        <thead><tr><th>Airline</th><th>Depart → Arrive</th><th>Duration</th><th>Stops</th><th class="r">Price</th></tr></thead>
-        <tbody>
-          <tr class="pick" id="row-late"><td class="air">Delta</td><td class="times">10:59p → 12:40a +1</td><td class="dur">1h 41m</td><td class="stops">Nonstop</td><td class="price r">$209</td></tr>
-          <tr id="row-early"><td class="air">Delta</td><td class="times">3:15p → 4:53p</td><td class="dur">1h 38m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
-          <tr><td class="air">Delta</td><td class="times">8:05a → 9:47a</td><td class="dur">1h 42m</td><td class="stops">Nonstop</td><td class="price r">$269</td></tr>
-          <tr><td class="air">Delta</td><td class="times">5:17p → 6:54p</td><td class="dur">1h 37m</td><td class="stops">Nonstop</td><td class="price r">$269</td></tr>
-          <tr><td class="air">Frontier</td><td class="times">8:43a → 2:42p</td><td class="dur">5h 59m</td><td class="stops">1 stop (CLE, 1.3h layover)</td><td class="price r">$140</td></tr>
-          <tr><td class="air">American</td><td class="times">9:14a → 1:35p</td><td class="dur">4h 21m</td><td class="stops">1 stop (CLT)</td><td class="price r">$219</td></tr>
-          <tr><td class="air">Southwest</td><td class="times">12:40p → 12:40a +1</td><td class="dur">12h</td><td class="stops">2 stops (MCO, BNA)</td><td class="price r">$195</td></tr>
-          <tr><td class="air">Frontier</td><td class="times">5:01a → 4:53p</td><td class="dur">11h 52m</td><td class="stops">1 stop (DEN)</td><td class="price r">$106</td></tr>
-          <tr><td class="air">Frontier</td><td class="times">12:25p → 5:12p +1</td><td class="dur">28h 47m</td><td class="stops">1 stop (ORD, 23.5h layover)</td><td class="price r">$106</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </details>
-
-  <details>
-    <summary>Rental car in Atlanta</summary>
-    <div class="dbody">
-      <ul>
-        <li>ATL airport, Fri Nov 20 – Tue Nov 24 (4 days): compact or midsize (Nissan Versa, Toyota Corolla or similar).</li>
-        <li><strong>$136–$144 total</strong> on Kayak. The $144 option has free cancellation. We use $140 in the math.</li>
-        <li>Pickup is by airport shuttle.</li>
-        <li>Rent it in Dad’s name. Drivers under 25 usually pay a daily young-driver fee.</li>
-        <li>Only needed if we fly. If we drive, we have the Giulia.</li>
-      </ul>
-    </div>
-  </details>
-
-  <details>
-    <summary>Driving math</summary>
-    <div class="dbody">
-      <table>
-        <tbody>
-          <tr><th scope="row">Distance</th><td>~605 miles each way on I-75, no tolls</td></tr>
-          <tr><th scope="row">Drive time</th><td>~9 hrs, about 10 with stops</td></tr>
-          <tr><th scope="row">Fuel economy</th><td>EPA 24 city / 33 hwy (RWD), 23 / 31 (AWD). We assume ~30 mpg on the interstate.</td></tr>
-          <tr><th scope="row">Premium gas</th><td>Fort Myers–Cape Coral $4.95, Florida avg $4.94, Georgia avg $4.59, Atlanta $4.66 (AAA, Oct 24)</td></tr>
-          <tr><th scope="row">Per leg</th><td>~20 gallons ≈ $95–$105</td></tr>
-          <tr><th scope="row">Both legs</th><td><strong>~$200</strong></td></tr>
-          <tr><th scope="row">Wear (optional)</th><td>Tires, oil, brakes and resale value at ~$0.12/mi × 1,210 mi ≈ $145. It’s an estimate, so it’s off by default.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </details>
-
-  <details>
-    <summary>Assumptions</summary>
-    <div class="dbody">
-      <ul>
-        <li>Door-to-door flight time = flight duration + 2.5 hours for getting to the airport, security, boarding and getting out at the other end.</li>
-        <li>Driving = about 10 hours per leg, including stops.</li>
-        <li>“Travel time” is the total hours spent traveling on the way up plus the way back. It isn’t multiplied by the number of people.</li>
-        <li>Up is 2 people (Dad and Dhira); back is 3 people (Dhruva, Dad and Dhira).</li>
-        <li>Flight prices don’t include bag fees. Frontier charges for carry-ons and checked bags, so options C and D cost more than shown.</li>
-        <li>The hotel, food, Dhruva’s SFO flight and getting around Atlanta cost about the same either way, so they’re left out.</li>
-      </ul>
-    </div>
-  </details>
-</section>
-
-<footer>
-  <strong>Sources</strong>
-  <ul>
-    <li>Flights: Google Flights</li>
-    <li>Rental car: Kayak</li>
-    <li>Gas prices: AAA</li>
-    <li>Fuel economy: EPA ratings via CarGurus</li>
-  </ul>
-  <p>Prices were checked on Saturday, Oct 24, 2026. They change often, so recheck before booking. Google Flights suggests booking before about Nov 6–10.</p>
-</footer>
-
 </main>
+
+<div class="zoombar" id="zoombar">
+  <button type="button" id="prev" aria-label="Previous photo">‹</button>
+  <button type="button" id="out">zoom out</button>
+  <button type="button" id="next" aria-label="Next photo">›</button>
+</div>
+<div class="sr" aria-live="polite" id="live"></div>
+
 <script>
-(function () {
-  var GAS = 200, WEAR = 145, UP_B = 229 * 2, RENT = 140;
-  var C_FLIGHTS = 220 * 2 + 140 * 3, D_FLIGHTS = 146 * 2 + 106 * 3;
-  var T = { a: 20, b: 8.5, c: 14.3, d: 28 };
-  var wear = document.getElementById('wear');
-  var radios = document.querySelectorAll('input[name=ret]');
+// One entry per polaroid, in yarn (trip) order.
+// x = horizontal center and y = top edge on the desktop board, both in % of the board; r = tilt in degrees.
+const TRIP = [
+  { id: 'roadtrip-up',  caption: 'road trip up 11/20 @ I-75',                x: 38, y: 4.5,  r: -4 },
+  { id: 'atl',          caption: 'landed! 11/20 @ ATL',                      x: 61, y: 3,    r: 3 },
+  { id: 'tallulah-rim', caption: 'Tallulah Gorge 11/21 @ Tallulah Falls',   x: 83, y: 5.5,  r: -2 },
+  { id: 'black-rock',   caption: 'Black Rock sunset 11/21 @ Black Rock Mtn', x: 84, y: 29.5, r: 5 },
+  { id: 'steaks',       caption: 'steaks 11/21 @ cabin',                     x: 62, y: 28,   r: -3 },
+  { id: 'newfound-gap', caption: 'Newfound Gap 11/22 @ Smokies',             x: 39, y: 30,   r: 2 },
+  { id: 'andrews-bald', caption: 'Andrews Bald 11/22 @ Smokies',             x: 17, y: 28.5, r: -5 },
+  { id: 'kuwohi',       caption: 'Kuwohi tower 11/22 @ Smokies',             x: 16.5, y: 53,   r: 4 },
+  { id: 'elk',          caption: 'elk! 11/22 @ Oconaluftee',                 x: 38, y: 52,   r: -2 },
+  { id: 'gorge-floor',  caption: 'gorge floor 11/23 @ Tallulah',             x: 61, y: 54,   r: 3 },
+  { id: 'rabun-bald',   caption: 'Rabun Bald 11/23 @ Sky Valley',            x: 83, y: 52.5, r: -4 },
+  { id: 'pickleball',   caption: 'pickleball 11/23 @ Tiger, GA',             x: 82, y: 77,   r: 2 },
+  { id: 'drive-home',   caption: 'drive home 11/24 @ I-75',                  x: 60, y: 76,   r: -3 }
+];
+const PHOTO_EXTS = ['jpg', 'jpeg', 'png', 'JPG'];
+const PIN_COLORS = [['#d93b30', '#ff9a8c', '#7a1a14'], ['#2f6fd1', '#9cc0ff', '#183c78'], ['#2f9e5a', '#9be0b2', '#175a31'],
+                    ['#f2c230', '#fff0a8', '#94700c'], ['#f08a24', '#ffcf94', '#8a4a0c']];
 
-  function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
-  function set(key, text) {
-    document.querySelectorAll('[data-out="' + key + '"]').forEach(function (el) { el.textContent = text; });
+// ---------- Placeholder art (200×200, warm storybook palette) ----------
+function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+const lg = (id, stops, x2 = 0, y2 = 1) =>
+  `<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o, c, a = 1]) => `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</linearGradient>`;
+const rg = (id, c, a = .85) => `<radialGradient id="${id}"><stop offset="0" stop-color="${c}" stop-opacity="${a}"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`;
+function stars(n, seed, maxY) {
+  const R = rng(seed); let s = '';
+  for (let i = 0; i < n; i++) s += `<circle cx="${(R() * 200).toFixed(1)}" cy="${(R() * maxY).toFixed(1)}" r="${(.35 + R() * .75).toFixed(2)}" fill="#fff4d6" opacity="${(.35 + R() * .6).toFixed(2)}"/>`;
+  return s;
+}
+function pines(x0, x1, step, base, hMin, hMax, fill, seed, op = 1) {
+  const R = rng(seed); let s = '';
+  for (let x = x0; x <= x1; x += step) { const h = hMin + R() * (hMax - hMin), w = h * .32; s += `<path d="M${x} ${base - h}L${x - w} ${base}H${x + w}Z"/>`; }
+  return `<g fill="${fill}" opacity="${op}">${s}</g>`;
+}
+function roadDashes(x0, y0, x1, y1, color) {
+  let s = '';
+  [[.05, .1], [.18, .27], [.37, .5], [.62, .82]].forEach(([a, b]) => {
+    s += `M${(x0 + (x1 - x0) * a).toFixed(1)} ${(y0 + (y1 - y0) * a).toFixed(1)}L${(x0 + (x1 - x0) * b).toFixed(1)} ${(y0 + (y1 - y0) * b).toFixed(1)}`;
+  });
+  return `<path d="${s}" stroke="${color}" stroke-width="2" stroke-linecap="round"/>`;
+}
+function windows(bldgs, seed) {
+  const R = rng(seed); let s = '';
+  bldgs.forEach(([x, top, w]) => {
+    for (let y = top + 5; y < 172; y += 6) for (let wx = x + 3; wx < x + w - 3; wx += 5) if (R() > .58) s += `<rect x="${wx}" y="${y}" width="2.2" height="2.8"/>`;
+  });
+  return `<g fill="#ffd27a" opacity=".85">${s}</g>`;
+}
+function hiker(x, y, color) {
+  return `<g transform="translate(${x} ${y})"><path d="M-1.8 0L0 -6.5L2 0" stroke="#2a2433" stroke-width="1.5" fill="none" stroke-linecap="round"/>` +
+    `<rect x="-4.6" y="-12.5" width="3" height="6" rx="1" fill="#3a3040"/><rect x="-2" y="-13" width="4.4" height="7.5" rx="1.6" fill="${color}"/>` +
+    `<circle cy="-15.4" r="2.1" fill="#e9c39f"/><path d="M3.2 -10L5 0" stroke="#2a2433" stroke-width=".7"/></g>`;
+}
+function elk(x, y, s, flip, down) {
+  const neck = down ? '<path d="M11 -3L22 9L27 6L17 -6Z"/><ellipse cx="25" cy="11" rx="6" ry="3" transform="rotate(50 25 11)"/>'
+                    : '<path d="M11 -3L21 -16L27 -15L18 2Z"/><ellipse cx="27" cy="-16" rx="6.2" ry="3" transform="rotate(18 27 -16)"/>' +
+                      '<path d="M23 -18Q19 -31 11 -37M19 -28L25 -33M15 -33L17 -40M25 -18Q30 -29 36 -33M30 -26L36 -24" stroke="#2a1e1a" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
+  return `<g transform="translate(${x} ${y}) scale(${flip ? -s : s} ${s})" fill="#2a1e1a"><ellipse rx="18" ry="8.5"/>` +
+    `<path d="M-12 4L-13 20M-7 5L-6 20M9 5L10 20M13 4L14 20" stroke="#2a1e1a" stroke-width="2.6" stroke-linecap="round"/>${neck}` +
+    `<ellipse cx="-16" cy="-1" rx="3.4" ry="4.4" fill="#b99468"/></g>`;
+}
+function bridge() {
+  const q = (t, a, b, c) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c;
+  let h = '';
+  for (let t = .08; t < .95; t += .07) h += `M${q(t, 44, 100, 156).toFixed(1)} ${q(t, 88, 108, 86).toFixed(1)}V${q(t, 96, 116, 94).toFixed(1)}`;
+  return `<g fill="none" stroke="#2a2730" stroke-linecap="round"><path d="${h}" stroke-width=".7"/><path d="M44 88Q100 108 156 86" stroke-width="1"/><path d="M44 96Q100 116 156 94" stroke-width="2.4"/>` +
+    `<path d="M44 80V100M156 78V98" stroke-width="3"/></g>`;
+}
+function stones(x, y, w, h, seed) {
+  const R = rng(seed); let s = '';
+  for (let yy = y, row = 0; yy < y + h; yy += 6, row++) for (let xx = x - (row % 2) * 4; xx < x + w; xx += 8) {
+    const x0 = Math.max(x, xx), x1 = Math.min(x + w, xx + 8);
+    s += `<rect x="${x0 + .5}" y="${yy + .5}" width="${x1 - x0 - 1}" height="5" rx="1.2" opacity="${(.15 + R() * .25).toFixed(2)}"/>`;
   }
-  function vs(extra, saved) {
-    if (saved <= 0) return '+' + money(extra) + ' vs. driving · ' + Math.round(-saved) + ' hrs slower · never worth it';
-    return '+' + money(extra) + ' vs. driving · saves ~' + saved + ' hrs · ~' + money(extra / saved) + '/hr saved';
+  return `<g fill="#3d3128">${s}</g>`;
+}
+
+const ART = {
+  'roadtrip-up': () => `<defs>${lg('rt-s', [[0, '#27325f'], [.4, '#6d4f86'], [.68, '#e98a63'], [.92, '#ffd38a']])}${rg('rt-g', '#ffd98f')}${rg('rt-t', '#ff5a3a', .9)}</defs>
+    <rect width="200" height="200" fill="url(#rt-s)"/>${stars(14, 7, 50)}
+    <circle cx="112" cy="120" r="48" fill="url(#rt-g)"/><circle cx="112" cy="121" r="17" fill="#ffe9b5"/>
+    <rect y="118" width="200" height="82" fill="#3c4636"/><path d="M0 118H200V130C150 124 60 126 0 133Z" fill="#56604a"/>
+    ${pines(126, 140, 7, 119, 7, 11, '#4f5a6a', 3, .55)}${pines(147, 172, 8, 120, 10, 16, '#3e4a52', 5, .8)}${pines(178, 200, 9, 122, 16, 24, '#2c3638', 8)}
+    <path d="M104 120L116 120L190 200L18 200Z" fill="#3a3542"/><path d="M104 120L18 200M116 120L190 200" stroke="#cfc3a8" stroke-width="1.4" opacity=".55"/>
+    ${roadDashes(110, 121, 104, 200, '#ffd98a')}
+    <g fill="none" stroke-linecap="round"><path d="M22 200C26 170 24 140 34 112" stroke="#221f2c" stroke-width="5"/>
+    <path d="M34 112q-16 -6 -30 6M34 112q-10 -14 -28 -12M34 112q4 -16 22 -16M34 112q16 -4 26 10M34 112q2 8 -4 22" stroke="#221f2c" stroke-width="4"/>
+    <path d="M62 200C64 180 62 160 70 140" stroke="#2c2a38" stroke-width="3.4"/><path d="M70 140q-11 -4 -21 4M70 140q-7 -10 -19 -8M70 140q3 -11 15 -11M70 140q11 -3 18 7" stroke="#2c2a38" stroke-width="3"/></g>
+    <g transform="translate(138 168)"><ellipse cy="23" rx="31" ry="4" fill="#000" opacity=".35"/>
+    <rect x="-27" y="12" width="9" height="11" rx="2" fill="#1b1a22"/><rect x="18" y="12" width="9" height="11" rx="2" fill="#1b1a22"/>
+    <path d="M-20 -6L-14 -20Q0 -23 14 -20L20 -6Z" fill="#8f2b2b"/><path d="M-16 -7L-12 -17Q0 -19.5 12 -17L16 -7Z" fill="#2b3150"/>
+    <path d="M-9 -16L-5 -17.5" stroke="#ffd9a0" stroke-width="1.2" opacity=".7"/>
+    <rect x="-29" y="-8" width="58" height="22" rx="6" fill="#c0413a"/><rect x="-29" y="-8" width="58" height="4" rx="2" fill="#d65a4c"/>
+    <circle cx="-20.5" cy="-.5" r="11" fill="url(#rt-t)"/><circle cx="20.5" cy="-.5" r="11" fill="url(#rt-t)"/>
+    <rect x="-26" y="-3" width="11" height="5" rx="2" fill="#ffb08a"/><rect x="15" y="-3" width="11" height="5" rx="2" fill="#ffb08a"/>
+    <rect x="-9" y="4" width="18" height="6" rx="1" fill="#f3ead2"/></g>`,
+
+  'atl': () => {
+    const far = [[0, 125, 14], [12, 112, 12], [26, 120, 16], [44, 100, 10], [56, 116, 14], [72, 108, 12], [86, 122, 18], [106, 98, 12], [120, 114, 16], [138, 104, 12], [152, 118, 16], [170, 110, 12], [184, 120, 16]];
+    const near = [[4, 140, 18], [24, 128, 14], [40, 146, 20], [62, 118, 12], [76, 134, 16], [94, 86, 16], [112, 130, 14], [128, 112, 18], [148, 140, 16], [166, 124, 14], [182, 138, 18]];
+    const R = rng(21); let lights = '';
+    for (let x = 6; x < 200; x += 12) lights += `<circle cx="${x}" cy="188" r="1.3"/>`;
+    return `<defs>${lg('at-s', [[0, '#d9665a'], [.42, '#f1a15c'], [.78, '#ffd88e'], [1, '#ffeab8']])}${rg('at-g', '#fff2c4', .9)}${rg('at-l', '#fff6d0', .95)}</defs>
+    <rect width="200" height="200" fill="url(#at-s)"/><circle cx="150" cy="128" r="56" fill="url(#at-g)"/><circle cx="150" cy="130" r="19" fill="#fff0c8"/>
+    <g fill="#a9667a" opacity=".85">${far.map(([x, t, w]) => `<rect x="${x}" y="${t}" width="${w}" height="${180 - t}"/>`).join('')}</g>
+    <g fill="#563a5c">${near.map(([x, t, w]) => `<rect x="${x}" y="${t}" width="${w}" height="${180 - t}"/>`).join('')}<path d="M94 86L102 68L110 86Z"/><path d="M102 68V56" stroke="#563a5c" stroke-width="1.2"/></g>
+    ${windows(near, 5)}
+    <rect y="176" width="200" height="24" fill="#3a2a44"/><g fill="#fff1b0">${lights}</g>
+    <g transform="translate(70 50) rotate(12)" fill="#3c2f4f">
+      <path d="M-4 -1L-16 -22L-9 -22L12 -1Z" fill="#4b3d5e"/>
+      <path d="M-34 0Q-34 -5 -26 -5L26 -4Q36 -2 38 1Q36 4 26 4L-26 4Q-34 4 -34 0Z"/>
+      <path d="M-4 2L-18 20L-10 20L12 2Z"/><path d="M-30 -3L-38 -16L-32 -16L-22 -4Z"/><path d="M-28 2L-36 8L-31 8L-22 2Z"/>
+      <path d="M2 4V9M20 4V8" stroke="#3c2f4f" stroke-width="1.2"/>
+      <g fill="#ffd98f" opacity=".75">${[-20, -15, -10, -5, 0, 5, 10, 15, 20].map(x => `<circle cx="${x}" cy="-1" r=".9"/>`).join('')}</g>
+      <circle cx="36" cy="3" r="12" fill="url(#at-l)"/><circle cx="36" cy="3" r="1.6" fill="#fffbe8"/></g>`;
+  },
+
+  'tallulah-rim': () => `<defs>${lg('tr-s', [[0, '#33406f'], [.5, '#9b6a8a'], [.8, '#f0a26b']])}</defs>
+    <rect width="200" height="200" fill="url(#tr-s)"/>
+    <path d="M0 70C40 60 80 72 120 62S180 64 200 60V130H0Z" fill="#6a5f86"/>
+    <path d="M44 70L156 66L130 184L70 184Z" fill="#4e4256"/>
+    <path d="M0 64L44 70Q58 100 62 130Q70 160 78 200H0Z" fill="#7a6258"/>
+    <path d="M10 90Q30 110 34 150M24 74Q44 100 50 140M4 130Q20 160 30 200" stroke="#5e4a44" stroke-width="3" fill="none" opacity=".7"/>
+    <path d="M200 60L156 66Q144 96 140 128Q130 160 124 200H200Z" fill="#6a5560"/>
+    <path d="M186 80Q166 110 162 150M196 120Q178 150 172 200" stroke="#544350" stroke-width="3" fill="none" opacity=".7"/>
+    <path d="M44 70Q58 100 62 130" stroke="#f0a070" stroke-width="1.2" fill="none" opacity=".45"/>
+    ${pines(4, 42, 6, 68, 8, 14, '#2c3a35', 12)}${pines(160, 200, 6, 64, 8, 15, '#283530', 14)}
+    ${bridge()}
+    <path d="M66 182Q100 176 132 182L134 200H64Z" fill="#3d7096"/>
+    <path d="M72 186q6 -3 12 0t12 0t12 0t12 0t12 0M68 194q6 -3 12 0t12 0t12 0t12 0t12 0t12 0" stroke="#e9f4f7" stroke-width="1.4" fill="none" opacity=".85"/>
+    <g transform="translate(104 189) rotate(-8)"><ellipse rx="7.5" ry="1.9" fill="#f28a2c"/><circle cy="-2.6" r="1.5" fill="#2b2b3a"/><path d="M-5 -5.5L5 1" stroke="#2b2b3a" stroke-width=".9"/></g>`,
+
+  'black-rock': () => `<defs>${lg('br-s', [[0, '#283266'], [.38, '#8c5a86'], [.58, '#e7865e'], [.72, '#ffc978']])}${rg('br-g', '#ffd890', .9)}</defs>
+    <rect width="200" height="200" fill="url(#br-s)"/>${stars(8, 17, 34)}
+    <circle cx="128" cy="108" r="52" fill="url(#br-g)"/><circle cx="128" cy="109" r="14" fill="#ffe6a6"/>
+    <path d="M0 112C25 100 45 108 70 102S120 96 145 104S185 98 200 102V200H0Z" fill="#9a7aa6" opacity=".9"/>
+    <rect y="114" width="200" height="8" fill="#ffd8b0" opacity=".18"/>
+    <path d="M0 124C30 112 55 122 85 114S140 110 165 118S195 112 200 114V200H0Z" fill="#7464a0"/>
+    <path d="M0 138C20 130 50 136 80 128S130 130 155 134S190 126 200 130V200H0Z" fill="#535489"/>
+    <rect y="140" width="200" height="6" fill="#f3d0c0" opacity=".12"/>
+    <path d="M0 152C35 142 60 152 95 144S150 146 175 150S195 146 200 148V200H0Z" fill="#3a3f6e"/>
+    <path d="M0 168C40 160 70 166 110 160S170 164 200 160V200H0Z" fill="#262b52"/>
+    <path d="M0 170L40 161L84 168L104 182L112 200H0Z" fill="#1a1b2b"/><path d="M0 170L40 161L84 168" stroke="#f0a070" stroke-width="1.3" fill="none" opacity=".55"/>
+    <path d="M18 180L46 176M30 190L70 186" stroke="#2c2d42" stroke-width="1.2"/>`,
+
+  'steaks': () => `<defs>${lg('st-s', [[0, '#0f1633'], [1, '#2a3768']])}${rg('st-w', '#ffc56a', .7)}${rg('st-f', '#ff8a3a', .75)}${rg('st-l', '#ffd47a', .8)}${rg('st-m', '#fdf0c8', .5)}</defs>
+    <rect width="200" height="200" fill="url(#st-s)"/>${stars(26, 3, 90)}
+    <circle cx="168" cy="30" r="22" fill="url(#st-m)"/><circle cx="168" cy="30" r="8.5" fill="#fdf0c8"/>
+    <rect y="150" width="200" height="50" fill="#1d2a2a"/>
+    <rect x="0" y="50" width="70" height="125" fill="#5a3c2a"/>
+    <path d="M0 59H70M0 68H70M0 77H70M0 86H70M0 95H70M0 104H70M0 113H70M0 122H70M0 131H70M0 140H70M0 149H70M0 158H70M0 167H70" stroke="#3f2a1d" stroke-width="1.2"/>
+    <path d="M-4 34L80 48V56L-4 54Z" fill="#241a17"/>
+    <circle cx="31" cy="96" r="44" fill="url(#st-w)"/><rect x="16" y="82" width="30" height="28" fill="#ffc56a"/><path d="M31 82V110M16 96H46" stroke="#5a3c2a" stroke-width="2.2"/><rect x="16" y="82" width="30" height="28" fill="none" stroke="#3f2a1d" stroke-width="2.4"/>
+    <rect x="70" y="135" width="130" height="4" fill="#4a3322"/><path d="M74 135V170M100 135V170M174 135V170M196 135V170" stroke="#4a3322" stroke-width="3.4"/>
+    <rect y="168" width="200" height="32" fill="#3d2a1e"/><path d="M0 176H200M0 185H200M0 194H200" stroke="#2c1e15" stroke-width="1"/>
+    <circle cx="182" cy="127" r="30" fill="url(#st-l)"/><path d="M182 112V116" stroke="#1c1c22" stroke-width="1.2"/>
+    <path d="M176 118H188L186 116H178Z" fill="#1c1c22"/><rect x="177" y="118" width="10" height="15" rx="2" fill="#ffd47a"/><rect x="177" y="118" width="10" height="15" rx="2" fill="none" stroke="#1c1c22" stroke-width="1.2"/><rect x="176" y="133" width="12" height="2" fill="#1c1c22"/>
+    <circle cx="120" cy="140" r="40" fill="url(#st-f)"/>
+    <path d="M104 160L96 188M136 160L144 188M120 162V190" stroke="#1c1c22" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M92 140A28 24 0 0 0 148 140Z" fill="#1f1f26"/><path d="M99 148A22 18 0 0 0 113 160" stroke="#4a4a58" stroke-width="2" fill="none"/>
+    <rect x="90" y="138" width="60" height="3" rx="1.5" fill="#3a3a46"/>
+    <ellipse cx="109" cy="135.5" rx="10.5" ry="4.5" fill="#8b3a26"/><ellipse cx="131" cy="135" rx="9.5" ry="4.2" fill="#94402a"/>
+    <path d="M103 137L107 133M108 138L112 133.5M113 137.5L116 134M125 137L129 132.5M130 137.5L134 133" stroke="#4a1a10" stroke-width="1.2"/>
+    <path d="M96 130.5L146 128.5" stroke="#c9b48a" stroke-width=".9"/>
+    <g>${[['#d94a3a', 101], ['#5aa04a', 108], ['#f2c230', 115], ['#e8d3c0', 122], ['#d94a3a', 129], ['#5aa04a', 136], ['#f2c230', 143]].map(([c, x]) => `<circle cx="${x}" cy="${(130.4 - (x - 96) * .04).toFixed(1)}" r="2.7" fill="${c}"/>`).join('')}</g>
+    <g fill="none" stroke="#c9cee0" stroke-linecap="round" opacity=".33"><path d="M112 126c-6 -12 8 -18 2 -32c-5 -11 6 -18 2 -30" stroke-width="5"/><path d="M130 125c6 -10 -6 -18 0 -30c4 -9 -4 -15 0 -24" stroke-width="4"/></g>
+    <g fill="#ffb05a"><circle cx="106" cy="118" r=".9"/><circle cx="126" cy="112" r=".8"/><circle cx="118" cy="104" r=".7"/></g>`,
+
+  'newfound-gap': () => `<defs>${lg('ng-s', [[0, '#7f9cc4'], [.6, '#d7c6c4'], [1, '#f2d2a8']])}${rg('ng-g', '#fff2d6', .6)}</defs>
+    <rect width="200" height="200" fill="url(#ng-s)"/><circle cx="150" cy="70" r="46" fill="url(#ng-g)"/>
+    <path d="M0 96C30 80 50 92 75 82S120 70 150 84S185 78 200 86V200H0Z" fill="#8ea3c4"/>
+    <rect y="100" width="200" height="16" fill="#eef2f6" opacity=".45"/>
+    <path d="M0 116C40 100 70 112 100 104S160 98 200 110V200H0Z" fill="#6f87b0"/>
+    <ellipse cx="60" cy="124" rx="70" ry="6" fill="#eef2f6" opacity=".4"/>
+    <path d="M0 136C30 124 70 134 110 126S170 124 200 132V200H0Z" fill="#53698f"/>
+    <ellipse cx="150" cy="140" rx="70" ry="5" fill="#eef2f6" opacity=".3"/>
+    <path d="M0 150C40 142 90 150 130 144S185 146 200 148V200H0Z" fill="#3d4f72"/>
+    <rect y="172" width="200" height="28" fill="#8a8072"/>${stones(0, 172, 200, 28, 31)}<rect y="170" width="200" height="4" fill="#9d9384"/>
+    <rect x="55" y="118" width="7" height="56" fill="#4f3420"/><rect x="138" y="118" width="7" height="56" fill="#4f3420"/>
+    <rect x="40" y="96" width="120" height="42" rx="4" fill="#6a4428" stroke="#3d2716" stroke-width="2"/>
+    <rect x="45" y="101" width="110" height="32" rx="2" fill="none" stroke="#f4e3bb" stroke-width=".8" opacity=".5"/>
+    <text x="100" y="117" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="11.5" font-weight="700" fill="#f4e3bb" letter-spacing=".5">NEWFOUND GAP</text>
+    <text x="100" y="129" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="7.5" fill="#f4e3bb" opacity=".9" letter-spacing=".6">ELEV. 5,046 FT</text>`,
+
+  'andrews-bald': () => `<defs>${lg('ab-s', [[0, '#3f4e86'], [.55, '#b07a92'], [.9, '#f2b27c']])}</defs>
+    <rect width="200" height="200" fill="url(#ab-s)"/>${stars(6, 41, 30)}
+    <path d="M0 108C30 96 60 106 90 98S150 92 200 104V200H0Z" fill="#6a6f9c"/>
+    <path d="M0 124C40 114 80 122 120 114S180 116 200 120V200H0Z" fill="#4f5888"/>
+    <path d="M0 150C50 118 120 116 200 140V200H0Z" fill="#b3a75c"/>
+    <path d="M0 150C50 118 120 116 200 140" stroke="#dccb7c" stroke-width="2" fill="none" opacity=".7"/>
+    <path d="M0 176C60 160 140 168 200 176V200H0Z" fill="#8d8546"/>
+    <g fill="#4e5a36"><ellipse cx="20" cy="170" rx="15" ry="7"/><ellipse cx="172" cy="164" rx="17" ry="8"/><ellipse cx="150" cy="182" rx="10" ry="5"/><ellipse cx="44" cy="186" rx="9" ry="4"/></g>
+    <g stroke="#e0d088" stroke-width=".9" opacity=".6"><path d="M60 150l-2 -5M64 150l1 -5M120 146l-2 -5M124 146l1 -5M96 160l-2 -5M100 160l1 -5M150 156l-1 -5"/></g>
+    ${hiker(80, 125.5, '#d9443a')}${hiker(93, 124, '#2f6fd1')}${hiker(106, 123.6, '#f08a24')}`,
+
+  'kuwohi': () => `<defs>${lg('kw-s', [[0, '#1c2550'], [.45, '#5d5592'], [.72, '#e48f74'], [.85, '#f6c08a']])}${rg('kw-g', '#ffd3a0', .8)}</defs>
+    <rect width="200" height="200" fill="url(#kw-s)"/>${stars(22, 11, 70)}
+    <circle cx="36" cy="140" r="50" fill="url(#kw-g)"/>
+    <path d="M0 152Q30 126 62 152Z" fill="#3a3f6a"/><path d="M150 150Q176 132 200 146V160H150Z" fill="#363b64"/>
+    <path d="M0 168L98 112" stroke="#bfb8ae" stroke-width="5"/><path d="M0 162L98 106" stroke="#e9e4dc" stroke-width="1"/>
+    <path d="M22 156V180M46 142V180M70 128V180" stroke="#a9a29a" stroke-width="1.6"/>
+    <rect x="112" y="72" width="11" height="104" fill="#cfc8be"/><rect x="118" y="72" width="5" height="104" fill="#b4ada4"/>
+    <path d="M97 92A21 6 0 0 1 138 92M97 112A21 6 0 0 1 138 112" stroke="#9a948c" stroke-width="3" fill="none"/>
+    <path d="M97 92A21 6 0 0 0 138 92M97 112A21 6 0 0 0 138 112" stroke="#e2dcd2" stroke-width="4" fill="none"/>
+    <ellipse cx="117.5" cy="70" rx="25" ry="6" fill="#e7e1d8"/><path d="M92.5 70V71.5A25 6 0 0 0 142.5 71.5V70" fill="#c4bdb3"/>
+    <ellipse cx="117.5" cy="63" rx="25" ry="6" fill="none" stroke="#e7e1d8" stroke-width="1"/><path d="M92.5 63V70M142.5 63V70M104 68V74M131 68V74M117.5 69V75" stroke="#e7e1d8" stroke-width="1"/>
+    <g fill="#f4d9d0"><ellipse cx="20" cy="178" rx="38" ry="12"/><ellipse cx="75" cy="186" rx="44" ry="13"/><ellipse cx="140" cy="182" rx="46" ry="13"/><ellipse cx="192" cy="176" rx="30" ry="11"/></g>
+    <g fill="#e8c3c6"><ellipse cx="44" cy="196" rx="50" ry="10"/><ellipse cx="160" cy="198" rx="54" ry="10"/></g>
+    <g fill="#fbe6d6" opacity=".9"><ellipse cx="110" cy="172" rx="30" ry="7"/><ellipse cx="60" cy="168" rx="20" ry="5"/></g>`,
+
+  'elk': () => {
+    const R = rng(51); let tl = 'M0 126';
+    for (let x = 0; x <= 200; x += 6) tl += `L${x + 3} ${(126 - 10 - R() * 14).toFixed(1)}L${x + 6} 126`;
+    return `<defs>${lg('el-s', [[0, '#2b3260'], [.35, '#7a5f8c'], [.55, '#e59a6c'], [.63, '#f6c48a']])}${lg('el-g', [[0, '#7a7444'], [1, '#3f4428']])}${rg('el-h', '#ffd2a0', .7)}</defs>
+    <rect width="200" height="200" fill="url(#el-s)"/>${stars(10, 61, 40)}
+    <circle cx="150" cy="122" r="50" fill="url(#el-h)"/>
+    <path d="${tl}V140H0Z" fill="#283044"/>
+    <rect y="124" width="200" height="76" fill="url(#el-g)"/><rect y="122" width="200" height="9" fill="#f2d9c0" opacity=".22"/>
+    <g stroke="#9a9256" stroke-width=".8" opacity=".55"><path d="M20 190l-2 -6M24 190l1 -6M60 182l-2 -6M170 188l-2 -6M174 188l1 -6M120 194l-2 -6"/></g>
+    ${elk(168, 136, .45, true, true)}${elk(66, 152, 1, false, false)}${elk(138, 162, .92, true, true)}`;
+  },
+
+  'gorge-floor': () => `<defs>${lg('gf-s', [[0, '#f0b078'], [1, '#9a6f86']])}${rg('gf-m', '#ffffff', .6)}</defs>
+    <rect width="200" height="200" fill="url(#gf-s)"/>
+    <path d="M60 0H140V160H60Z" fill="#6e5a66"/>
+    <path d="M100 20Q97 80 101 152L119 152Q123 80 116 20Z" fill="#e8f2f6" opacity=".93"/>
+    <path d="M104 30Q102 80 105 148M110 26Q109 90 111 150M114 30Q116 80 115 148" stroke="#bcd6e2" stroke-width="1.2" fill="none"/>
+    <path d="M0 0H70Q60 50 66 90Q58 140 50 200H0Z" fill="#5a4848"/>
+    <path d="M200 0H128Q140 40 132 90Q142 140 150 200H200Z" fill="#4e4046"/>
+    <path d="M150 20Q170 60 160 100M176 40Q186 90 176 140" stroke="#43373d" stroke-width="3" fill="none" opacity=".7"/>
+    <circle cx="110" cy="152" r="34" fill="url(#gf-m)"/>
+    <path d="M36 160Q110 148 172 162L182 200H26Z" fill="#3e7396"/>
+    <path d="M70 168q6 -2 12 0t12 0M116 172q6 -2 12 0t12 0M86 184q6 -2 12 0t12 0" stroke="#e9f4f7" stroke-width="1.2" fill="none" opacity=".7"/>
+    <g><ellipse cx="52" cy="178" rx="19" ry="11" fill="#8b8178"/><ellipse cx="150" cy="184" rx="23" ry="12" fill="#7a716b"/><ellipse cx="98" cy="192" rx="15" ry="8" fill="#958a80"/><ellipse cx="170" cy="160" rx="11" ry="6" fill="#857a73"/>
+    <path d="M40 172q10 -6 22 -2M136 178q12 -6 26 -2M88 188q8 -4 18 -1" stroke="#b4aa9f" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>
+    <path d="M8 12L56 50L14 86L60 124L30 150" stroke="#7d848c" stroke-width="7" fill="none" stroke-dasharray="1.4 3"/>
+    <path d="M8 12L56 50L14 86L60 124L30 150" stroke="#b8bec6" stroke-width="2.4" fill="none"/>
+    <path d="M8 6L56 44L14 80L60 118L30 144" stroke="#d7dce2" stroke-width="1" fill="none"/>
+    <path d="M56 44V50M14 80V86M60 118V124M30 144V150M32 31V37M35 68V74M37 102V108" stroke="#d7dce2" stroke-width="1"/>`,
+
+  'rabun-bald': () => `<defs>${lg('rb-s', [[0, '#2a3266'], [.4, '#a65a7c'], [.62, '#f08c50'], [.75, '#ffd27a']])}${rg('rb-g', '#ffd890', .9)}</defs>
+    <rect width="200" height="200" fill="url(#rb-s)"/>${stars(10, 71, 40)}
+    <circle cx="46" cy="136" r="50" fill="url(#rb-g)"/><circle cx="46" cy="137" r="13" fill="#ffe7a6"/>
+    <path d="M0 140C30 132 60 140 90 134S150 130 200 138V200H0Z" fill="#6e5584" opacity=".92"/>
+    <path d="M0 152C40 144 80 152 120 146S180 144 200 150V200H0Z" fill="#4a3f6e"/>
+    <path d="M14 200C46 170 70 162 100 160C130 162 154 170 186 200Z" fill="#262640"/>
+    <rect x="86" y="116" width="28" height="46" fill="#8b7d70"/>${stones(86, 116, 28, 46, 13)}
+    <rect x="86" y="116" width="5" height="46" fill="#f0a060" opacity=".35"/>
+    <rect x="80" y="108" width="40" height="8" fill="#5b4c40"/>
+    <path d="M80 108V98M90 108V98M100 108V98M110 108V98M120 108V98M80 99H120M80 103.5H120" stroke="#3a3030" stroke-width="1.4"/>
+    <path d="M80 99H96" stroke="#f0a060" stroke-width="1" opacity=".5"/>`,
+
+  'pickleball': () => `<defs>${lg('pb-w', [[0, '#ffb05a', .45], [.6, '#ffb05a', .08], [1, '#6a3a8a', .25]], 1, 1)}</defs>
+    <rect width="200" height="200" fill="#4c8a5c"/>
+    <rect x="18" y="8" width="164" height="192" fill="#2f6f93"/>
+    <rect x="18" y="72" width="164" height="56" fill="#3f8f6a"/>
+    <path d="M18 8H182V200H18ZM100 8V72M100 128V200M18 72H182M18 128H182" stroke="#f4f1e8" stroke-width="2" fill="none"/>
+    <rect x="6" y="100" width="188" height="4" fill="#000" opacity=".25"/>
+    <rect x="8" y="94" width="184" height="7" fill="#23262e"/>
+    <path d="M14 94V101M22 94V101M30 94V101M38 94V101M46 94V101M54 94V101M62 94V101M70 94V101M78 94V101M86 94V101M94 94V101M102 94V101M110 94V101M118 94V101M126 94V101M134 94V101M142 94V101M150 94V101M158 94V101M166 94V101M174 94V101M182 94V101" stroke="#4a4f5c" stroke-width=".6"/>
+    <rect x="8" y="93" width="184" height="2.4" fill="#f4f1e8"/><circle cx="8" cy="97" r="3.4" fill="#1a1c22"/><circle cx="192" cy="97" r="3.4" fill="#1a1c22"/>
+    <g opacity=".28" fill="#000" transform="translate(9 6)"><g transform="translate(84 146) rotate(-25)"><rect x="-17" y="-24" width="34" height="40" rx="15"/><rect x="-4" y="14" width="8" height="21" rx="3"/></g><g transform="translate(116 146) rotate(25)"><rect x="-17" y="-24" width="34" height="40" rx="15"/><rect x="-4" y="14" width="8" height="21" rx="3"/></g><circle cx="146" cy="178" r="8"/></g>
+    <g transform="translate(84 146) rotate(-25)"><rect x="-17" y="-24" width="34" height="40" rx="15" fill="#f08a24"/><rect x="-13.5" y="-20.5" width="27" height="33" rx="12" fill="none" stroke="#fff" stroke-width="1.2" opacity=".35"/><rect x="-4" y="14" width="8" height="21" rx="3" fill="#2b2b33"/></g>
+    <g transform="translate(116 146) rotate(25)"><rect x="-17" y="-24" width="34" height="40" rx="15" fill="#7b5cd6"/><rect x="-13.5" y="-20.5" width="27" height="33" rx="12" fill="none" stroke="#fff" stroke-width="1.2" opacity=".35"/><rect x="-4" y="14" width="8" height="21" rx="3" fill="#2b2b33"/></g>
+    <circle cx="140" cy="174" r="8.5" fill="#f6dc3a"/><g fill="#c9a91c"><circle cx="137" cy="171" r="1.5"/><circle cx="143" cy="171.5" r="1.5"/><circle cx="140" cy="176.5" r="1.5"/><circle cx="135.5" cy="176" r="1.1"/><circle cx="144.5" cy="177" r="1.1"/></g>
+    <circle cx="137.5" cy="170.5" r="2.4" fill="#fff6b8" opacity=".55"/>
+    <rect width="200" height="200" fill="url(#pb-w)"/>`,
+
+  'drive-home': () => `<defs>${lg('dh-s', [[0, '#34487e'], [.45, '#c07a86'], [.72, '#f3a468'], [.9, '#ffe0a0']])}${rg('dh-g', '#ffd98f', .9)}${lg('dh-r', [[0, '#9fb7da'], [1, '#f2c7a8']])}<clipPath id="dh-m"><rect x="69" y="23" width="62" height="18" rx="7"/></clipPath></defs>
+    <rect width="200" height="200" fill="url(#dh-s)"/>
+    <circle cx="36" cy="122" r="46" fill="url(#dh-g)"/><circle cx="36" cy="124" r="13" fill="#ffe9b5"/>
+    <rect y="124" width="200" height="76" fill="#5d6b45"/><path d="M0 124H200V130C140 127 60 127 0 131Z" fill="#7d8656"/>
+    <g fill="none" stroke="#2f3330" stroke-linecap="round"><path d="M150 126C151 120 150 116 153 112" stroke-width="1.2"/><path d="M153 112q-5 -2 -9 2M153 112q-3 -4 -8 -3M153 112q2 -4 7 -4M153 112q5 -1 7 4" stroke-width="1.1"/>
+    <path d="M168 126C169 119 168 114 171 109" stroke-width="1.4"/><path d="M171 109q-6 -2 -11 2M171 109q-4 -5 -10 -3M171 109q2 -5 8 -5M171 109q6 -1 8 5" stroke-width="1.3"/></g>
+    <path d="M104 124L112 124L168 200L44 200Z" fill="#3a3640"/>${roadDashes(108, 125, 106, 200, '#ffd98a')}
+    <path d="M0 0H200V14H0Z" fill="#17161d"/><path d="M0 0L24 0L0 124Z" fill="#17161d"/><path d="M200 0L176 0L200 124Z" fill="#17161d"/>
+    <path d="M100 13V22" stroke="#17161d" stroke-width="3"/><rect x="66" y="20" width="68" height="24" rx="9" fill="#17161d"/>
+    <g clip-path="url(#dh-m)"><rect x="69" y="23" width="62" height="18" fill="url(#dh-r)"/>
+      <path d="M69 41L79 31L88 35L101 25L113 33L123 28L131 32V41Z" fill="#4f5f94"/><path d="M69 41L84 36L96 39L110 34L131 38V41Z" fill="#3a4778"/>
+      <path d="M96 41L104 41L100.8 36L99.2 36Z" fill="#5b5662"/><path d="M76 23L90 41" stroke="#fff" stroke-width="3" opacity=".18"/></g>
+    <path d="M0 168C50 156 150 156 200 168V200H0Z" fill="#1d1b24"/><path d="M0 168C50 156 150 156 200 168" stroke="#3a3646" stroke-width="2" fill="none"/>
+    <path d="M12 200A42 30 0 0 1 96 200" stroke="#0f0e14" stroke-width="7" fill="none"/>`
+};
+const art = id => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${ART[id]()}</svg>`;
+
+// ---------- Build the board ----------
+const stage = document.getElementById('stage');
+const board = document.getElementById('board');
+const yarn = document.getElementById('yarn');
+const bar = document.getElementById('zoombar');
+const live = document.getElementById('live');
+const cards = TRIP.map((d, i) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'polaroid' + (i % 2 ? ' alt' : '');
+  b.style.setProperty('--x', d.x);
+  b.style.setProperty('--y', d.y);
+  b.style.setProperty('--r', d.r + 'deg');
+  b.setAttribute('aria-label', d.caption);
+  b.innerHTML = `<span class="photo">${art(d.id)}</span><span class="tab"><span>${d.caption}</span></span>`;
+  b.addEventListener('click', e => { e.stopPropagation(); active === i ? zoomOut() : zoomTo(i); });
+  board.insertBefore(b, yarn);
+  return b;
+});
+
+// ---------- Real photos replace placeholders when present ----------
+async function findPhoto(d, el) {
+  for (const ext of PHOTO_EXTS) {
+    const url = `photos/${d.id}.${ext}`;
+    try { if (!(await fetch(url, { method: 'HEAD' })).ok) continue; } catch (e) { continue; }
+    const img = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = url; });
+    if (!img) continue;
+    img.alt = '';
+    img.decoding = 'async';
+    el.querySelector('.photo').appendChild(img);
+    el.classList.add('has-photo');
+    return;
   }
+}
+TRIP.forEach((d, i) => findPhoto(d, cards[i]));
 
-  function update() {
-    var back = Number(document.querySelector('input[name=ret]:checked').value);
-    var a = GAS + (wear.checked ? WEAR : 0);
-    var b = UP_B + back * 3 + RENT;
-    var c = C_FLIGHTS + RENT, d = D_FLIGHTS + RENT;
-    var bExtra = b - a, saved = +(T.a - T.b).toFixed(1);
+// ---------- Yarn + pushpins, computed from the laid-out polaroids ----------
+let pins = [], centers = [];
+function layout() {
+  const W = board.clientWidth, pw = cards[0].offsetWidth;
+  pins = []; centers = [];
+  cards.forEach((el, i) => {
+    const w = el.offsetWidth, h = el.offsetHeight, cx = el.offsetLeft + w / 2, cy = el.offsetTop + h / 2;
+    const a = TRIP[i].r * Math.PI / 180, v = h / 2 - 7;
+    centers.push({ x: cx, y: cy });
+    pins.push({ x: cx + v * Math.sin(a), y: cy - v * Math.cos(a) });
+  });
 
-    ['aCost', 'aCost3'].forEach(function (k) { set(k, '~' + money(a)); });
-    set('aCost2', money(a));
-    ['bCost', 'bCost3'].forEach(function (k) { set(k, '~' + money(b)); });
-    set('bCost2', money(b));
-    set('bExtra', '~' + money(bExtra));
-    set('bRate', '~' + money(bExtra / saved));
-    set('aVs', wear.checked ? 'Cheapest option. Includes ~$145 of wear on the car.' : 'Cheapest option. Wear on the car would add ~$145.');
-    set('bBack', money(back) + ' × 3 back (' + (back === 209 ? '10:59p' : '3:15p') + ')');
-    set('bVs', vs(bExtra, saved));
-    set('cVs', vs(c - a, +(T.a - T.c).toFixed(1)));
-    set('dVs', vs(d - a, T.a - T.d));
-
-    document.getElementById('row-late').classList.toggle('pick', back === 209);
-    document.getElementById('row-early').classList.toggle('pick', back === 229);
+  const f = n => n.toFixed(1);
+  let d = `M${f(pins[0].x)} ${f(pins[0].y)}`;
+  for (let i = 1; i < pins.length; i++) {
+    const p0 = pins[i - 1], p1 = pins[i], dx = p1.x - p0.x, dy = p1.y - p0.y;
+    let c1, c2;
+    if (Math.abs(dy) > Math.abs(dx)) {
+      // Going down a row: swing out around the side of the polaroid instead of across its photo.
+      const s = Math.abs(dx) > pw * .15 ? Math.sign(dx) : (p0.x > W / 2 ? 1 : -1);
+      const B = pw * (window.innerWidth >= 900 ? 1.02 : .62);
+      c1 = { x: p0.x + s * B, y: p0.y + dy * .05 };
+      c2 = { x: p1.x + s * B, y: p1.y - dy * .2 };
+    } else {
+      const sag = Math.min(40, Math.abs(dx) * .1);
+      c1 = { x: p0.x + dx * .3, y: p0.y + sag };
+      c2 = { x: p1.x - dx * .3, y: p1.y + sag };
+    }
+    d += `C${f(c1.x)} ${f(c1.y)} ${f(c2.x)} ${f(c2.y)} ${f(p1.x)} ${f(p1.y)}`;
   }
+  const a = pins[0], z = pins[pins.length - 1];
+  // Loose ends curl up onto the cork above the first and last pins.
+  const tails = `M${f(a.x)} ${f(a.y)}c-8 -4 -18 -14 -30 -12c-9 2 -12 -6 -20 -8M${f(a.x - 50)} ${f(a.y - 20)}l-4 -3M${f(a.x - 50)} ${f(a.y - 20)}l-5 1` +
+                `M${f(z.x)} ${f(z.y)}c8 -5 16 -16 28 -15c9 1 12 -6 20 -9M${f(z.x + 48)} ${f(z.y - 24)}l4 -3M${f(z.x + 48)} ${f(z.y - 24)}l5 1`;
 
-  wear.addEventListener('change', update);
-  radios.forEach(function (r) { r.addEventListener('change', update); });
-  update();
-})();
+  const pinSvg = pins.map((p, i) => {
+    const c = i % PIN_COLORS.length;
+    return `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="7" fill="none" stroke="#9e1f22" stroke-width="2.6"/>` +
+      `<circle cx="${f(p.x + 2)}" cy="${f(p.y + 3)}" r="6.5" fill="#2a1505" opacity=".35" filter="url(#pinblur)"/>` +
+      `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="6.5" fill="url(#pin${c})"/>` +
+      `<ellipse cx="${f(p.x - 2)}" cy="${f(p.y - 2.4)}" rx="2" ry="1.4" fill="#fff" opacity=".8"/>`;
+  }).join('');
+
+  yarn.innerHTML = `<defs><filter id="pinblur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter>` +
+    PIN_COLORS.map(([c, l, k], i) => `<radialGradient id="pin${i}" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="${l}"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="${k}"/></radialGradient>`).join('') +
+    `</defs><g fill="none" stroke-linecap="round" stroke-linejoin="round">` +
+    `<path d="${d}${tails}" stroke="#3a1505" stroke-opacity=".28" stroke-width="4.5" transform="translate(1.5 3)"/>` +
+    `<path d="${d}${tails}" stroke="var(--yarn)" stroke-width="3.4"/>` +
+    `<path d="${d}${tails}" stroke="#7a1517" stroke-width="3.4" stroke-dasharray="1.3 2.7" opacity=".7"/>` +
+    `<path d="${d}${tails}" stroke="#e8625a" stroke-width="1" stroke-dasharray="3 3" stroke-dashoffset="1.5" opacity=".75" transform="translate(-.4 -.7)"/>` +
+    `</g>${pinSvg}`;
+
+  if (active >= 0) apply(active);
+}
+
+// ---------- Camera: pan and zoom the whole board ----------
+let active = -1, zoomScrollY = 0;
+function apply(i) {
+  const s = window.innerWidth >= 900 ? 1.8 : 1.4;
+  const sr = stage.getBoundingClientRect();
+  const vw = document.documentElement.clientWidth;
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  const bx = sr.left + board.offsetLeft, by = sr.top + board.offsetTop, c = centers[i];
+  board.style.transform = `translate(${(vw / 2 - bx - s * c.x).toFixed(1)}px, ${(vh / 2 - by - s * c.y).toFixed(1)}px) scale(${s})`;
+}
+function zoomTo(i) {
+  i = Math.max(0, Math.min(TRIP.length - 1, i));
+  if (active >= 0) cards[active].classList.remove('active');
+  active = i;
+  zoomScrollY = window.scrollY;
+  board.classList.add('zoomed', 'moving');
+  cards[i].classList.add('active');
+  cards[i].focus({ preventScroll: true });
+  bar.classList.add('show');
+  live.textContent = TRIP[i].caption;
+  apply(i);
+}
+function zoomOut() {
+  if (active < 0) return;
+  cards[active].classList.remove('active');
+  active = -1;
+  board.classList.remove('zoomed');
+  board.style.transform = '';
+  bar.classList.remove('show');
+  live.textContent = 'Full board';
+}
+board.addEventListener('transitionend', e => { if (e.target === board && active < 0) board.classList.remove('moving'); });
+
+stage.addEventListener('click', e => { if (active >= 0 && !e.target.closest('.polaroid, a')) zoomOut(); });
+document.getElementById('out').addEventListener('click', zoomOut);
+document.getElementById('prev').addEventListener('click', () => zoomTo(active - 1));
+document.getElementById('next').addEventListener('click', () => zoomTo(active + 1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') zoomOut();
+  else if (active >= 0 && e.key === 'ArrowRight') { e.preventDefault(); zoomTo(active + 1); }
+  else if (active >= 0 && e.key === 'ArrowLeft') { e.preventDefault(); zoomTo(active - 1); }
+});
+
+let touch = null;
+stage.addEventListener('touchstart', e => { const t = e.touches[0]; touch = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
+stage.addEventListener('touchend', e => {
+  if (!touch || active < 0) return;
+  const t = e.changedTouches[0], dx = t.clientX - touch.x, dy = t.clientY - touch.y;
+  touch = null;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) zoomTo(active + (dx < 0 ? 1 : -1));
+}, { passive: true });
+window.addEventListener('wheel', () => { if (active >= 0) zoomOut(); }, { passive: true });
+window.addEventListener('scroll', () => { if (active >= 0 && Math.abs(window.scrollY - zoomScrollY) > 40) zoomOut(); }, { passive: true });
+
+let queued = false;
+function relayout() { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; layout(); }); }
+window.addEventListener('resize', relayout);
+window.addEventListener('orientationchange', relayout);
+if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(board);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+layout();
 </script>
 </body>
 </html>

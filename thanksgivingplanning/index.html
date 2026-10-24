@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Thanksgiving Trip</title>
+<meta name="description" content="Driving vs. flying from Fort Myers to Atlanta for Thanksgiving, Nov 20–24, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --surface-2: #f2f1ec;
+  --text: #1c1b18;
+  --muted: #5d5a52;
+  --border: #e2e0d8;
+  --accent: #b4451f;
+  --accent-soft: #fbeae3;
+  --accent-text: #ffffff;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141412;
+    --surface: #1d1c1a;
+    --surface-2: #262522;
+    --text: #f1efe9;
+    --muted: #a9a59b;
+    --border: #35332f;
+    --accent: #f08a5d;
+    --accent-soft: #3a2219;
+    --accent-text: #1c1b18;
+    --warn: #f0c060;
+    --warn-soft: #352a12;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
+h1, h2, h3 { line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.25rem; font-weight: 700; margin: 40px 0 12px; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.num { font-variant-numeric: tabular-nums; }
+
+header .sub { font-size: 1.05rem; margin-top: 6px; }
+.checked {
+  display: inline-block; margin-top: 10px; padding: 3px 10px;
+  border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 0.8rem;
+}
+
+/* Bottom line */
+.summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.scard {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+}
+.scard.fly { border-color: var(--accent); }
+.scard .label { font-weight: 600; font-size: 0.95rem; }
+.scard .big { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 2px; }
+.scard .time { color: var(--muted); }
+.verdict {
+  margin-top: 12px; padding: 12px 16px; border-radius: 12px; background: var(--accent-soft);
+}
+.points { margin: 14px 0 0; padding-left: 20px; }
+.points li { margin-bottom: 6px; }
+
+/* Timeline */
+.timeline { list-style: none; margin: 0; padding: 0; }
+.timeline li { position: relative; padding: 0 0 18px 28px; }
+.timeline li::before {
+  content: ""; position: absolute; left: 5px; top: 6px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--accent);
+}
+.timeline li:not(:last-child)::after {
+  content: ""; position: absolute; left: 10px; top: 20px; bottom: 0; width: 2px; background: var(--border);
+}
+.timeline .when { font-weight: 600; }
+
+/* Options */
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.opt {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.opt.real { border: 2px solid var(--accent); }
+.opt .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.opt .cost { font-size: 1.5rem; font-weight: 700; }
+.tag {
+  font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+}
+.tag.real { background: var(--accent); color: var(--accent-text); }
+.tag.slow { background: var(--warn-soft); color: var(--warn); }
+.opt .vs { font-size: 0.875rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; }
+
+/* Toggles */
+.controls { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 4px 16px; }
+.control { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 0; }
+.control + .control, fieldset.control { border-top: 1px solid var(--border); }
+.control input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
+.control label { cursor: pointer; }
+fieldset.control { margin: 0; border-left: 0; border-right: 0; border-bottom: 0; padding: 10px 0; flex-wrap: wrap; }
+fieldset legend { float: left; width: 100%; font-weight: 500; margin-bottom: 8px; padding: 0; }
+.seg { display: flex; gap: 8px; width: 100%; }
+.seg label {
+  flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 44px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px;
+  font-size: 0.95rem;
+}
+.seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.seg input:checked + label { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
+.seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Details */
+details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; }
+summary {
+  min-height: 48px; display: flex; align-items: center; padding: 10px 16px; cursor: pointer;
+  font-weight: 600; list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; margin-left: auto; font-size: 1.3rem; color: var(--muted); }
+details[open] summary::after { content: "−"; }
+.dbody { padding: 0 16px 16px; }
+.dbody ul { padding-left: 20px; margin: 0 0 12px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.925rem; }
+caption { text-align: left; color: var(--muted); font-size: 0.85rem; padding-bottom: 8px; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+td.r, th.r { text-align: right; }
+tr.pick td { background: var(--accent-soft); }
+tr.pick td:first-child { font-weight: 600; }
+
+/* Narrow screens: flight tables become stacked cards */
+@media (max-width: 600px) {
+  .summary, .options { grid-template-columns: 1fr; }
+  .scard { display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: 8px; padding: 12px 14px; }
+  .scard .label { grid-column: 1 / -1; }
+  .scard .big { font-size: 1.7rem; }
+  .scard .time { text-align: right; }
+  table.cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.cards, table.cards caption, table.cards tbody, table.cards tr, table.cards td { display: block; width: 100%; }
+  table.cards tr {
+    display: grid; grid-template-columns: 1fr auto; gap: 2px 12px;
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  table.cards tr.pick { border-color: var(--accent); background: var(--accent-soft); }
+  table.cards tr.pick td { background: none; }
+  table.cards td { border: 0; padding: 0; text-align: left; }
+  table.cards td.air { font-weight: 600; }
+  table.cards td.price { text-align: right; font-weight: 700; grid-row: 1; grid-column: 2; }
+  table.cards td.times { grid-column: 1 / -1; }
+  table.cards td.dur, table.cards td.stops { color: var(--muted); font-size: 0.875rem; }
+  table.cards td.stops { grid-column: 2; text-align: right; }
+}
+
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.875rem; }
+footer ul { padding-left: 20px; margin: 6px 0 12px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>Thanksgiving trip: drive or fly?</h1>
+  <p class="sub muted">Fort Myers ↔ Atlanta · Nov 20–24, 2026</p>
+  <span class="checked">Prices checked Oct 24, 2026</span>
+</header>
+
+<section aria-labelledby="bl">
+  <h2 id="bl" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Bottom line</h2>
+  <div class="summary">
+    <div class="scard">
+      <div class="label">🚗 Drive the Giulia</div>
+      <div class="big num" data-out="aCost">~$200</div>
+      <div class="time">~20 hrs</div>
+    </div>
+    <div class="scard fly">
+      <div class="label">✈️ Fly nonstop + rental</div>
+      <div class="big num" data-out="bCost">~$1,225</div>
+      <div class="time">~8.5 hrs</div>
+    </div>
+  </div>
+  <p class="verdict">Flying costs <strong class="num" data-out="bExtra">~$1,025</strong> more and saves <strong>~11.5 hours</strong> (<strong class="num" data-out="bRate">~$90</strong> per hour saved).</p>
+  <ul class="points">
+    <li><strong>Driving is the cheapest by far:</strong> about <span data-out="aCost2">$200</span>, compared with about <span data-out="bCost2">$1,225</span> to fly nonstop and rent a car.</li>
+    <li>The “cheap” flights aren’t worth it. They cost more than driving and save little or no time, and the absolute cheapest is slower than driving.</li>
+    <li>So the real choice is <strong>drive</strong> or <strong>fly Delta nonstop + rental</strong>.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="plan">
+  <h2 id="plan">The plan</h2>
+  <ol class="timeline">
+    <li><span class="when">Fri, Nov 20 · travel up</span><br>Dad (Shiva) and Dhira get from Fort Myers to Atlanta, either in the Giulia or on a flight from RSW. Dhruva flies in from SFO (that flight is booked either way and isn’t part of this comparison).</li>
+    <li><span class="when">Fri, Nov 20 – Tue, Nov 24 · in Atlanta</span><br>All three of us together. If we flew, we pick up a rental car at ATL; if we drove, we have the Giulia.</li>
+    <li><span class="when">Tue, Nov 24 · travel back</span><br>All three head back to Fort Myers the same way Dad and Dhira came up: drive the Giulia home, or fly ATL → RSW.</li>
+  </ol>
+  <p class="small muted">Left out because they’re the same either way: Dhruva’s SFO flight, the hotel, food, and driving or parking around Atlanta.</p>
+</section>
+
+<section aria-labelledby="opts">
+  <h2 id="opts">All four options</h2>
+  <div class="options">
+    <article class="opt real">
+      <div class="head"><h3>A. Drive the Giulia</h3><span class="tag real">The real choice</span></div>
+      <div class="cost num" data-out="aCost3">~$200</div>
+      <div class="muted">~20 hrs (10 up + 10 back)</div>
+      <p class="small">About $100 of premium gas each way. No rental needed.</p>
+      <div class="vs" data-out="aVs">Cheapest option. Wear on the car would add ~$145.</div>
+    </article>
+    <article class="opt real">
+      <div class="head"><h3>B. Fly nonstop (Delta)</h3><span class="tag real">The real choice</span></div>
+      <div class="cost num" data-out="bCost3">~$1,225</div>
+      <div class="muted">~8.5 hrs (4.3 up + 4.2 back)</div>
+      <p class="small"><span>$229 × 2 up</span>, <span data-out="bBack">$209 × 3 back (10:59p)</span>, plus a $140 rental.</p>
+      <div class="vs" data-out="bVs">+$1,025 vs. driving · saves ~11.5 hrs · ~$90/hr saved</div>
+    </article>
+    <article class="opt">
+      <div class="head"><h3>C. Cheapest reasonable flights</h3></div>
+      <div class="cost num">~$1,000 <span class="small muted">+ bag fees</span></div>
+      <div class="muted">~14.3 hrs (5.8 up + 8.5 back)</div>
+      <p class="small">Southwest via Orlando up ($220 × 2), Frontier 8:43a via Cleveland back ($140 × 3), plus rental.</p>
+      <div class="vs" data-out="cVs">+$800 vs. driving · saves ~5.7 hrs · ~$140/hr saved</div>
+    </article>
+    <article class="opt">
+      <div class="head"><h3>D. Absolute cheapest flights</h3><span class="tag slow">Slower than driving</span></div>
+      <div class="cost num">~$750 <span class="small muted">+ bag fees</span></div>
+      <div class="muted">~28 hrs (13.5 up + 14.4 back)</div>
+      <p class="small">Frontier with long layovers both ways ($146 × 2 up, $106 × 3 back), plus rental.</p>
+      <div class="vs" data-out="dVs">+$550 vs. driving · 8 hrs <em>slower</em> · never worth it</div>
+    </article>
+  </div>
+</section>
+
+<section aria-labelledby="tweak">
+  <h2 id="tweak">Try it</h2>
+  <div class="controls">
+    <div class="control">
+      <input type="checkbox" id="wear">
+      <label for="wear">Include wear on the Alfa <span class="muted">(+$145)</span></label>
+    </div>
+    <fieldset class="control">
+      <legend>Delta return flight on Nov 24</legend>
+      <div class="seg">
+        <input type="radio" name="ret" id="ret-late" value="209" checked>
+        <label for="ret-late">10:59p · $209 each</label>
+        <input type="radio" name="ret" id="ret-early" value="229">
+        <label for="ret-early">3:15p · $229 each</label>
+      </div>
+      <p class="small muted" style="margin:8px 0 0">The 10:59p lands after midnight; the 3:15p lands at 4:53p.</p>
+    </fieldset>
+  </div>
+</section>
+
+<section aria-labelledby="det">
+  <h2 id="det">Details</h2>
+
+  <details>
+    <summary>Flights up: RSW → ATL, Fri Nov 20</summary>
+    <div class="dbody">
+      <table class="cards">
+        <caption>Per person, one-way, taxes in, bags not included. 2 tickets (Dad and Dhira).</caption>
+        <thead><tr><th>Airline</th><th>Depart → Arrive</th><th>Duration</th><th>Stops</th><th class="r">Price</th></tr></thead>
+        <tbody>
+          <tr class="pick"><td class="air">Delta</td><td class="times">5:30a → 7:17a</td><td class="dur">1h 47m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">7:00a → 8:51a</td><td class="dur">1h 51m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">8:10a → 10:01a</td><td class="dur">1h 51m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">10:52a → 12:37p</td><td class="dur">1h 45m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">3:35p → 5:27p</td><td class="dur">1h 52m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">6:23p → 8:19p</td><td class="dur">1h 56m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">7:59p → 9:58p</td><td class="dur">1h 59m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Southwest</td><td class="times">7:25a → 10:45a</td><td class="dur">3h 20m</td><td class="stops">1 stop (MCO)</td><td class="price r">$220</td></tr>
+          <tr><td class="air">Southwest</td><td class="times">5:30p → 9:15p</td><td class="dur">3h 45m</td><td class="stops">1 stop (MCO)</td><td class="price r">$220</td></tr>
+          <tr><td class="air">American</td><td class="times">7:29p → 11:55p</td><td class="dur">4h 26m</td><td class="stops">1 stop (CLT)</td><td class="price r">$239</td></tr>
+          <tr><td class="air">Frontier</td><td class="times">12:19p → 11:19p</td><td class="dur">11h</td><td class="stops">1 stop (DTW, 5.5h layover)</td><td class="price r">$146</td></tr>
+          <tr><td class="air">Frontier</td><td class="times">8:21p → 7:33a +1</td><td class="dur">11h 12m</td><td class="stops">1 stop (CLE, 6.3h layover)</td><td class="price r">$146</td></tr>
+          <tr><td class="air">Frontier</td><td class="times">9:25p → 11:39a +1</td><td class="dur">14h 14m</td><td class="stops">1 stop (CVG, 9.9h layover)</td><td class="price r">$146</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top:8px">All Delta nonstops cost the same, so pick whichever time works.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Flights back: ATL → RSW, Tue Nov 24</summary>
+    <div class="dbody">
+      <table class="cards">
+        <caption>Per person, one-way, taxes in, bags not included. 3 tickets (Dhruva, Dad and Dhira).</caption>
+        <thead><tr><th>Airline</th><th>Depart → Arrive</th><th>Duration</th><th>Stops</th><th class="r">Price</th></tr></thead>
+        <tbody>
+          <tr class="pick" id="row-late"><td class="air">Delta</td><td class="times">10:59p → 12:40a +1</td><td class="dur">1h 41m</td><td class="stops">Nonstop</td><td class="price r">$209</td></tr>
+          <tr id="row-early"><td class="air">Delta</td><td class="times">3:15p → 4:53p</td><td class="dur">1h 38m</td><td class="stops">Nonstop</td><td class="price r">$229</td></tr>
+          <tr><td class="air">Delta</td><td class="times">8:05a → 9:47a</td><td class="dur">1h 42m</td><td class="stops">Nonstop</td><td class="price r">$269</td></tr>
+          <tr><td class="air">Delta</td><td class="times">5:17p → 6:54p</td><td class="dur">1h 37m</td><td class="stops">Nonstop</td><td class="price r">$269</td></tr>
+          <tr><td class="air">Frontier</td><td class="times">8:43a → 2:42p</td><td class="dur">5h 59m</td><td class="stops">1 stop (CLE, 1.3h layover)</td><td class="price r">$140</td></tr>
+          <tr><td class="air">American</td><td class="times">9:14a → 1:35p</td><td class="dur">4h 21m</td><td class="stops">1 stop (CLT)</td><td class="price r">$219</td></tr>
+          <tr><td class="air">Southwest</td><td class="times">12:40p → 12:40a +1</td><td class="dur">12h</td><td class="stops">2 stops (MCO, BNA)</td><td class="price r">$195</td></tr>
+          <tr><td class="air">Frontier</td><td class="times">5:01a → 4:53p</td><td class="dur">11h 52m</td><td class="stops">1 stop (DEN)</td><td class="price r">$106</td></tr>
+          <tr><td class="air">Frontier</td><td class="times">12:25p → 5:12p +1</td><td class="dur">28h 47m</td><td class="stops">1 stop (ORD, 23.5h layover)</td><td class="price r">$106</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>Rental car in Atlanta</summary>
+    <div class="dbody">
+      <ul>
+        <li>ATL airport, Fri Nov 20 – Tue Nov 24 (4 days): compact or midsize (Nissan Versa, Toyota Corolla or similar).</li>
+        <li><strong>$136–$144 total</strong> on Kayak. The $144 option has free cancellation. We use $140 in the math.</li>
+        <li>Pickup is by airport shuttle.</li>
+        <li>Rent it in Dad’s name. Drivers under 25 usually pay a daily young-driver fee.</li>
+        <li>Only needed if we fly. If we drive, we have the Giulia.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Driving math</summary>
+    <div class="dbody">
+      <table>
+        <tbody>
+          <tr><th scope="row">Distance</th><td>~605 miles each way on I-75, no tolls</td></tr>
+          <tr><th scope="row">Drive time</th><td>~9 hrs, about 10 with stops</td></tr>
+          <tr><th scope="row">Fuel economy</th><td>EPA 24 city / 33 hwy (RWD), 23 / 31 (AWD). We assume ~30 mpg on the interstate.</td></tr>
+          <tr><th scope="row">Premium gas</th><td>Fort Myers–Cape Coral $4.95, Florida avg $4.94, Georgia avg $4.59, Atlanta $4.66 (AAA, Oct 24)</td></tr>
+          <tr><th scope="row">Per leg</th><td>~20 gallons ≈ $95–$105</td></tr>
+          <tr><th scope="row">Both legs</th><td><strong>~$200</strong></td></tr>
+          <tr><th scope="row">Wear (optional)</th><td>Tires, oil, brakes and resale value at ~$0.12/mi × 1,210 mi ≈ $145. It’s an estimate, so it’s off by default.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>Assumptions</summary>
+    <div class="dbody">
+      <ul>
+        <li>Door-to-door flight time = flight duration + 2.5 hours for getting to the airport, security, boarding and getting out at the other end.</li>
+        <li>Driving = about 10 hours per leg, including stops.</li>
+        <li>“Travel time” is the total hours spent traveling on the way up plus the way back. It isn’t multiplied by the number of people.</li>
+        <li>Up is 2 people (Dad and Dhira); back is 3 people (Dhruva, Dad and Dhira).</li>
+        <li>Flight prices don’t include bag fees. Frontier charges for carry-ons and checked bags, so options C and D cost more than shown.</li>
+        <li>The hotel, food, Dhruva’s SFO flight and getting around Atlanta cost about the same either way, so they’re left out.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<footer>
+  <strong>Sources</strong>
+  <ul>
+    <li>Flights: Google Flights</li>
+    <li>Rental car: Kayak</li>
+    <li>Gas prices: AAA</li>
+    <li>Fuel economy: EPA ratings via CarGurus</li>
+  </ul>
+  <p>Prices were checked on Saturday, Oct 24, 2026. They change often, so recheck before booking. Google Flights suggests booking before about Nov 6–10.</p>
+</footer>
+
+</main>
+<script>
+(function () {
+  var GAS = 200, WEAR = 145, UP_B = 229 * 2, RENT = 140;
+  var C_FLIGHTS = 220 * 2 + 140 * 3, D_FLIGHTS = 146 * 2 + 106 * 3;
+  var T = { a: 20, b: 8.5, c: 14.3, d: 28 };
+  var wear = document.getElementById('wear');
+  var radios = document.querySelectorAll('input[name=ret]');
+
+  function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  function set(key, text) {
+    document.querySelectorAll('[data-out="' + key + '"]').forEach(function (el) { el.textContent = text; });
+  }
+  function vs(extra, saved) {
+    if (saved <= 0) return '+' + money(extra) + ' vs. driving · ' + Math.round(-saved) + ' hrs slower · never worth it';
+    return '+' + money(extra) + ' vs. driving · saves ~' + saved + ' hrs · ~' + money(extra / saved) + '/hr saved';
+  }
+
+  function update() {
+    var back = Number(document.querySelector('input[name=ret]:checked').value);
+    var a = GAS + (wear.checked ? WEAR : 0);
+    var b = UP_B + back * 3 + RENT;
+    var c = C_FLIGHTS + RENT, d = D_FLIGHTS + RENT;
+    var bExtra = b - a, saved = +(T.a - T.b).toFixed(1);
+
+    ['aCost', 'aCost3'].forEach(function (k) { set(k, '~' + money(a)); });
+    set('aCost2', money(a));
+    ['bCost', 'bCost3'].forEach(function (k) { set(k, '~' + money(b)); });
+    set('bCost2', money(b));
+    set('bExtra', '~' + money(bExtra));
+    set('bRate', '~' + money(bExtra / saved));
+    set('aVs', wear.checked ? 'Cheapest option. Includes ~$145 of wear on the car.' : 'Cheapest option. Wear on the car would add ~$145.');
+    set('bBack', money(back) + ' × 3 back (' + (back === 209 ? '10:59p' : '3:15p') + ')');
+    set('bVs', vs(bExtra, saved));
+    set('cVs', vs(c - a, +(T.a - T.c).toFixed(1)));
+    set('dVs', vs(d - a, T.a - T.d));
+
+    document.getElementById('row-late').classList.toggle('pick', back === 209);
+    document.getElementById('row-early').classList.toggle('pick', back === 229);
+  }
+
+  wear.addEventListener('change', update);
+  radios.forEach(function (r) { r.addEventListener('change', update); });
+  update();
+})();
+</script>
+</body>
+</html>
