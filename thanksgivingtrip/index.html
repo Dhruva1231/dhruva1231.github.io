@@ -29,50 +29,121 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
+  /* Wall + frame: swap these to try other colors */
+  --wall: #2f3d33;
+  --wall-shade: rgba(10, 18, 12, .45);
+  --wall-light: rgba(255, 212, 150, .24);
+  --wall-light-core: rgba(255, 226, 180, .22);
+  --frame-wood: #3b2416;
+  --frame-wood-dark: #1f120a;
+  --frame-bevel: #75503a;
+  --frame-w: 20px;
+  --wallpad: clamp(48px, 5vw, 72px);
+
   --cork: #c08a56;
   --ink: #2b2c4a;
   --paper: #fbf9f3;
   --yarn: #b3262a;
   --hand: Caveat, Kalam, "Bradley Hand", "Segoe Print", cursive;
-  --pw: clamp(180px, 19vw, 240px);
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .19 0 0 0 0 .08 0 0 0 1.25 -.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --flecks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .96 0 0 0 0 .8 0 0 0 0 .58 1.6 0 0 0 -1.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
   --blotch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .27 0 0 0 0 .12 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
-  color-scheme: light;
+  --plaster: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 -.24'/%3E%3C/filter%3E%3Cfilter id='q'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.04' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .5 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23q)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0035 .2' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .07 0 0 0 0 .035 0 0 0 0 .01 0 0 0 1.7 -.62'/%3E%3C/filter%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .62 0 0 0 0 .42 0 0 0 0 .26 0 0 0 1.4 -.78'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--noise), var(--flecks), var(--blotch), var(--cork);
+  background: var(--plaster), var(--wall);
   color: var(--ink);
   font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  cursor: default;
 }
 .cork { background: var(--noise), var(--flecks), var(--blotch), var(--cork); }
 
-.vignette {
-  position: fixed; inset: 0; pointer-events: none; z-index: 20;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(70,35,10,.28) 85%, rgba(50,22,5,.5) 100%);
+/* ---------- Wall, frame, board ---------- */
+#stage { position: relative; overflow: hidden; overflow: clip; touch-action: manipulation; }
+#wall {
+  position: absolute; left: -15vw; right: -15vw; top: -300px; bottom: -300px;
+  transform-origin: 0 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(0,0,0,0), var(--wall-shade)),
+    var(--plaster),
+    var(--wall);
+  pointer-events: none;
 }
-
-#stage { position: relative; overflow: hidden; touch-action: manipulation; }
+.glow {
+  position: absolute; left: 50%; top: calc(300px + var(--wallpad) - 340px);
+  width: min(1600px, 140vw); height: 900px; margin-left: calc(min(1600px, 140vw) / -2);
+  background:
+    radial-gradient(ellipse 26% 9% at 50% 38%, var(--wall-light-core), rgba(0,0,0,0)),
+    radial-gradient(ellipse 50% 42% at 50% 38%, var(--wall-light), rgba(255,200,120,.07) 55%, rgba(0,0,0,0) 78%);
+}
+#scene { position: relative; padding: var(--wallpad); transform-origin: 0 0; }
+.frame {
+  position: relative;
+  max-width: calc(1600px + 2 * var(--frame-w));
+  margin: 0 auto;
+  padding: var(--frame-w);
+  border-radius: 4px;
+  container-type: inline-size;
+  background:
+    var(--grain),
+    linear-gradient(160deg, rgba(255,235,210,.08), rgba(0,0,0,0) 35%, rgba(0,0,0,.28)),
+    var(--frame-wood);
+  box-shadow:
+    inset 0 1px 0 rgba(255,228,196,.2),
+    inset 1px 0 0 rgba(255,228,196,.08),
+    inset 0 -2px 2px rgba(0,0,0,.45),
+    inset -1px 0 0 rgba(0,0,0,.3),
+    0 2px 3px rgba(0,0,0,.45),
+    0 22px 36px -10px rgba(0,0,0,.55),
+    0 60px 110px -30px rgba(0,0,0,.6);
+}
 #board {
+  --pw: clamp(150px, 17vw, 240px);
+  --zz: min(11vw, 80px);
+  --sw: min(30vw, 150px);
   position: relative;
   width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
   height: calc(var(--pw) * 5.2 + 260px);
-  transform-origin: 0 0;
-  transition: transform 700ms cubic-bezier(.65, 0, .35, 1);
+  box-shadow:
+    0 0 0 2px var(--frame-bevel),
+    0 0 0 3px var(--frame-wood-dark),
+    inset 0 2px 10px rgba(30,15,5,.55),
+    inset 0 0 0 1px rgba(30,15,5,.35);
 }
-#board.moving { will-change: transform; }
+@supports (width: 1cqw) {
+  #board { --pw: clamp(150px, 20cqw, 240px); --zz: min(12cqw, 80px); --sw: min(34cqw, 150px); }
+}
 
 /* Yarn + pushpins sit above the polaroids */
 #yarn { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 5; }
+#measure { position: absolute; width: 0; height: 0; visibility: hidden; }
 
-/* Polaroids */
+/* Dims everything except the focused polaroid while zoomed */
+#dim {
+  position: absolute; inset: -400px; z-index: 10;
+  background: rgba(14, 9, 4, .4);
+  opacity: 0; pointer-events: none;
+  transition: opacity 450ms ease;
+}
+#board.zoomed #dim { opacity: 1; }
+@media (min-width: 900px) and (hover: hover) {
+  #dim { -webkit-backdrop-filter: blur(1.1px); backdrop-filter: blur(1.1px); }
+}
+.zvig {
+  position: fixed; inset: 0; z-index: 25; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 48%, rgba(0,0,0,.55) 100%);
+  opacity: 0; transition: opacity 500ms ease;
+}
+.zvig.show { opacity: 1; }
+
+/* ---------- Polaroids ---------- */
 .polaroid {
   position: absolute;
   left: calc(var(--x) * 1%);
@@ -86,19 +157,27 @@ body {
   color: var(--ink);
   font: inherit;
   text-align: center;
-  cursor: zoom-in;
-  transform: rotate(var(--r));
+  cursor: pointer;
+  /* Pivot on the pushpin; --dx/--dy (set in layout) keep the resting pose identical to a center rotation. */
+  transform-origin: 50% 7px;
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r));
   box-shadow:
     0 1px 1px rgba(40, 20, 5, .25),
     0 8px 14px -6px rgba(40, 20, 5, .5),
     0 22px 34px -14px rgba(40, 20, 5, .45);
   z-index: 2;
   -webkit-tap-highlight-color: transparent;
-  transition: filter 500ms ease, box-shadow 200ms ease;
+  transition: transform 650ms cubic-bezier(.3, 1.25, .5, 1);
 }
-.polaroid:hover { box-shadow: 0 1px 1px rgba(40,20,5,.25), 0 12px 18px -6px rgba(40,20,5,.55), 0 30px 40px -14px rgba(40,20,5,.5); }
+.polaroid::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: 2px;
+  box-shadow: 0 34px 60px -12px rgba(15, 8, 0, .7), 0 16px 26px -8px rgba(15, 8, 0, .45);
+  opacity: 0; transition: opacity 500ms ease;
+}
+.polaroid.active { z-index: 12; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1.06); will-change: transform; }
+.polaroid.active::before { opacity: 1; }
 .polaroid:focus { outline: none; }
-.polaroid:focus-visible { outline: 3px solid #fff7d6; outline-offset: 5px; box-shadow: 0 0 0 8px rgba(43, 44, 74, .55); }
+.polaroid:focus-visible { outline: 3px solid #fff7d6; outline-offset: 5px; }
 .photo { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; background: #2b2c3a; }
 .photo svg, .photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .photo img { object-fit: cover; object-position: center; }
@@ -114,23 +193,27 @@ body {
   padding: 0 4px;
   font-family: var(--hand);
   font-weight: 600;
-  font-size: calc(var(--pw) * .09);
+  font-size: max(15px, calc(var(--pw) * .09));
   line-height: 1.02;
 }
 .tab span { display: block; transform: rotate(-1.2deg); }
+/* The focused polaroid's own pushpin, drawn above the dimmer */
+.ppin {
+  position: absolute; left: 50%; top: 7px; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, var(--pl), var(--pc) 45%, var(--pk));
+  box-shadow: 2px 3px 3px rgba(40,20,5,.45), inset -1px -1px 1px rgba(0,0,0,.15);
+  opacity: 0; pointer-events: none;
+}
+.ppin::after { content: ""; position: absolute; left: 2.5px; top: 2.5px; width: 4px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.8); }
+.polaroid.active .ppin { opacity: 1; animation: pop 460ms cubic-bezier(.3, 1.4, .5, 1) 180ms both; }
+@keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-#board.zoomed .polaroid { cursor: zoom-in; }
-#board.zoomed .polaroid:not(.active) { filter: brightness(.62) saturate(.85); }
-#board.zoomed .polaroid.active { cursor: zoom-out; }
-#board.zoomed { cursor: zoom-out; }
-
-/* Paper note + sticky */
+/* ---------- Paper note + sticky ---------- */
 .note {
   position: absolute; left: 2.5%; top: 2.5%;
-  width: clamp(190px, 21vw, 280px);
+  width: clamp(170px, 18vw, 270px);
   padding: 26px 18px 16px;
   background:
-    linear-gradient(#fffdf7, #fffdf7) 0 0 / 100% 22px no-repeat,
     linear-gradient(to bottom, transparent 21px, rgba(214,92,92,.55) 21px, rgba(214,92,92,.55) 22px, transparent 22px) 0 0 / 100% 100% no-repeat,
     repeating-linear-gradient(to bottom, #fffdf7 0 25px, rgba(120,150,200,.35) 25px 26px);
   background-color: #fffdf7;
@@ -139,8 +222,8 @@ body {
   font-family: var(--hand);
   z-index: 3;
 }
-.note h1 { margin: 0; font-size: clamp(1.6rem, 2.3vw, 2.1rem); font-weight: 700; line-height: 1.05; }
-.note p { margin: 6px 0 0; font-size: 1.4rem; line-height: 1.1; }
+.note h1 { margin: 0; font-size: clamp(1.5rem, 2.1vw, 2.1rem); font-weight: 700; line-height: 1.05; }
+.note p { margin: 6px 0 0; font-size: 1.35rem; line-height: 1.1; }
 .note .hint { font-size: 1.1rem; opacity: .65; margin-top: 10px; }
 .pinned::before {
   content: ""; position: absolute; left: 50%; top: 6px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
@@ -151,8 +234,8 @@ body {
 .sticky {
   --pin: #2f9e5a; --pin-dark: #1a5c34;
   position: absolute; left: 30%; top: 79.5%;
-  width: clamp(140px, 13vw, 170px); aspect-ratio: 1 / 1;
-  margin-left: calc(clamp(140px, 13vw, 170px) / -2);
+  width: clamp(130px, 12vw, 165px); aspect-ratio: 1 / 1;
+  margin-left: calc(clamp(130px, 12vw, 165px) / -2);
   display: flex; align-items: center; justify-content: center;
   padding: 22px 12px 12px;
   background: linear-gradient(170deg, #fff1a0, #ffe36b);
@@ -160,15 +243,16 @@ body {
   text-decoration: none;
   text-align: center;
   font-family: var(--hand);
-  font-size: 1.55rem; font-weight: 700; line-height: 1.05;
+  font-size: 1.5rem; font-weight: 700; line-height: 1.05;
   transform: rotate(4deg);
   box-shadow: 0 1px 1px rgba(40,20,5,.2), 0 12px 16px -8px rgba(40,20,5,.5);
   z-index: 3;
+  cursor: pointer;
 }
 .sticky:hover { background: linear-gradient(170deg, #fff4b4, #ffe880); }
 .sticky:focus-visible { outline: 3px solid #fff7d6; outline-offset: 4px; }
 
-/* Zoom controls */
+/* ---------- Zoom controls ---------- */
 .zoombar {
   position: fixed; top: 12px; right: 12px; z-index: 30;
   display: flex; gap: 8px;
@@ -181,72 +265,76 @@ body {
   border: 0; border-radius: 4px;
   background: var(--paper); color: var(--ink);
   font-family: var(--hand); font-size: 1.35rem; font-weight: 700; white-space: nowrap;
-  box-shadow: 0 6px 12px -4px rgba(40,20,5,.5);
+  box-shadow: 0 6px 12px -4px rgba(0,0,0,.5);
   cursor: pointer;
 }
 .zoombar button:focus-visible { outline: 3px solid #fff7d6; outline-offset: 2px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* Phone: zig-zag column */
+/* ---------- Phone: zig-zag column ---------- */
 @media (max-width: 899px) {
-  :root { --pw: min(64vw, 330px); }
-  #board {
-    height: auto;
-    display: flex; flex-direction: column; align-items: flex-start;
-    padding: 0 0 90px;
-  }
+  :root { --frame-w: 11px; --wallpad: 14px; }
+  #board { --pw: min(60vw, 330px); height: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0 0 70px; }
+  @supports (width: 1cqw) { #board { --pw: min(66cqw, 330px); } }
   .note {
     position: relative; left: auto; top: auto;
-    width: calc(100% - min(36vw, 160px) - 44px);
-    margin: 22px 0 0 16px;
-    padding: 24px 14px 12px;
+    width: calc(100% - var(--sw) - 34px);
+    margin: 20px 0 0 12px;
+    padding: 24px 12px 12px;
   }
-  .note h1 { font-size: 1.7rem; }
-  .note p { font-size: 1.3rem; }
+  .note h1 { font-size: 1.6rem; }
+  .note p { font-size: 1.25rem; }
+  .note .hint { font-size: 1.05rem; }
   .sticky {
-    left: auto; right: 14px; top: 34px; margin-left: 0;
-    width: min(36vw, 160px);
-    font-size: 1.35rem;
-    padding: 20px 8px 8px;
+    left: auto; right: 10px; top: 30px; margin-left: 0;
+    width: var(--sw); aspect-ratio: auto; min-height: var(--sw);
+    font-size: 1.25rem;
+    padding: 22px 8px 10px;
   }
   .polaroid {
     position: relative; left: auto; top: auto;
-    margin: 46px 0 0 calc(50% - var(--pw) / 2 - min(13vw, 90px));
+    margin: 46px 0 0 calc(50% - var(--pw) / 2 - var(--zz));
     flex: none;
   }
-  .polaroid.alt { margin-left: calc(50% - var(--pw) / 2 + min(13vw, 90px)); }
+  .polaroid.alt { margin-left: calc(50% - var(--pw) / 2 + var(--zz)); }
   .tab { font-size: max(16px, calc(var(--pw) * .09)); }
   .zoombar { top: auto; bottom: 16px; right: 50%; transform: translate(50%, 8px); }
   .zoombar.show { transform: translate(50%, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #board, .zoombar, .polaroid { transition: none; }
+  .polaroid, .polaroid::before, .zoombar, .zvig, #dim { transition-duration: 150ms; transition-timing-function: ease; }
+  .polaroid.active .ppin { animation: none; }
 }
 </style>
 </head>
 <body>
-<div class="vignette" aria-hidden="true"></div>
-
 <main id="stage">
-  <div id="board" class="cork">
-    <div class="note pinned">
-      <h1>Thanksgiving ’26 — boys’ trip</h1>
-      <p>Shiva · Dhruva · Dhira</p>
-      <p class="hint">tap a polaroid to zoom in</p>
+  <div id="wall" aria-hidden="true"><div class="glow"></div></div>
+  <div id="scene">
+    <div class="frame" id="frame">
+      <div id="board" class="cork">
+        <div class="note pinned">
+          <h1>Thanksgiving ’26 — boys’ trip</h1>
+          <p>Shiva · Dhruva · Dhira</p>
+          <p class="hint">tap a polaroid to zoom in</p>
+        </div>
+        <a class="sticky pinned" href="/thanksgivingplanning">how we decided to drive →</a>
+        <svg id="yarn" aria-hidden="true"></svg>
+        <div id="dim" aria-hidden="true"></div>
+      </div>
     </div>
-    <a class="sticky pinned" href="/thanksgivingplanning">how we decided to drive →</a>
-    <svg id="yarn" aria-hidden="true"></svg>
   </div>
+  <svg id="measure" aria-hidden="true"><path id="measure-path"/></svg>
 </main>
 
+<div class="zvig" id="zvig" aria-hidden="true"></div>
 <div class="zoombar" id="zoombar">
   <button type="button" id="prev" aria-label="Previous photo">‹</button>
   <button type="button" id="out">zoom out</button>
   <button type="button" id="next" aria-label="Next photo">›</button>
 </div>
 <div class="sr" aria-live="polite" id="live"></div>
-
 <script>
 // One entry per polaroid, in yarn (trip) order.
 // x = horizontal center and y = top edge on the desktop board, both in % of the board; r = tilt in degrees.
@@ -536,25 +624,26 @@ const ART = {
 const art = id => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${ART[id]()}</svg>`;
 
 // ---------- Build the board ----------
-const stage = document.getElementById('stage');
-const board = document.getElementById('board');
-const yarn = document.getElementById('yarn');
-const bar = document.getElementById('zoombar');
-const live = document.getElementById('live');
+const $ = id => document.getElementById(id);
+const stage = $('stage'), wall = $('wall'), scene = $('scene'), frameEl = $('frame'), board = $('board');
+const yarn = $('yarn'), dim = $('dim'), measure = $('measure-path');
+const bar = $('zoombar'), zvig = $('zvig'), live = $('live');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const cards = TRIP.map((d, i) => {
   const b = document.createElement('button');
+  const [pc, pl, pk] = PIN_COLORS[i % PIN_COLORS.length];
   b.type = 'button';
   b.className = 'polaroid' + (i % 2 ? ' alt' : '');
   b.style.setProperty('--x', d.x);
   b.style.setProperty('--y', d.y);
   b.style.setProperty('--r', d.r + 'deg');
   b.setAttribute('aria-label', d.caption);
-  b.innerHTML = `<span class="photo">${art(d.id)}</span><span class="tab"><span>${d.caption}</span></span>`;
+  b.innerHTML = `<span class="photo">${art(d.id)}</span><span class="tab"><span>${d.caption}</span></span>` +
+    `<span class="ppin" style="--pc:${pc};--pl:${pl};--pk:${pk}"></span>`;
   b.addEventListener('click', e => { e.stopPropagation(); active === i ? zoomOut() : zoomTo(i); });
   board.insertBefore(b, yarn);
   return b;
 });
-
 // ---------- Real photos replace placeholders when present ----------
 async function findPhoto(d, el) {
   for (const ext of PHOTO_EXTS) {
@@ -571,20 +660,27 @@ async function findPhoto(d, el) {
 }
 TRIP.forEach((d, i) => findPhoto(d, cards[i]));
 
+
 // ---------- Yarn + pushpins, computed from the laid-out polaroids ----------
-let pins = [], centers = [];
+// Everything the camera needs is measured here (after layout and on resize), never during an animation.
+let geo = null;
 function layout() {
   const W = board.clientWidth, pw = cards[0].offsetWidth;
-  pins = []; centers = [];
-  cards.forEach((el, i) => {
-    const w = el.offsetWidth, h = el.offsetHeight, cx = el.offsetLeft + w / 2, cy = el.offsetTop + h / 2;
-    const a = TRIP[i].r * Math.PI / 180, v = h / 2 - 7;
-    centers.push({ x: cx, y: cy });
-    pins.push({ x: cx + v * Math.sin(a), y: cy - v * Math.cos(a) });
+  // Board origin inside the scene (offsets ignore transforms, so this is safe mid-zoom).
+  const bo = { x: frameEl.offsetLeft + board.offsetLeft, y: frameEl.offsetTop + board.offsetTop };
+  const sizes = cards.map(el => ({ w: el.offsetWidth, h: el.offsetHeight }));
+  // Where each pushpin lands once the polaroid is tilted (as if rotated about its center). Polaroids pivot on
+  // the pin itself, so the --dx/--dy shift keeps them in that pose and the pin stays put when they straighten.
+  const pins = cards.map((el, i) => {
+    const a = TRIP[i].r * Math.PI / 180, v = sizes[i].h / 2 - 7;
+    const dx = v * Math.sin(a), dy = v * (1 - Math.cos(a));
+    el.style.setProperty('--dx', dx.toFixed(2) + 'px');
+    el.style.setProperty('--dy', dy.toFixed(2) + 'px');
+    return { x: el.offsetLeft + el.offsetWidth / 2 + dx, y: el.offsetTop + 7 + dy };
   });
 
   const f = n => n.toFixed(1);
-  let d = `M${f(pins[0].x)} ${f(pins[0].y)}`;
+  const segs = [];
   for (let i = 1; i < pins.length; i++) {
     const p0 = pins[i - 1], p1 = pins[i], dx = p1.x - p0.x, dy = p1.y - p0.y;
     let c1, c2;
@@ -599,8 +695,9 @@ function layout() {
       c1 = { x: p0.x + dx * .3, y: p0.y + sag };
       c2 = { x: p1.x - dx * .3, y: p1.y + sag };
     }
-    d += `C${f(c1.x)} ${f(c1.y)} ${f(c2.x)} ${f(c2.y)} ${f(p1.x)} ${f(p1.y)}`;
+    segs.push(`C${f(c1.x)} ${f(c1.y)} ${f(c2.x)} ${f(c2.y)} ${f(p1.x)} ${f(p1.y)}`);
   }
+  const start = `M${f(pins[0].x)} ${f(pins[0].y)}`, d = start + segs.join('');
   const a = pins[0], z = pins[pins.length - 1];
   // Loose ends curl up onto the cork above the first and last pins.
   const tails = `M${f(a.x)} ${f(a.y)}c-8 -4 -18 -14 -30 -12c-9 2 -12 -6 -20 -8M${f(a.x - 50)} ${f(a.y - 20)}l-4 -3M${f(a.x - 50)} ${f(a.y - 20)}l-5 1` +
@@ -623,46 +720,199 @@ function layout() {
     `<path d="${d}${tails}" stroke="#e8625a" stroke-width="1" stroke-dasharray="3 3" stroke-dashoffset="1.5" opacity=".75" transform="translate(-.4 -.7)"/>` +
     `</g>${pinSvg}`;
 
-  if (active >= 0) apply(active);
+  // Sample the yarn so the camera can follow it without touching the DOM mid-flight.
+  const lens = [0];
+  for (let i = 1; i < pins.length; i++) {
+    measure.setAttribute('d', start + segs.slice(0, i).join(''));
+    lens.push(measure.getTotalLength());
+  }
+  measure.setAttribute('d', d);
+  const total = measure.getTotalLength(), step = 4, samples = [];
+  for (let L = 0; L <= total + step; L += step) {
+    const p = measure.getPointAtLength(Math.min(L, total));
+    samples.push(p.x + bo.x, p.y + bo.y);
+  }
+
+  geo = {
+    pins: pins.map(p => ({ x: p.x + bo.x, y: p.y + bo.y })),
+    // From a lifted (untilted, 1.06×) polaroid's pin to its center.
+    offs: sizes.map(s => ({ x: 0, y: (s.h / 2 - 7) * 1.06 })),
+    sizes, lens, samples, step,
+    wo: { x: wall.offsetLeft, y: wall.offsetTop }
+  };
+
+  if (active >= 0 || running) {
+    readView();
+    travel = null;
+    goal = active >= 0 ? focusGoal(active) : overviewGoal();
+    kick();
+  }
 }
 
-// ---------- Camera: pan and zoom the whole board ----------
-let active = -1, zoomScrollY = 0;
-function apply(i) {
-  const s = window.innerWidth >= 900 ? 1.8 : 1.4;
-  const sr = stage.getBoundingClientRect();
-  const vw = document.documentElement.clientWidth;
-  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  const bx = sr.left + board.offsetLeft, by = sr.top + board.offsetTop, c = centers[i];
-  board.style.transform = `translate(${(vw / 2 - bx - s * c.x).toFixed(1)}px, ${(vh / 2 - by - s * c.y).toFixed(1)}px) scale(${s})`;
+// ---------- Camera: spring physics on (focus x, focus y, zoom) ----------
+// The camera looks at a focus point in scene coordinates. Springing the focus point and zoom
+// (rather than raw translate/scale) keeps the target pinned to the screen center as it zooms.
+const K = 170, D = 26;          // camera spring (≈ critically damped)
+const KU = 120, DU = 22;        // progress spring for traveling along the yarn
+const PARALLAX = .85, PULL = .2;      // PULL .2 nets ≈15% after spring smoothing
+const cam = { x: 0, y: 0, s: 1, vx: 0, vy: 0, vs: 0 };
+let goal = { x: 0, y: 0, s: 1 }, travel = null;
+let origin = { x: 0, y: 0 }, vp = { w: 1, h: 1 };
+let active = -1, running = false, last = 0, zoomScrollY = 0;
+
+function viewport() {
+  return { w: document.documentElement.clientWidth, h: window.visualViewport ? window.visualViewport.height : window.innerHeight };
 }
-function zoomTo(i) {
-  i = Math.max(0, Math.min(TRIP.length - 1, i));
+// Re-read where the (untransformed) scene sits on screen, keeping the current picture continuous.
+function readView() {
+  const r = stage.getBoundingClientRect(), nv = viewport();
+  if (active >= 0 || running) {
+    cam.x += ((nv.w - vp.w) / 2 - (r.left - origin.x)) / cam.s;
+    cam.y += ((nv.h - vp.h) / 2 - (r.top - origin.y)) / cam.s;
+  }
+  origin = { x: r.left, y: r.top };
+  vp = nv;
+}
+const overviewGoal = () => ({ x: vp.w / 2 - origin.x, y: vp.h / 2 - origin.y, s: 1 });
+function zoomFor(i) {
+  const base = vp.w >= 900 ? 2 : 1.5, sz = geo.sizes[i];
+  return Math.min(base, .88 * vp.h / (sz.h * 1.06), .94 * vp.w / (sz.w * 1.06));
+}
+function focusGoal(i) {
+  const p = geo.pins[i], o = geo.offs[i];
+  return { x: p.x + o.x, y: p.y + o.y, s: zoomFor(i) };
+}
+function pathAt(L) {
+  const s = geo.samples, n = s.length / 2 - 1;
+  const t = Math.max(0, Math.min(n, L / geo.step)), k = Math.min(n - 1, Math.floor(t)), u = t - k;
+  return { x: s[2 * k] + (s[2 * k + 2] - s[2 * k]) * u, y: s[2 * k + 1] + (s[2 * k + 3] - s[2 * k + 1]) * u };
+}
+const lerp = (a, b, t) => a + (b - a) * t;
+function spring(o, key, vel, target, k, d, h) {
+  o[vel] += (-k * (o[key] - target) - d * o[vel]) * h;
+  o[key] += o[vel] * h;
+}
+
+function render() {
+  const s = cam.s;
+  const tx = vp.w / 2 - origin.x - s * cam.x, ty = vp.h / 2 - origin.y - s * cam.y;
+  scene.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${s.toFixed(5)})`;
+  // The wall follows 85% of the camera move, so the framed board reads as raised off it.
+  const sw = 1 + PARALLAX * (s - 1);
+  wall.style.transform = `translate3d(${(PARALLAX * tx + (sw - 1) * geo.wo.x).toFixed(2)}px, ${(PARALLAX * ty + (sw - 1) * geo.wo.y).toFixed(2)}px, 0) scale(${sw.toFixed(5)})`;
+}
+function clearCamera() {
+  scene.style.transform = wall.style.transform = '';
+}
+
+function tick(now) {
+  const dt = Math.min(.05, (now - last) / 1000);
+  last = now;
+  const n = Math.max(1, Math.ceil(dt * 240)), h = dt / n;
+  for (let k = 0; k < n; k++) {
+    if (travel) {
+      // Slide the focus along the yarn; pull back a little mid-way like a dolly move.
+      spring(travel, 'u', 'uv', 1, KU, DU, h);
+      const u = travel.u, uc = Math.max(0, Math.min(1, u));
+      const p = pathAt(lerp(travel.L0, travel.L1, u));
+      const nx = p.x + lerp(travel.o0.x, travel.o1.x, uc), ny = p.y + lerp(travel.o0.y, travel.o1.y, uc);
+      cam.vx = (nx - cam.x) / h; cam.vy = (ny - cam.y) / h;
+      cam.x = nx; cam.y = ny;
+      spring(cam, 's', 'vs', travel.Z * (1 - PULL * Math.sin(Math.PI * uc)), K, D, h);
+      if (Math.abs(1 - u) < 5e-4 && Math.abs(travel.uv) < 2e-3) { goal = focusGoal(travel.j); travel = null; }
+    } else {
+      spring(cam, 'x', 'vx', goal.x, K, D, h);
+      spring(cam, 'y', 'vy', goal.y, K, D, h);
+      spring(cam, 's', 'vs', goal.s, K, D, h);
+    }
+  }
+  const settled = !travel &&
+    Math.abs(cam.x - goal.x) < .1 && Math.abs(cam.y - goal.y) < .1 && Math.abs(cam.s - goal.s) < 5e-4 &&
+    Math.abs(cam.vx) < .5 && Math.abs(cam.vy) < .5 && Math.abs(cam.vs) < 5e-3;
+  if (settled) {
+    Object.assign(cam, goal, { vx: 0, vy: 0, vs: 0 });
+    if (active < 0) clearCamera(); else render();
+    // Dropping will-change once still lets the browser re-rasterize crisply at the zoomed scale.
+    scene.style.willChange = wall.style.willChange = 'auto';
+    running = false;
+    return;
+  }
+  render();
+  requestAnimationFrame(tick);
+}
+function kick() {
+  if (reducedMotion.matches) return crossfade();
+  if (running) return;
+  running = true;
+  scene.style.willChange = wall.style.willChange = 'transform';
+  last = performance.now();
+  requestAnimationFrame(tick);
+}
+// Reduced motion: no camera move, just a quick fade into the new framing.
+function crossfade() {
+  travel = null;
+  Object.assign(cam, goal, { vx: 0, vy: 0, vs: 0 });
+  const show = () => { if (active < 0) clearCamera(); else render(); };
+  if (!stage.animate) return show();
+  stage.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: 'ease-out' }).onfinish = () => {
+    show();
+    stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: 'ease-in' });
+  };
+}
+
+function setActive(i) {
   if (active >= 0) cards[active].classList.remove('active');
   active = i;
-  zoomScrollY = window.scrollY;
-  board.classList.add('zoomed', 'moving');
-  cards[i].classList.add('active');
-  cards[i].focus({ preventScroll: true });
-  bar.classList.add('show');
-  live.textContent = TRIP[i].caption;
-  apply(i);
+  board.classList.toggle('zoomed', i >= 0);
+  zvig.classList.toggle('show', i >= 0);
+  bar.classList.toggle('show', i >= 0);
+  if (i >= 0) {
+    cards[i].classList.add('active');
+    cards[i].focus({ preventScroll: true });
+    live.textContent = TRIP[i].caption;
+    zoomScrollY = window.scrollY;
+  } else {
+    live.textContent = 'Full board';
+  }
+}
+function zoomTo(i) {
+  if (!geo) return;
+  i = Math.max(0, Math.min(TRIP.length - 1, i));
+  const from = active;
+  if (i === from && !travel) return;
+  if (from < 0 && !running) {
+    readView();
+    Object.assign(cam, overviewGoal(), { vx: 0, vy: 0, vs: 0 });
+  } else {
+    readView();
+  }
+  setActive(i);
+  if (from >= 0 && Math.abs(i - from) === 1) {
+    // Neighbor: travel along the yarn from wherever the camera is right now.
+    const Lc = travel ? lerp(travel.L0, travel.L1, travel.u) : geo.lens[from];
+    const speed = travel ? travel.uv * (travel.L1 - travel.L0) : 0;
+    const p = pathAt(Lc), L1 = geo.lens[i], span = (L1 - Lc) || 1;
+    travel = { L0: Lc, L1, u: 0, uv: speed / span, o0: { x: cam.x - p.x, y: cam.y - p.y }, o1: geo.offs[i], j: i, Z: zoomFor(i) };
+    goal = focusGoal(i);
+  } else {
+    travel = null;
+    goal = focusGoal(i);
+  }
+  kick();
 }
 function zoomOut() {
   if (active < 0) return;
-  cards[active].classList.remove('active');
-  active = -1;
-  board.classList.remove('zoomed');
-  board.style.transform = '';
-  bar.classList.remove('show');
-  live.textContent = 'Full board';
+  readView();
+  setActive(-1);
+  travel = null;
+  goal = overviewGoal();
+  kick();
 }
-board.addEventListener('transitionend', e => { if (e.target === board && active < 0) board.classList.remove('moving'); });
 
 stage.addEventListener('click', e => { if (active >= 0 && !e.target.closest('.polaroid, a')) zoomOut(); });
-document.getElementById('out').addEventListener('click', zoomOut);
-document.getElementById('prev').addEventListener('click', () => zoomTo(active - 1));
-document.getElementById('next').addEventListener('click', () => zoomTo(active + 1));
+$('out').addEventListener('click', zoomOut);
+$('prev').addEventListener('click', () => zoomTo(active - 1));
+$('next').addEventListener('click', () => zoomTo(active + 1));
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') zoomOut();
   else if (active >= 0 && e.key === 'ArrowRight') { e.preventDefault(); zoomTo(active + 1); }
@@ -686,6 +936,7 @@ window.addEventListener('resize', relayout);
 window.addEventListener('orientationchange', relayout);
 if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(board);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+readView();
 layout();
 </script>
 </body>
