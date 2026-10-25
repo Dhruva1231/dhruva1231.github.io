@@ -1,18 +1,18 @@
 {
   "andrews-bald": [
     {
+      "src": "andrews-bald/IMG_3093-poster.jpg",
+      "video": "andrews-bald/IMG_3093.mp4",
+      "duration": 12,
+      "aspect": 1.78,
+      "caption": null
+    },
+    {
       "src": "andrews-bald/IMG_3161.jpg",
       "caption": null
     },
     {
       "src": "andrews-bald/IMG_3076.jpg",
-      "caption": null
-    },
-    {
-      "src": "andrews-bald/IMG_3093-poster.jpg",
-      "video": "andrews-bald/IMG_3093.mp4",
-      "duration": 12,
-      "aspect": 1.78,
       "caption": null
     }
   ],

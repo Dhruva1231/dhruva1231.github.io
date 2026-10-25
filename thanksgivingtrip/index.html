@@ -18,12 +18,13 @@
   (<= 4s, same base name or shot within 4s) with their photo, make posters for regular videos, and rebuild
   photos/manifest.json, which this page reads. Never edit the manifest by hand.
 
-  Per folder, optionally:
-    captions.txt   one "filename: caption" per line; otherwise a card shows the moment's caption
+  Every card shows its moment's caption (from TRIP below). Per folder, optionally:
     order.txt      one filename per line, shown first in that order; otherwise capture-time order
     cover*.jpg     a file whose name starts with "cover" is always the top card
 
-  0 photos shows the cartoon; 1 shows a single polaroid; 2+ make a stack that opens into a spread.
+  0 photos shows the cartoon; 1 shows a single polaroid; 2+ make a stack. Zoomed in, clicking a stack (or
+  the arrows) shuffles it: the front card slides out and tucks in at the back. Videos play muted on a loop,
+  cropped like the photos; zoomed in, the speaker button (or M) turns the sound on.
   Without a manifest entry the page still tries the old single file, photos/<id>.jpg (or .jpeg/.png/.JPG).
 
   Frames: polaroid-frame-a/b/c.webp sit next to this file (see FRAMES in the script for each window).
@@ -223,34 +224,28 @@ body {
 .ppin::after { content: ""; position: absolute; left: 2.5px; top: 2.5px; width: 4px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.8); }
 .polaroid.active .ppin { opacity: 1; animation: pop 460ms cubic-bezier(.3, 1.4, .5, 1) 180ms both; }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
-.tab .cnt { white-space: nowrap; }
-
 /* ---------- Stacks: several photos for one moment ----------
-   The top card is the normal polaroid (pin, caption, yarn). The stack's own cards sit centered under it,
-   placed in px by layout(); --px/--py/--pr/--ps is each card's pose, piled up or spread out. */
+   The top card is the normal polaroid (pin, caption, yarn) and always shows the stack's front photo.
+   Up to three back cards sit centered under it, placed in px by layout(); --px/--py/--pr/--ps is a card's
+   pose. Clicking a zoomed stack shuffles it: a flyer copy of the front card slides out and tucks in behind. */
 .polaroid.scard {
   position: absolute; margin: 0;
   transform-origin: 50% 50%;
   transform:
     translate(calc(var(--px, 0px) + var(--hov, 0) * var(--hx, 0px)), calc(var(--py, 0px) + var(--hov, 0) * var(--hy, 0px)))
     rotate(calc(var(--pr, 0deg) + var(--hov, 0) * var(--hr, 0deg))) scale(var(--ps, 1));
-  transition: transform 200ms ease-out, opacity 150ms ease;
+  transition: transform 200ms ease-out;
   z-index: 1;
 }
 .polaroid.scard.hov { --hov: 1; }
-.polaroid.scard.off { opacity: 0; pointer-events: none; }
-.polaroid.scard.near { z-index: 11; }          /* the open moment's pile stays bright under the dimmer */
-.polaroid.scard.spread { z-index: 14; }
-.polaroid.scard.lift {
-  z-index: 15; transform: translate(var(--px, 0px), var(--py, 0px)) rotate(0deg) scale(calc(var(--ps, 1) * 1.06));
-  filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)) drop-shadow(0 22px 26px rgba(20,10,2,.5));
-}
-.polaroid.away { opacity: 0; pointer-events: none; }
-.scard:not(.spread) .livebadge { display: none; }
+.polaroid.scard.near { z-index: 11; }          /* the zoomed moment's pile stays bright under the dimmer */
+.polaroid.scard.flyer { z-index: 13; transition: none; pointer-events: none; }
+.polaroid.scard.flyer.behind { z-index: 11; }
+.scard .livebadge, .scard .vbadge { display: none; }
 
 /* ---------- Live Photos ---------- */
 .photo video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 300ms ease; }
-.polaroid.playing .photo video { opacity: 1; transition-duration: 150ms; }
+.polaroid.playing .photo video.lv { opacity: 1; transition-duration: 150ms; }
 .livebadge {
   position: absolute; left: calc(var(--wl) + 2.4%); top: calc(var(--wt) + 1.9%);
   display: none; align-items: center; gap: .28em;
@@ -268,44 +263,33 @@ body {
 .polaroid { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
 /* ---------- Videos ----------
-   Controls live in the card, which the camera scales; --inv (1 / on-screen scale, set when zoomed)
-   keeps the play button at 56px and the tap targets at 44px on screen. */
+   A video is a living photo: muted, looping and cropped like the photos, playing whenever its card is the
+   front of its stack and on screen. Zoomed in, a speaker button turns the sound on. --inv (1 / on-screen
+   scale, set when the camera settles) keeps that button at 44px on screen. */
 .vbadge {
   position: absolute; left: calc(var(--wl) + 2.4%); top: calc(var(--wt) + var(--wh) - 2.4%); transform: translateY(-100%);
   display: none; align-items: center; gap: .3em;
   font: 600 max(9px, calc(var(--pw) * .046)) / 1 -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   font-variant-numeric: tabular-nums; color: rgba(255,255,255,.85);
   text-shadow: 0 1px 2px rgba(0,0,0,.45); filter: drop-shadow(0 1px 1.5px rgba(0,0,0,.35));
-  pointer-events: none; transition: opacity 200ms ease;
+  pointer-events: none;
 }
 .polaroid.is-video .vbadge { display: flex; }
-.scard:not(.spread) .vbadge { display: none; }
-.polaroid.vfocus .vbadge { opacity: 0; }
 .vbadge svg { width: 1.5em; height: 1.5em; }
-.vplay, .vbar { display: none; }
-.polaroid.vfocus .vplay { display: grid; }
-.polaroid.vfocus .vbar { display: block; }
-.vplay {
-  position: absolute; left: calc(var(--wl) + var(--ww) / 2); top: calc(var(--wt) + var(--wh) / 2);
-  width: calc(56px * var(--inv, 1)); height: calc(56px * var(--inv, 1));
-  transform: translate(-50%, -50%); border-radius: 50%; place-items: center;
-  background: rgba(255,255,255,.2);
-  -webkit-backdrop-filter: blur(10px) saturate(1.3); backdrop-filter: blur(10px) saturate(1.3);
-  box-shadow: 0 2px 12px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.35);
-  pointer-events: none; transition: opacity 200ms ease;
+.vsound {
+  position: absolute; right: calc(100% - var(--wl) - var(--ww) + 2.4%); top: calc(var(--wt) + var(--wh) - 2.4%);
+  width: calc(44px * var(--inv, 1)); height: calc(44px * var(--inv, 1)); transform: translateY(-100%);
+  display: none; place-items: center; border-radius: 50%; cursor: pointer;
+  color: rgba(255,255,255,.95); background: rgba(20,16,12,.42);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: 0 1px 6px rgba(0,0,0,.3), inset 0 0 0 1px rgba(255,255,255,.25);
 }
-.vplay svg { width: 40%; height: 40%; margin-left: 9%; fill: rgba(255,255,255,.95); }
-.polaroid.vplaying .vplay { opacity: 0; }
-.vbar {
-  position: absolute; left: var(--wl); width: var(--ww); top: calc(var(--wt) + var(--wh)); height: calc(44px * var(--inv, 1));
-  transform: translateY(-100%); cursor: pointer; touch-action: none;
-}
-.vbar::before, .vbar i { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: calc(3px * var(--inv, 1)); }
-.vbar::before { background: rgba(255,255,255,.3); }
-.vbar i { background: rgba(255,255,255,.92); transform-origin: 0 50%; transform: scaleX(var(--prog, 0)); }
+.polaroid.active.settled.is-video .vsound { display: grid; }
+.vsound svg { width: 52%; height: 52%; }
+.vsound .on, .polaroid.sound-on .vsound .off { display: none; }
+.polaroid.sound-on .vsound .on { display: inline; }
 .photo video.vid { opacity: 0; transition: opacity 250ms ease; }
-.polaroid.vshow .photo video.vid { opacity: 1; }
-.polaroid.vcontain .photo video.vid { object-fit: contain; background: #141210; }
+.polaroid.vplaying .photo video.vid { opacity: 1; }
 
 /* ---------- Post-it notes ---------- */
 .note {
@@ -408,7 +392,7 @@ body {
   .polaroid, .zoombar, .zvig, #dim { transition-duration: 150ms; transition-timing-function: ease; }
   .polaroid.active .ppin { animation: none; }
   .polaroid.playing .livebadge svg { animation: none; }
-  .photo video, .photo video.vid, .vplay, .vbadge { transition: none; }
+  .photo video, .photo video.vid { transition: none; }
 }
 </style>
 </head>
@@ -774,7 +758,9 @@ const LIVE_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" ar
   '<circle cx="10" cy="10" r="8.5" stroke-width="1.3" stroke-dasharray=".2 2.45" stroke-linecap="round"/></svg>';
 const FILM_CAM = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="7" width="13.5" height="10" rx="2.2"/>' +
   '<path d="M16.5 10.6 22 7.6v8.8l-5.5-3z"/><circle cx="6" cy="5" r="2.3"/><circle cx="11.6" cy="5" r="2.3"/></svg>';
-const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.4-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>';
+const SPEAKER = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 9.4h3.3L12 5.6v12.8l-4.7-3.8H4z"/>' +
+  '<g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path class="off" d="M15.6 9.6l4.8 4.8M20.4 9.6l-4.8 4.8"/>' +
+  '<path class="on" d="M15.6 9.2a4 4 0 0 1 0 5.6M18.3 6.7a7.6 7.6 0 0 1 0 10.6"/></g></svg>';
 const clock = t => `${Math.floor(t / 60)}:${String(Math.round(t) % 60).padStart(2, '0')}`;
 function frameVars(el, key) {
   const fr = FRAMES[key], [aw, ah] = fr.ar.split('/').map(Number);
@@ -786,6 +772,7 @@ const cardInner = (key, photo) =>
   `<span class="photo">${photo}</span><span class="film"></span>` +
   `<img class="fimg" src="${FRAMES[key].src}" alt="" draggable="false">` +
   `<span class="livebadge" aria-hidden="true">${LIVE_ICON}<span>live</span></span>` +
+  `<span class="vbadge" aria-hidden="true">${FILM_CAM}<span></span></span>` +
   `<span class="tab"><span></span></span>`;
 const cards = TRIP.map((d, i) => {
   const b = document.createElement('button');
@@ -800,13 +787,16 @@ const cards = TRIP.map((d, i) => {
   rand();
   b.style.setProperty('--cr', (rand() * 4 - 2).toFixed(2) + 'deg');
   b.setAttribute('aria-label', d.caption);
-  b.innerHTML = cardInner(d.frame, art(d.id)) + `<span class="ppin" style="--pc:${pc};--pl:${pl};--pk:${pk}"></span>`;
+  b.innerHTML = cardInner(d.frame, art(d.id)) + `<span class="vsound" aria-hidden="true">${SPEAKER}</span>` +
+    `<span class="ppin" style="--pc:${pc};--pl:${pl};--pk:${pk}"></span>`;
   b.querySelector('.tab > span').textContent = d.caption;
   b.addEventListener('click', e => {
     e.stopPropagation();
-    if (swallowClick() || e.target.closest('.vbar')) return;
-    if (vidEl === b) return toggleVideo(b);
-    active === i ? zoomOut() : zoomTo(i);
+    if (swallowClick()) return;
+    if (e.target.closest('.vsound')) return toggleSound(b);
+    if (active !== i) return zoomTo(i);
+    if (stacks[i]) return shuffle(stacks[i], 1);
+    zoomOut();
   });
   board.insertBefore(b, yarn);
   return b;
@@ -814,18 +804,23 @@ const cards = TRIP.map((d, i) => {
 
 // ---------- Photos: manifest stacks, then legacy photos/<id>.jpg, then the cartoon ----------
 // photos/manifest.json is written by the convert-photos Action (or tools/add-photos.sh), never by hand.
-const STACK_BACK = 3;                  // cards showing behind the top one in a pile
-const stacks = TRIP.map(() => null);   // per moment with 2+ photos: { i, entries, cards, pile, open, ... }
+const STACK_BACK = 3;                  // cards showing behind the front one in a pile
+const stacks = TRIP.map(() => null);   // per moment with 2+ photos: { i, entries, order, back, pile, ... }
 const hoverable = window.matchMedia('(hover: hover) and (pointer: fine)');
 let filmReady = false;
 
-function addPhoto(el, url) {
+function addPhoto(el, url, entry) {
   return new Promise(res => {
     const im = new Image();
     im.alt = '';
     im.decoding = 'async';
     im.draggable = false;
-    im.onload = () => { el.querySelector('.photo').appendChild(im); el.classList.add('has-photo'); res(true); };
+    im.onload = () => {
+      if (entry && el._entry !== entry) return res(false);   // the card moved on to another photo meanwhile
+      el.querySelector('.photo').appendChild(im);
+      el.classList.add('has-photo');
+      res(true);
+    };
     im.onerror = () => res(false);
     im.src = url;
   });
@@ -837,19 +832,17 @@ async function findPhoto(d, el) {
     if (await addPhoto(el, url)) return;
   }
 }
-function setEntry(el, entry) {
+// Point a card at one manifest entry: its photo (or a video's poster) and the Live / video badges.
+function showEntry(el, entry, load) {
+  if (el._entry === entry && (el._loaded || !load)) return Promise.resolve(true);
   el._entry = entry;
-  if (entry.video) {
-    el.classList.add('is-video');
-    el.insertAdjacentHTML('beforeend', `<span class="vbadge" aria-hidden="true">${FILM_CAM}<span>${clock(entry.duration || 0)}</span></span>` +
-      `<span class="vplay" aria-hidden="true">${PLAY_ICON}</span><span class="vbar" aria-hidden="true"><i></i></span>`);
-    hookScrub(el);
-  } else if (entry.live) el.classList.add('is-live');
-}
-function loadCard(el) {
-  if (el._loaded || !el._entry) return;
-  el._loaded = true;
-  addPhoto(el, el._entry.src);
+  el.querySelectorAll('.photo img, .photo video').forEach(n => n.remove());
+  el.classList.toggle('is-video', !!entry.video);
+  el.classList.toggle('is-live', !!entry.live && !entry.video);
+  el.classList.remove('playing', 'vplaying');
+  el.querySelector('.vbadge span').textContent = entry.video ? clock(entry.duration || 0) : '';
+  el._loaded = !!load;
+  return load ? addPhoto(el, entry.src, entry) : Promise.resolve(false);
 }
 // Light-leak overlay, turned a different way on each card. The window is near square, so the slight
 // scale covers the corners when it's turned 90° or 270°.
@@ -863,58 +856,46 @@ function addFilm(el, n) {
 
 function buildStack(i, entries) {
   const d = TRIP[i], top = cards[i], rand = rng(i * 104729 + 3);
-  const n = entries.length;
   top.classList.add('stack');
-  const cnt = document.createElement('span');
-  cnt.className = 'cnt';
-  cnt.textContent = ` (${n})`;
-  top.querySelector('.tab > span').append(cnt);
-  top.setAttribute('aria-label', `${d.caption}, ${n} photos`);
-  // Back cards use the other two frames first, so the three nearest the top never repeat a frame.
+  top.setAttribute('aria-label', `${d.caption}, ${entries.length} photos`);
+  // Back cards use the other two frames first, so the cards nearest the front never repeat a frame.
   const keys = ['a', 'b', 'c'].filter(k => k !== d.frame).concat(d.frame);
-  const st = { i, entries, cards: [], pile: [], drift: [], open: false };
-  entries.forEach((entry, j) => {
-    const key = j === 0 ? d.frame : keys[(j - 1) % 3];
-    const el = document.createElement('button');
+  const st = { i, entries, order: entries.map((e, j) => j), back: [], pile: [], steps: 0, busy: false };
+  for (let k = 0; k < Math.min(STACK_BACK, entries.length - 1); k++) {
+    const key = keys[k], el = document.createElement('button');
     el.type = 'button';
-    el.className = 'polaroid scard' + (j === 0 || j > STACK_BACK ? ' off' : '');
+    el.className = 'polaroid scard';
     el.tabIndex = -1;
     el.setAttribute('aria-hidden', 'true');
-    el.setAttribute('aria-label', `${entry.caption || d.caption}, photo ${j + 1} of ${n}`);
     frameVars(el, key);
-    // Card 0 stands in for the top card while the stack is open, so it copies it exactly.
-    el.style.setProperty('--cr', j === 0 ? top.style.getPropertyValue('--cr') : (rand() * 4 - 2).toFixed(2) + 'deg');
+    el.style.setProperty('--cr', (rand() * 4 - 2).toFixed(2) + 'deg');
     el.innerHTML = cardInner(key, '');
-    const cap = el.querySelector('.tab > span');
-    if (j === 0) cap.innerHTML = top.querySelector('.tab > span').innerHTML;
-    else cap.textContent = entry.caption || d.caption;
-    setEntry(el, entry);
-    addFilm(el, i + j);
-    // Pile pose: 6–14px off the top card in a seeded direction, turned a further 3–9° either way.
-    if (j === 0) st.pile.push({ x: 0, y: 0, r: d.r });
-    else if (j <= STACK_BACK) {
-      const a = rand() * Math.PI * 2, m = 6 + rand() * 8, turn = (3 + rand() * 6) * (rand() < .5 ? -1 : 1);
-      st.pile.push({ x: Math.cos(a) * m, y: Math.sin(a) * m, r: d.r + turn });
-      st.drift.push({ x: Math.cos(a) * 5, y: Math.sin(a) * 5, r: Math.sign(turn) * 2.5 });
-    } else st.pile.push(st.pile[STACK_BACK]);
-    const dr = st.drift[j - 1];
-    if (dr) { el.style.setProperty('--hx', dr.x.toFixed(2) + 'px'); el.style.setProperty('--hy', dr.y.toFixed(2) + 'px'); el.style.setProperty('--hr', dr.r + 'deg'); }
-    setPose(el, st.pile[j], 1);
+    el.querySelector('.tab > span').textContent = d.caption;
+    addFilm(el, i + k + 1);
+    // Pile pose: 6–14px off the front card in a seeded direction, turned a further 3–9° either way.
+    const a = rand() * Math.PI * 2, m = 6 + rand() * 8, turn = (3 + rand() * 6) * (rand() < .5 ? -1 : 1);
+    st.pile.push({ x: Math.cos(a) * m, y: Math.sin(a) * m, r: d.r + turn });
+    el.style.setProperty('--hx', (Math.cos(a) * 5).toFixed(2) + 'px');
+    el.style.setProperty('--hy', (Math.sin(a) * 5).toFixed(2) + 'px');
+    el.style.setProperty('--hr', Math.sign(turn) * 2.5 + 'deg');
+    setPose(el, st.pile[k], 1);
     el.addEventListener('click', e => {
       e.stopPropagation();
-      if (swallowClick() || e.target.closest('.vbar')) return;
-      if (!st.open) return active === i ? null : zoomTo(i);
-      if (vidEl === el) return toggleVideo(el);
-      if (cardAt === j) unfocusCard(); else focusCard(j);
+      if (swallowClick()) return;
+      if (active !== i) zoomTo(i); else shuffle(st, 1);
     });
-    hookLive(el);
-    board.insertBefore(el, top);
-    st.cards.push(el);
-  });
-  // Desktop hover: the back cards drift out a little to hint that the pile opens.
-  const hov = on => { if (hoverable.matches && !st.open) st.cards.forEach(c => c.classList.toggle('hov', on)); };
-  for (const el of [top, ...st.cards]) { el.addEventListener('mouseenter', () => hov(true)); el.addEventListener('mouseleave', () => hov(false)); }
+    // back[0] sits right behind the front card, the last one deepest in the pile.
+    board.insertBefore(el, k ? st.back[k - 1] : top);
+    st.back.push(el);
+  }
+  showBacks(st, false);
+  // Desktop hover on the board: the back cards drift out a little to hint there's more.
+  const hov = on => { if (hoverable.matches) st.back.forEach(c => c.classList.toggle('hov', on && active !== i)); };
+  for (const el of [top, ...st.back]) { el.addEventListener('mouseenter', () => hov(true)); el.addEventListener('mouseleave', () => hov(false)); }
   stacks[i] = st;
+}
+function showBacks(st, load) {
+  st.back.forEach((el, k) => showEntry(el, st.entries[st.order[k + 1]], load || el._loaded));
 }
 function setPose(el, p, scale) {
   el.style.setProperty('--px', p.x.toFixed(2) + 'px');
@@ -931,22 +912,23 @@ async function loadPhotos() {
     if (!list.length) return findPhoto(d, cards[i]);
     const entries = list.map(e => ({
       src: 'photos/' + e.src, live: e.live ? 'photos/' + e.live : null, video: e.video ? 'photos/' + e.video : null,
-      duration: +e.duration || 0, aspect: +e.aspect || 0, caption: e.caption || null
+      duration: +e.duration || 0
     }));
-    setEntry(cards[i], entries[0]);
     if (entries.length > 1) buildStack(i, entries);
-    return addPhoto(cards[i], entries[0].src);
+    const shown = showEntry(cards[i], entries[0], true);
+    syncVideo(cards[i]);
+    return shown;
   });
   if (stacks.some(Boolean)) relayout();
-  // Back cards only start loading once every top photo has had its turn; the rest wait for the stack to open.
+  // Back cards only start loading once every front photo has had its turn.
   await Promise.allSettled(tops);
-  stacks.forEach(st => st && st.cards.slice(0, STACK_BACK + 1).forEach(loadCard));
+  stacks.forEach(st => st && showBacks(st, true));
 }
 (async () => {
   try { filmReady = (await fetch('film-overlay.webp', { method: 'HEAD' })).ok; } catch (e) { filmReady = false; }
   if (!filmReady) return;
   cards.forEach((el, i) => addFilm(el, i));
-  stacks.forEach(st => st && st.cards.forEach((el, j) => addFilm(el, st.i + j)));
+  stacks.forEach(st => st && st.back.forEach((el, k) => addFilm(el, st.i + k + 1)));
 })();
 cards.forEach(hookLive);
 loadPhotos();
@@ -1031,7 +1013,7 @@ function layout() {
     sizes, lens, samples, step,
     wo: { x: wall.offsetLeft, y: wall.offsetTop }
   };
-  stacks.forEach(st => st && placeStack(st, bo, pins[st.i]));
+  stacks.forEach(st => st && placeStack(st));
 
   if (active >= 0 || running) {
     readView();
@@ -1041,47 +1023,18 @@ function layout() {
   }
 }
 
-// A stack's cards sit centered on its top card. The spread is a loose grid around that spot (3 across on
-// desktop, 2 on phones), shrunk if needed to fit the board and the screen, and kept inside the board.
-function placeStack(st, bo, pin) {
-  const top = cards[st.i], W = board.clientWidth, H = board.clientHeight;
-  const tw = top.offsetWidth, th = top.offsetHeight;
+// A stack's back cards sit centered on its front card. st.lift is where a card must start to match the
+// lifted front card exactly (tilt 0, 1.06× about the pin), which is where the shuffle's flyer begins.
+function placeStack(st) {
+  const top = cards[st.i], tw = top.offsetWidth, th = top.offsetHeight;
   const c = { x: top.offsetLeft + tw / 2, y: top.offsetTop + th / 2 };
-  const hs = st.cards.map(el => el.offsetHeight);
-  st.cards.forEach((el, j) => {
+  st.box = { c, tw, th };
+  st.back.forEach(el => {
     el.style.left = (c.x - tw / 2).toFixed(2) + 'px';
-    el.style.top = (c.y - hs[j] / 2).toFixed(2) + 'px';
+    el.style.top = (c.y - el.offsetHeight / 2).toFixed(2) + 'px';
   });
-  // Where card 0 must start so it matches the lifted top card exactly (tilt 0, 1.06× about the pin).
   const v = th * (.5 - PIN_TOP), a = TRIP[st.i].r * Math.PI / 180;
   st.lift = { x: v * Math.sin(a), y: v * (1 - Math.cos(a)) + v * .06, r: 0 };
-
-  const n = st.cards.length, cols = Math.min(n, vp.w >= 900 ? 3 : 2), rows = Math.ceil(n / cols);
-  const hmax = Math.max(...hs), gx = tw * .16, gy = hmax * .12, M = 10;
-  const W0 = cols * tw + (cols - 1) * gx, H0 = rows * hmax + (rows - 1) * gy;
-  const k = Math.min(1, (W - 2 * M) / W0, vp.h * .84 / H0);
-  const half = { x: W0 * k / 2, y: H0 * k / 2 };
-  const cx = W0 * k + 2 * M <= W ? Math.max(half.x + M, Math.min(W - half.x - M, c.x)) : W / 2;
-  const cy = H0 * k + 2 * M <= H ? Math.max(half.y + M, Math.min(H - half.y - M, c.y)) : H / 2;
-  const rand = rng(st.i * 7 + 991), slots = [];
-  for (let j = 0; j < n; j++) {
-    const r = Math.floor(j / cols), col = j % cols, inRow = Math.min(cols, n - r * cols);
-    const rowW = inRow * tw + (inRow - 1) * gx;
-    const x = (-rowW / 2 + tw / 2 + col * (tw + gx)) * k + (rand() - .5) * tw * .05 * k;
-    const y = (-H0 / 2 + hmax / 2 + r * (hmax + gy)) * k + (rand() - .5) * hmax * .04 * k;
-    slots.push({ x: cx - c.x + x, y: cy - c.y + y, r: rand() * 8 - 4, dur: 500 + rand() * 200 });
-  }
-  st.slots = slots;
-  st.k = k;
-  st.box = { x: cx + bo.x, y: cy + bo.y, w: W0 * k, h: H0 * k };
-  st.centers = slots.map(p => ({ x: c.x + p.x + bo.x, y: c.y + p.y + bo.y }));
-  st.sizes = hs.map(h => ({ w: tw * k, h: h * k }));
-  // Re-apply the current pose instantly (this only runs on load and resize).
-  st.cards.forEach((el, j) => {
-    el.style.transition = 'none';
-    if (st.open) setPose(el, slots[j], k); else setPose(el, st.pile[j], 1);
-  });
-  requestAnimationFrame(() => st.cards.forEach(el => { if (el.style.transition === 'none') el.style.transition = ''; }));
 }
 
 // ---------- Camera: spring physics on (focus x, focus y, zoom) ----------
@@ -1094,8 +1047,7 @@ const cam = { x: 0, y: 0, s: 1, vx: 0, vy: 0, vs: 0 };
 let goal = { x: 0, y: 0, s: 1 }, travel = null;
 let origin = { x: 0, y: 0 }, vp = { w: 1, h: 1 };
 let active = -1, running = false, last = 0, zoomScrollY = 0;
-// Inside an open stack: which stack, and which card is zoomed (-1 = looking at the whole spread).
-let open = null, cardAt = -1, pendingExpand = false, arriveDir = 0;
+
 
 function viewport() {
   return { w: document.documentElement.clientWidth, h: window.visualViewport ? window.visualViewport.height : window.innerHeight };
@@ -1119,18 +1071,8 @@ function focusGoal(i) {
   const p = geo.pins[i], o = geo.offs[i];
   return { x: p.x + o.x, y: p.y + o.y, s: zoomFor(i) };
 }
-function spreadGoal(st) {
-  const b = st.box, base = vp.w >= 900 ? 2 : 1.5;
-  return { x: b.x, y: b.y, s: Math.min(base, .86 * vp.h / (b.h + 24), .92 * vp.w / (b.w + 24)) };
-}
-function cardGoal(st, j) {
-  const c = st.centers[j], sz = st.sizes[j], base = vp.w >= 900 ? 2 : 1.5;
-  return { x: c.x, y: c.y, s: Math.min(base, .88 * vp.h / (sz.h * 1.06), .94 * vp.w / (sz.w * 1.06)) };
-}
 function currentGoal() {
-  if (active < 0) return overviewGoal();
-  if (open) return cardAt >= 0 ? cardGoal(open, cardAt) : spreadGoal(open);
-  return focusGoal(active);
+  return active < 0 ? overviewGoal() : focusGoal(active);
 }
 function pathAt(L) {
   const s = geo.samples, n = s.length / 2 - 1;
@@ -1192,6 +1134,7 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 function kick() {
+  if (active >= 0) cards[active].classList.remove('settled');
   if (reducedMotion.matches) return crossfade();
   if (running) return;
   running = true;
@@ -1212,34 +1155,38 @@ function crossfade() {
 }
 
 function setActive(i) {
-  stopMedia();
+  stopLive();
   if (active >= 0) {
-    cards[active].classList.remove('active');
-    if (stacks[active]) stacks[active].cards.forEach(c => c.classList.remove('near'));
+    const prev = cards[active];
+    prev.classList.remove('active', 'settled');
+    if (prev._sound) toggleSound(prev);
+    if (stacks[active]) stacks[active].back.forEach(c => c.classList.remove('near'));
   }
   active = i;
-  if (i >= 0 && stacks[i]) stacks[i].cards.forEach(c => c.classList.add('near'));
   board.classList.toggle('zoomed', i >= 0);
   zvig.classList.toggle('show', i >= 0);
   bar.classList.toggle('show', i >= 0);
   if (i >= 0) {
+    const st = stacks[i];
     cards[i].classList.add('active');
     cards[i].focus({ preventScroll: true });
     live.textContent = TRIP[i].caption;
     zoomScrollY = window.scrollY;
+    if (st) {
+      st.steps = 0;
+      st.back.forEach(c => { c.classList.add('near'); c.classList.remove('hov'); });
+      // Warm the cache so every shuffle lands on a photo that's already loaded.
+      st.entries.forEach(e => { const im = new Image(); im.src = e.src; });
+    }
   } else {
     live.textContent = 'Full board';
   }
 }
-function zoomTo(i, dir = 0) {
+function zoomTo(i) {
   if (!geo) return;
   i = Math.max(0, Math.min(TRIP.length - 1, i));
   const from = active;
-  if (i === from && !travel && !open) return;
-  if (open) collapse(i === from);
-  pendingExpand = !!stacks[i];
-  arriveDir = dir;
-  if (i === from) { pendingExpand = false; readView(); travel = null; goal = focusGoal(i); return kick(); }
+  if (i === from && !travel) return;
   if (from < 0 && !running) {
     readView();
     Object.assign(cam, overviewGoal(), { vx: 0, vy: 0, vs: 0 });
@@ -1262,149 +1209,143 @@ function zoomTo(i, dir = 0) {
 }
 function zoomOut() {
   if (active < 0) return;
-  if (open) collapse(false);
-  pendingExpand = false;
   readView();
   setActive(-1);
   travel = null;
   goal = overviewGoal();
   kick();
 }
-
-// ---------- Stacks: open into a spread, zoom card by card, fold back up ----------
-// Runs whenever the camera comes to rest: open a stack we just arrived at, or play a Live Photo.
+// Runs whenever the camera comes to rest on a moment: show the sound button, play a Live Photo.
 function onSettle() {
   if (active < 0) return;
-  const st = stacks[active];
-  if (st && !open && pendingExpand) { pendingExpand = false; return expand(st); }
-  const el = open ? (cardAt >= 0 ? open.cards[cardAt] : null) : (st ? null : cards[active]);
-  if (el && el._entry && el._entry.video) return armVideo(el);
-  if (reducedMotion.matches) return;
-  if (!st && !open) playLive(cards[active]);
-  else if (open && cardAt >= 0) playLive(open.cards[cardAt]);
+  const el = cards[active];
+  el.style.setProperty('--inv', (1 / (cam.s * 1.06)).toFixed(4));
+  el.classList.add('settled');
+  if (!reducedMotion.matches) playLive(el);
 }
-function expand(st) {
-  open = st; cardAt = -1; st.open = true;
-  stopMedia();
-  const top = cards[st.i], c0 = st.cards[0], n = st.cards.length, still = reducedMotion.matches;
-  // Card 0 takes the lifted top card's exact place, then everything moves out to its spot in the spread.
-  c0.style.transition = 'none';
-  setPose(c0, st.lift, 1.06);
-  st.cards.forEach(c => { c.classList.remove('hov'); c.classList.add('spread'); c.removeAttribute('aria-hidden'); c.tabIndex = 0; });
-  c0.classList.remove('off');
-  top.classList.remove('active');
-  top.classList.add('away');
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    if (open !== st) return;
-    st.cards.forEach((el, j) => {
-      const p = st.slots[j];
-      if (still) {
-        el.style.transition = 'none';
-        el.style.opacity = '0';
-        setPose(el, p, st.k);
-        el.classList.remove('off');
-        requestAnimationFrame(() => { el.style.transition = 'opacity 150ms ease'; el.style.opacity = ''; });
-      } else {
-        el.style.transition = `transform ${p.dur | 0}ms cubic-bezier(.2,.7,.25,1) ${j * 40}ms, opacity 200ms ease ${j * 40}ms`;
-        setPose(el, p, st.k);
-        el.classList.remove('off');
-      }
-    });
-  }));
-  // Load the rest of the photos, nearest to the top card first.
-  st.cards.map((el, j) => [el, Math.hypot(st.slots[j].x - st.slots[0].x, st.slots[j].y - st.slots[0].y)])
-    .sort((a, b) => a[1] - b[1]).forEach(([el]) => loadCard(el));
-  live.textContent = `${TRIP[st.i].caption}: ${n} photos`;
-  if (arriveDir < 0) return focusCard(n - 1);
-  readView(); travel = null; goal = spreadGoal(st); kick();
+
+// ---------- Shuffling a stack: one photo at a time, the front card cycles to the back ----------
+const T = (p, s) => `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) rotate(${p.r.toFixed(2)}deg) scale(${s})`;
+function shuffle(st, dir) {
+  if (st.busy) return;
+  stopLive();
+  const top = cards[st.i], d = TRIP[st.i], n = st.order.length;
+  st.order = dir > 0 ? st.order.slice(1).concat(st.order[0]) : [st.order[n - 1]].concat(st.order.slice(0, n - 1));
+  const front = st.entries[st.order[0]];
+  live.textContent = `${d.caption}: photo ${st.order[0] + 1} of ${n}`;
+  const land = () => { showBacks(st, true); syncVideo(top); if (!reducedMotion.matches && !running) playLive(top); };
+  if (reducedMotion.matches || !top.animate) {
+    showEntry(top, front, true);
+    return land();
+  }
+  // The flyer is a copy of the card that travels: the old front going to the back (dir > 0), or the
+  // card at the very back coming forward (dir < 0). It wears the front card's frame either way.
+  const fly = document.createElement('div');
+  fly.className = 'polaroid scard flyer' + (dir > 0 ? '' : ' behind');
+  frameVars(fly, d.frame);
+  fly.style.setProperty('--cr', top.style.getPropertyValue('--cr'));
+  fly.innerHTML = cardInner(d.frame, '');
+  fly.querySelector('.tab > span').textContent = d.caption;
+  addFilm(fly, st.i);
+  showEntry(fly, dir > 0 ? top._entry : front, true);
+  const { c, tw, th } = st.box, deep = st.back[st.back.length - 1];
+  fly.style.left = (c.x - tw / 2).toFixed(2) + 'px';
+  fly.style.top = (c.y - th / 2).toFixed(2) + 'px';
+  const lifted = T(st.lift, 1.06);
+  const out = T({ x: st.lift.x + tw * .66, y: st.lift.y - th * .03, r: 9 }, 1.04);
+  const back = T(st.pile[st.back.length - 1], 1);
+  st.busy = true;
+  if (dir > 0) {
+    fly.style.transform = lifted;
+    board.insertBefore(fly, top.nextSibling);
+    showEntry(top, front, true);          // revealed underneath as the flyer slides away
+    syncVideo(top);
+    fly.animate([{ transform: lifted }, { transform: out }], { duration: 230, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }).onfinish = () => {
+      fly.classList.add('behind');
+      board.insertBefore(fly, deep);       // now tucked under the whole pile
+      fly.animate([{ transform: out }, { transform: back }], { duration: 320, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).onfinish = () => {
+        fly.remove(); st.busy = false; land();
+      };
+    };
+  } else {
+    fly.style.transform = back;
+    board.insertBefore(fly, deep);
+    fly.animate([{ transform: back }, { transform: out }], { duration: 300, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }).onfinish = () => {
+      fly.classList.remove('behind');
+      board.insertBefore(fly, top.nextSibling);
+      fly.animate([{ transform: out }, { transform: lifted }], { duration: 260, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).onfinish = () => {
+        showEntry(top, front, true).then(() => fly.remove());
+        setTimeout(() => fly.remove(), 300);
+        st.busy = false; land();
+      };
+    };
+  }
 }
-// Fold the open stack back into its pile. keep = the camera stays on this moment (top card lifted again).
-function collapse(keep) {
-  const st = open;
-  if (!st) return;
-  open = null; cardAt = -1; st.open = false;
-  stopMedia();
-  const n = st.cards.length, top = cards[st.i], still = reducedMotion.matches;
-  if (keep) top.classList.add('active');
-  let end = 0;
-  st.cards.forEach((el, j) => {
-    el.classList.remove('lift');
-    el.tabIndex = -1;
-    el.setAttribute('aria-hidden', 'true');
-    const delay = (n - 1 - j) * 40, dur = st.slots[j].dur | 0;
-    end = Math.max(end, delay + dur);
-    el.style.transition = still ? 'none' : `transform ${dur}ms cubic-bezier(.4,0,.2,1) ${delay}ms, opacity 160ms ease ${delay + dur * .6 | 0}ms`;
-    if (j === 0) setPose(el, keep ? st.lift : st.pile[0], keep ? 1.06 : 1);
-    else setPose(el, st.pile[j], 1);
-    if (j > STACK_BACK) el.classList.add('off');
-  });
-  setTimeout(() => {
-    if (st.open) return;
-    top.classList.remove('away');
-    st.cards[0].style.transition = 'none';
-    st.cards[0].classList.add('off');
-    setPose(st.cards[0], st.pile[0], 1);
-    st.cards.forEach(el => { el.classList.remove('spread'); requestAnimationFrame(() => { el.style.transition = ''; }); });
-  }, still ? 0 : end + 40);
-}
-function focusCard(j) {
-  const st = open;
-  if (!st) return;
-  stopMedia();
-  const quick = reducedMotion.matches ? 'transform 150ms ease' : 'transform 450ms cubic-bezier(.3,1.2,.5,1)';
-  if (cardAt >= 0) { st.cards[cardAt].style.transition = quick; st.cards[cardAt].classList.remove('lift'); }
-  cardAt = j;
-  const el = st.cards[j];
-  el.style.transition = quick;
-  el.classList.add('lift');
-  el.focus({ preventScroll: true });
-  live.textContent = `${el._entry.caption || TRIP[st.i].caption} (${j + 1} of ${st.cards.length})`;
-  readView(); travel = null; goal = cardGoal(st, j); kick();
-}
-function unfocusCard() {
-  const st = open;
-  if (!st || cardAt < 0) return;
-  stopMedia();
-  const el = st.cards[cardAt];
-  el.style.transition = reducedMotion.matches ? 'transform 150ms ease' : 'transform 450ms cubic-bezier(.3,1.2,.5,1)';
-  el.classList.remove('lift');
-  cardAt = -1;
-  live.textContent = `${TRIP[st.i].caption}: ${st.cards.length} photos`;
-  readView(); travel = null; goal = spreadGoal(st); kick();
-}
-// Arrows and swipes: card by card inside an open stack, then on along the yarn.
+// Arrows and swipes: through the stack one shuffle at a time, then on along the yarn.
 function step(dir) {
   if (active < 0) return;
-  if (open) {
-    const n = open.cards.length, j = cardAt < 0 ? (dir > 0 ? 0 : -1) : cardAt + dir;
-    if (j >= 0 && j < n) return focusCard(j);
-    const next = active + dir;
-    if (next < 0 || next >= TRIP.length) return zoomTo(active);  // board ends here: just fold the pile up
-    return zoomTo(next, dir);
+  const st = stacks[active];
+  if (st && !travel && !running) {
+    if (st.busy) return;
+    if (dir > 0 && st.steps < st.order.length - 1) { st.steps++; return shuffle(st, 1); }
+    if (dir < 0 && st.steps > 0) { st.steps--; return shuffle(st, -1); }
   }
-  zoomTo(active + dir, dir);
+  zoomTo(active + dir);
 }
-// Esc and background clicks go out one level: card → spread → board.
-function stepOut() {
-  if (active < 0) return;
-  if (open && cardAt >= 0) return unfocusCard();
-  zoomOut();
+
+// ---------- Videos: living photos ----------
+// Plays muted on a loop while the card is a stack's front and on screen; the src is only set then.
+const onScreen = 'IntersectionObserver' in window
+  ? new IntersectionObserver(list => list.forEach(e => { e.target._onscreen = e.isIntersecting; syncVideo(e.target); }), { rootMargin: '80px' })
+  : null;
+if (onScreen) cards.forEach(el => onScreen.observe(el));
+function syncVideo(el) {
+  const e = el._entry, box = el.querySelector('.photo');
+  let v = box.querySelector('video.vid');
+  const want = !!(e && e.video) && el._onscreen !== false && !document.hidden && (!reducedMotion.matches || el._sound);
+  if (!want) {
+    if (v) { v.pause(); v.removeAttribute('src'); v.load(); v.remove(); }
+    el.classList.remove('vplaying');
+    return;
+  }
+  if (!v) {
+    v = document.createElement('video');
+    v.className = 'vid';
+    v.muted = true;
+    v.loop = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    for (const a of ['muted', 'loop', 'playsinline', 'disablepictureinpicture']) v.setAttribute(a, '');
+    v.addEventListener('playing', () => { if (el._entry === e) el.classList.add('vplaying'); });
+    v.addEventListener('error', () => el.classList.remove('vplaying'));
+    box.appendChild(v);
+  }
+  if (v.getAttribute('src') !== e.video) v.src = e.video;
+  v.muted = !el._sound;
+  const p = v.play();
+  if (p && p.catch) p.catch(() => {});
+}
+function toggleSound(el) {
+  el._sound = !el._sound;
+  el.classList.toggle('sound-on', el._sound);
+  syncVideo(el);
 }
 
 // ---------- Live Photos ----------
-// The video only gets a src when it's about to play, and is unloaded again afterwards.
+// Play once when the camera settles on a front card that's a Live Photo; the clip is unloaded afterwards.
 let playing = null, holdTimer = 0, held = false;
 function liveFocused(el) {
-  if (running || active < 0) return false;
-  return open ? cardAt >= 0 && open.cards[cardAt] === el : el === cards[active] && !stacks[active];
+  const st = stacks[active];
+  return !running && active >= 0 && el === cards[active] && !(st && st.busy);
 }
 function playLive(el) {
-  if (!el || !el._entry || !el._entry.live || el._liveBroken) return;
+  if (!el || !el._entry || !el._entry.live || el._entry.video || el._liveBroken) return;
   stopLive();
   const box = el.querySelector('.photo');
-  let v = box.querySelector('video');
+  let v = box.querySelector('video.lv');
   if (!v) {
     v = document.createElement('video');
+    v.className = 'lv';
     v.muted = true;
     v.playsInline = true;
     v.preload = 'none';
@@ -1425,89 +1366,13 @@ function stopLive() {
   if (!el) return;
   playing = null;
   el.classList.remove('playing');
-  const v = el.querySelector('.photo video');
+  const v = el.querySelector('.photo video.lv');
   if (!v) return;
   v.pause();
   // Unload after the 300ms fade back to the still.
   setTimeout(() => { if (playing !== el) { v.removeAttribute('src'); v.load(); } }, 320);
 }
-function stopMedia() { stopLive(); resetVideo(); }
-
-// ---------- Videos: poster until zoomed in, then tap to play with sound ----------
-let vidEl = null, progRaf = 0;
-function armVideo(el) {
-  resetVideo();
-  vidEl = el;
-  const lifted = el.classList.contains('scard') ? open.k * 1.06 : 1.06;
-  el.style.setProperty('--inv', (1 / (cam.s * lifted)).toFixed(4));
-  el.classList.add('vfocus');
-  const box = el.querySelector('.photo');
-  let v = box.querySelector('video.vid');
-  if (!v) {
-    v = document.createElement('video');
-    v.className = 'vid';
-    v.playsInline = true;
-    v.preload = 'none';
-    v.disablePictureInPicture = true;
-    for (const a of ['playsinline', 'disablepictureinpicture']) v.setAttribute(a, '');
-    v.setAttribute('controlslist', 'nofullscreen nodownload noremoteplayback');
-    v.addEventListener('ended', () => { if (vidEl === el) endVideo(el); });
-    v.addEventListener('error', () => { if (vidEl === el && v.getAttribute('src')) endVideo(el); });
-    box.appendChild(v);
-  }
-  if (v.getAttribute('src') !== el._entry.video) v.src = el._entry.video;
-}
-function toggleVideo(el) {
-  const v = el.querySelector('video.vid');
-  if (!v) return;
-  if (v.paused) {
-    // Far from the window's shape (e.g. 16:9 landscape): letterbox it while it plays instead of cropping.
-    const a = el._entry.aspect, wa = el._wa;
-    el.classList.toggle('vcontain', !!a && Math.max(a / wa, wa / a) > 1.25);
-    el.classList.add('vshow', 'vplaying');
-    const p = v.play();
-    if (p && p.catch) p.catch(() => { if (vidEl === el) endVideo(el); });
-    const loop = () => { if (vidEl !== el) return; el.style.setProperty('--prog', v.duration ? (v.currentTime / v.duration).toFixed(4) : 0); if (!v.paused) progRaf = requestAnimationFrame(loop); };
-    cancelAnimationFrame(progRaf);
-    progRaf = requestAnimationFrame(loop);
-  } else {
-    v.pause();
-    el.classList.remove('vplaying');
-  }
-}
-// Back to the poster and play button, from the start.
-function endVideo(el) {
-  const v = el.querySelector('video.vid');
-  el.classList.remove('vplaying', 'vshow');
-  el.style.setProperty('--prog', 0);
-  cancelAnimationFrame(progRaf);
-  if (v) { v.pause(); try { v.currentTime = 0; } catch (e) { /* nothing loaded yet */ } }
-  setTimeout(() => { if (!el.classList.contains('vshow')) el.classList.remove('vcontain'); }, 260);
-}
-function resetVideo() {
-  const el = vidEl;
-  if (!el) return;
-  vidEl = null;
-  endVideo(el);
-  el.classList.remove('vfocus');
-  const v = el.querySelector('video.vid');
-  if (v) setTimeout(() => { if (vidEl !== el) { v.removeAttribute('src'); v.load(); } }, 300);
-}
-function hookScrub(el) {
-  const bar = el.querySelector('.vbar');
-  const seek = e => {
-    const v = el.querySelector('video.vid'), r = bar.getBoundingClientRect();
-    if (!v || vidEl !== el || !v.duration) return;
-    const f = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-    v.currentTime = f * v.duration;
-    el.style.setProperty('--prog', f.toFixed(4));
-    el.classList.add('vshow');
-  };
-  bar.addEventListener('pointerdown', e => { e.stopPropagation(); if (vidEl !== el) return; bar.setPointerCapture(e.pointerId); seek(e); });
-  bar.addEventListener('pointermove', e => { if (bar.hasPointerCapture(e.pointerId)) seek(e); });
-  bar.addEventListener('click', e => e.stopPropagation());
-}
-document.addEventListener('visibilitychange', () => { if (document.hidden) { stopLive(); if (vidEl) endVideo(vidEl); } });
+document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(syncVideo); });
 
 // Replay: hover on desktop, press and hold for 300ms on phones.
 function hookLive(el) {
@@ -1518,7 +1383,7 @@ function hookLive(el) {
   }, { passive: true });
   for (const t of ['touchend', 'touchmove', 'touchcancel']) el.addEventListener(t, () => clearTimeout(holdTimer), { passive: true });
 }
-// A press-and-hold ends in a click; don't let it zoom anything. Any new touch clears a stale hold.
+// A press-and-hold ends in a click; don't let it shuffle or zoom. Any new touch clears a stale hold.
 document.addEventListener('touchstart', () => { held = false; }, { passive: true, capture: true });
 function swallowClick() {
   if (!held) return false;
@@ -1526,15 +1391,15 @@ function swallowClick() {
   return true;
 }
 
-stage.addEventListener('click', e => { if (active >= 0 && !e.target.closest('.polaroid, a')) stepOut(); });
+stage.addEventListener('click', e => { if (active >= 0 && !e.target.closest('.polaroid, a')) zoomOut(); });
 $('out').addEventListener('click', zoomOut);
 $('prev').addEventListener('click', () => step(-1));
 $('next').addEventListener('click', () => step(1));
 document.addEventListener('keydown', e => {
-  if (e.key === ' ' && vidEl && document.activeElement !== vidEl) { e.preventDefault(); toggleVideo(vidEl); }
-  else if (e.key === 'Escape') stepOut();
+  if (e.key === 'Escape') zoomOut();
   else if (active >= 0 && e.key === 'ArrowRight') { e.preventDefault(); step(1); }
   else if (active >= 0 && e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+  else if (active >= 0 && (e.key === 'm' || e.key === 'M') && cards[active]._entry && cards[active]._entry.video) toggleSound(cards[active]);
 });
 
 let touch = null;
