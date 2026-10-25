@@ -242,6 +242,10 @@ body {
 .polaroid.scard.near { z-index: 11; }          /* the zoomed moment's pile stays bright under the dimmer */
 .polaroid.scard.flyer { z-index: 13; transition: none; pointer-events: none; }
 .polaroid.scard.flyer.behind { z-index: 11; }
+/* On the resting board (phones) the front card sits at z 2 under the yarn, so the flyer goes just above it
+   on the way out and under the whole pile on the way back. */
+.polaroid.scard.flyer.rest { z-index: 3; }
+.polaroid.scard.flyer.rest.behind { z-index: 0; }
 .scard .livebadge, .scard .vbadge { display: none; }
 
 /* ---------- Live Photos ---------- */
@@ -1237,10 +1241,12 @@ function onSettle() {
 // ---------- Shuffling a stack: one photo at a time, the front card cycles to the back ----------
 const T = (p, s) => `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) rotate(${p.r.toFixed(2)}deg) scale(${s})`;
 // side: which way the moving card leaves the pile (1 = right, -1 = left; a swipe sends it the way the finger went).
-function shuffle(st, dir, side = 1) {
+function shuffle(st, dir, side) {
   if (st.busy) return;
   stopLive();
-  const top = cards[st.i], d = TRIP[st.i], n = st.order.length;
+  const top = cards[st.i], d = TRIP[st.i], n = st.order.length, zoomed = active === st.i;
+  // Unzoomed (phones), a tap sends the card toward the middle of the board, where there's room.
+  if (!side) side = zoomed ? 1 : (st.box.c.x < board.offsetWidth / 2 ? 1 : -1);
   st.order = dir > 0 ? st.order.slice(1).concat(st.order[0]) : [st.order[n - 1]].concat(st.order.slice(0, n - 1));
   const front = st.entries[st.order[0]];
   live.textContent = `${d.caption}: photo ${st.order[0] + 1} of ${n}`;
@@ -1252,7 +1258,7 @@ function shuffle(st, dir, side = 1) {
   // The flyer is a copy of the card that travels: the old front going to the back (dir > 0), or the
   // card at the very back coming forward (dir < 0). It wears the front card's frame either way.
   const fly = document.createElement('div');
-  fly.className = 'polaroid scard flyer' + (dir > 0 ? '' : ' behind');
+  fly.className = 'polaroid scard flyer' + (zoomed ? '' : ' rest') + (dir > 0 ? '' : ' behind');
   frameVars(fly, d.frame);
   fly.style.setProperty('--cr', top.style.getPropertyValue('--cr'));
   fly.innerHTML = cardInner(d.frame, '');
@@ -1263,9 +1269,9 @@ function shuffle(st, dir, side = 1) {
   fly.style.left = (c.x - tw / 2).toFixed(2) + 'px';
   fly.style.top = (c.y - th / 2).toFixed(2) + 'px';
   // The front card's pose: lifted and straightened when zoomed in, else resting at its tilt (phones).
-  const zoomed = active === st.i, rest = zoomed ? st.lift : { x: 0, y: 0, r: d.r };
+  const rest = zoomed ? st.lift : { x: 0, y: 0, r: d.r };
   const lifted = T(rest, zoomed ? 1.06 : 1);
-  const out = T({ x: rest.x + side * tw * .66, y: rest.y - th * .03, r: rest.r + side * 9 }, zoomed ? 1.04 : 1.02);
+  const out = T({ x: rest.x + side * tw * (zoomed ? .66 : .56), y: rest.y - th * .03, r: rest.r + side * 9 }, zoomed ? 1.04 : 1.02);
   const back = T(st.pile[st.back.length - 1], 1);
   st.busy = true;
   if (dir > 0) {
