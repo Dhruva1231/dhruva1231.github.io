@@ -61,6 +61,13 @@
     {
       "src": "elk/IMG_2944.jpg",
       "caption": null
+    },
+    {
+      "src": "elk/IMG_3717-poster.jpg",
+      "video": "elk/IMG_3717.mp4",
+      "duration": 9,
+      "aspect": 1.78,
+      "caption": null
     }
   ],
   "gorge-floor": [
