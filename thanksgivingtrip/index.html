@@ -58,16 +58,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Wall + frame: swap these to try other colors */
-  --wall: #2f3d33;
-  --wall-shade: rgba(10, 18, 12, .45);
-  --wall-light: rgba(255, 212, 150, .24);
-  --wall-light-core: rgba(255, 226, 180, .22);
+  /* The room: a big pine window (casing, gap of view around the board, sill) in a warm plaster wall */
+  --casing: clamp(24px, 2.4vw, 38px);
+  --gap-x: clamp(64px, 5.6vw, 96px);
+  --gap-y: clamp(64px, 5.6vw, 96px);
+  --sill: clamp(30px, 2.6vw, 42px);
+  --cols: 3;
+  --pine: #9a6234;
+  --pine-hi: #c08752;
+  --pine-lo: #5a3418;
+  --plaster-paint: #c2a17b;
   --frame-wood: #3b2416;
   --frame-wood-dark: #1f120a;
   --frame-bevel: #75503a;
   --frame-w: 20px;
-  --wallpad: clamp(48px, 5vw, 72px);
+  --wallpad: calc(var(--casing) + var(--gap-x));
+  --winw: min(100%, calc(1600px + 2 * var(--frame-w) + 2 * var(--wallpad)));
 
   --cork: #c08a56;
   --ink: #2b2c4a;
@@ -79,6 +85,8 @@
   --blotch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .27 0 0 0 0 .12 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
   --plaster: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 -.24'/%3E%3C/filter%3E%3Cfilter id='q'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.04' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .5 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23q)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0035 .2' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .07 0 0 0 0 .035 0 0 0 0 .01 0 0 0 1.7 -.62'/%3E%3C/filter%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .62 0 0 0 0 .42 0 0 0 0 .26 0 0 0 1.4 -.78'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+  --grainh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.005 .2' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .07 0 0 0 0 .035 0 0 0 0 .01 0 0 0 1.7 -.62'/%3E%3C/filter%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.01 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .62 0 0 0 0 .42 0 0 0 0 .26 0 0 0 1.4 -.78'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+  --grainv: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='600'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.2 .005' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .07 0 0 0 0 .035 0 0 0 0 .01 0 0 0 1.7 -.62'/%3E%3C/filter%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35 .01' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .62 0 0 0 0 .42 0 0 0 0 .26 0 0 0 1.4 -.78'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
   /* Undeveloped instant film: a flat blue-gray-green (#4f5a52 to #66705f) with soft low-frequency mottling */
   --chem: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='c' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.011' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.2 0 0 0 .25 .2 0 0 0 .29 .12 0 0 0 .28 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
   --fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .18 0 0 0 .5 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
@@ -90,7 +98,7 @@ html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--plaster), var(--wall);
+  background: #1b2046;   /* dusk, for overscroll */
   color: var(--ink);
   font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
@@ -98,25 +106,82 @@ body {
 }
 .cork { background: var(--noise), var(--flecks), var(--blotch), var(--cork); }
 
-/* ---------- Wall, frame, board ---------- */
-#stage { position: relative; overflow: hidden; overflow: clip; touch-action: manipulation; }
-#wall {
-  position: absolute; left: -15vw; right: -15vw; top: -300px; bottom: -300px;
-  transform-origin: 0 0;
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(0,0,0,0), var(--wall-shade)),
-    var(--plaster),
-    var(--wall);
-  pointer-events: none;
+/* ---------- The view through the window ----------
+   A fixed layer (not background-attachment, which iPhone ignores), 15% larger than the viewport on every side so
+   the camera and tilt can move it. Its landscape is baked into blurred bitmaps by the script (see bakeView); the
+   gradient here only shows until they're ready. Ambient motion: the mist drifts, a few stars twinkle. */
+#view {
+  position: fixed; left: -15vw; top: -15vh; top: -15lvh; width: 130vw; height: 130vh; height: 130lvh;
+  z-index: 0; overflow: hidden; pointer-events: none; will-change: transform;
+  background: linear-gradient(#151c46, #2a2c64 22%, #4a3a76 40%, #a8667c 54%, #eb9a72 63%, #8d7896 66%, #444a74 74%, #252a4c 86%, #12152d);
 }
-.glow {
-  position: absolute; left: 50%; top: calc(300px + var(--wallpad) - 340px);
-  width: min(1600px, 140vw); height: 900px; margin-left: calc(min(1600px, 140vw) / -2);
-  background:
-    radial-gradient(ellipse 26% 9% at 50% 38%, var(--wall-light-core), rgba(0,0,0,0)),
-    radial-gradient(ellipse 50% 42% at 50% 38%, var(--wall-light), rgba(255,200,120,.07) 55%, rgba(0,0,0,0) 78%);
+#view .vl, #view canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+#view .mist { width: 200%; animation: mist 60s linear infinite; }
+#view canvas.d { opacity: 0; transition: opacity 700ms ease; }
+#view.deep canvas.d { opacity: 1; }
+#view .tw {
+  position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,250,235,.95), rgba(255,250,235,.35) 35%, rgba(255,250,235,0) 70%);
+  animation: twinkle 4.8s ease-in-out infinite;
 }
-#scene { position: relative; padding: var(--wallpad); transform-origin: 0 0; }
+#view.still .mist, #view.still .tw { animation-play-state: paused; }
+@keyframes mist { to { transform: translateX(-50%); } }
+@keyframes twinkle { 0%, 100% { opacity: .9; } 45% { opacity: .25; } 60% { opacity: .7; } }
+
+/* ---------- Room: window, frame, board ---------- */
+#stage { position: relative; z-index: 1; overflow: hidden; overflow: clip; touch-action: manipulation; }
+#scene {
+  position: relative; transform-origin: 0 0;
+  padding: calc(var(--casing) + var(--gap-y)) var(--wallpad) calc(var(--gap-y) + var(--sill));
+}
+/* The window fills the scene; the plaster wall shows only past its sides on very wide screens (and covers the
+   edges the zoom camera could otherwise uncover). */
+#room { position: absolute; inset: 0; pointer-events: none; }
+#room .pl {
+  position: absolute; top: -100vh; bottom: -100vh;
+  background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(255,196,130,.16), rgba(255,196,130,0)), linear-gradient(rgba(194,161,123,.78), rgba(194,161,123,.78)), var(--plaster), var(--plaster-paint);
+  box-shadow: inset 0 0 120px rgba(40,24,10,.35);
+}
+#room .pl.l { left: -100vw; right: calc(50% + var(--winw) / 2); }
+#room .pl.r { right: -100vw; left: calc(50% + var(--winw) / 2); }
+#room .pl.t { left: -100vw; right: -100vw; top: -100vh; bottom: 100%; }
+#room .pl.b { left: -100vw; right: -100vw; top: 100%; bottom: -100vh; }
+.win { position: absolute; top: 0; bottom: 0; left: 50%; width: var(--winw); margin-left: calc(var(--winw) / -2); }
+/* The glass: a slight cool cast, a faint diagonal reflection in each pane, and the mullions. Each pane is one
+   background tile with half a bar on every edge, so neighbors make a full bar. Pane height comes from the script. */
+.glass {
+  --mb: 3px; --mull: #84522b; --mull-hi: #b07a47; --mull-lo: #4c2c13;
+  position: absolute; left: var(--casing); right: var(--casing); top: var(--casing); bottom: var(--sill);
+  background:
+    linear-gradient(90deg, var(--mull-lo) 0 1px, var(--mull) 1px var(--mb), rgba(0,0,0,0) var(--mb) calc(100% - var(--mb)), var(--mull) calc(100% - var(--mb)) calc(100% - 1px), var(--mull-hi) calc(100% - 1px)),
+    linear-gradient(180deg, var(--mull-lo) 0 1px, var(--mull) 1px var(--mb), rgba(0,0,0,0) var(--mb) calc(100% - var(--mb)), var(--mull) calc(100% - var(--mb)) calc(100% - 1px), var(--mull-hi) calc(100% - 1px)),
+    linear-gradient(116deg, rgba(255,255,255,0) 16%, rgba(255,255,255,.045) 29%, rgba(255,255,255,.012) 36%, rgba(255,255,255,0) 37% 52%, rgba(255,255,255,.028) 56%, rgba(255,255,255,0) 62%),
+    rgba(118,146,204,.07);
+  background-size: calc(100% / var(--cols)) var(--paneh, 560px);
+  box-shadow: inset 0 0 0 1px rgba(160,190,240,.14), inset 0 10px 16px -10px rgba(10,8,20,.5);
+}
+.win .wood { position: absolute; background: var(--grainh), linear-gradient(180deg, rgba(255,230,200,.1), rgba(0,0,0,0) 40%, rgba(0,0,0,.18)), var(--pine); }
+.win .head { left: 0; right: 0; top: 0; height: var(--casing); box-shadow: inset 0 1px 0 rgba(255,226,190,.25), inset 0 -2px 2px rgba(0,0,0,.35), 0 3px 5px rgba(0,0,0,.25); z-index: 1; }
+.win .jamb { top: 0; bottom: var(--sill); width: var(--casing); background: var(--grainv), linear-gradient(90deg, rgba(255,230,200,.1), rgba(0,0,0,0) 45%, rgba(0,0,0,.2)), var(--pine); }
+.win .jamb.l { left: 0; box-shadow: inset -2px 0 2px rgba(0,0,0,.3), inset -5px 0 6px -3px rgba(150,180,235,.22); }
+.win .jamb.r { right: 0; box-shadow: inset 2px 0 2px rgba(0,0,0,.3), inset 5px 0 6px -3px rgba(150,180,235,.22); }
+/* The sill: top face (cool window light at its back edge), then the darker front edge; the board's shadow lies on
+   the top face, pushed right by the lamp at front-left. */
+.win .sill {
+  position: absolute; left: calc(var(--casing) * -.4); right: calc(var(--casing) * -.4); bottom: 0; height: var(--sill); z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(150,180,235,.28), rgba(150,180,235,0) 22%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0 46%, #5a3418 46% 50%, rgba(0,0,0,0) 50%),
+    var(--grainh),
+    linear-gradient(180deg, var(--pine-hi), #a96f3e 46%, #7a4825 50%, #6a3e1f);
+  border-radius: 2px;
+  box-shadow: 0 1px 0 rgba(255,226,190,.12) inset, 0 8px 12px -4px rgba(20,10,4,.55);
+}
+.win .sill::after {
+  content: ""; position: absolute; top: 0; height: 44%;
+  left: calc(var(--casing) * .4 + var(--wallpad) + 2%); right: calc(var(--casing) * .4 + var(--wallpad) - 3%);
+  background: radial-gradient(closest-side, rgba(25,12,4,.5), rgba(25,12,4,.28) 60%, rgba(25,12,4,0));
+}
 .frame {
   position: relative;
   max-width: calc(1600px + 2 * var(--frame-w));
@@ -133,9 +198,9 @@ body {
     inset 1px 0 0 rgba(255,228,196,.08),
     inset 0 -2px 2px rgba(0,0,0,.45),
     inset -1px 0 0 rgba(0,0,0,.3),
-    0 2px 3px rgba(0,0,0,.45),
-    0 22px 36px -10px rgba(0,0,0,.55),
-    0 60px 110px -30px rgba(0,0,0,.6);
+    0 0 0 1px rgba(170,198,245,.32),
+    0 0 9px 1px rgba(140,176,238,.2),
+    0 2px 3px rgba(0,0,0,.45);
 }
 #board {
   --pw: clamp(150px, 17vw, 240px);
@@ -162,6 +227,13 @@ body {
 /* Tilt parallax moves these layers (and each card's shade, gloss and pin) with inline translates; see tiltApply. */
 #board.tilting :is(#cork, #yarn, #pinsh, #pins, #pinhl, .shade, .gl) { will-change: transform; }
 #measure { position: absolute; width: 0; height: 0; visibility: hidden; }
+/* Warm lamp light from the room's front-left, falling off to the right (≤10% tint, plain alpha: no blending). */
+#lamp {
+  position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 65% at 2% 16%, rgba(255,182,108,.09), rgba(255,182,108,.04) 45%, rgba(255,182,108,0) 75%),
+    linear-gradient(90deg, rgba(255,188,118,.05), rgba(255,188,118,0) 45%, rgba(16,20,46,0) 58%, rgba(16,20,46,.08));
+}
 
 /* Dims everything except the focused polaroid while zoomed */
 #dim {
@@ -465,7 +537,7 @@ body {
 
 /* ---------- Phone: zig-zag column ---------- */
 @media (max-width: 899px) {
-  :root { --frame-w: 11px; --wallpad: 14px; }
+  :root { --frame-w: 11px; --casing: 8px; --gap-x: 9px; --gap-y: 30px; --sill: 22px; --cols: 2; }
   #board { --pw: min(60vw, 330px); height: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0 0 70px; }
   @supports (width: 1cqw) { #board { --pw: min(66cqw, 330px); } }
   .note {
@@ -506,13 +578,19 @@ body {
   .polaroid.playing .livebadge svg { animation: none; }
   .photo video, .photo video.vid { transition: none; }
   #board.tilting * { will-change: auto !important; }
+  #view .mist, #view .tw { animation: none; }
+  #view canvas.d { transition: none; }
 }
 </style>
 </head>
 <body>
+<div id="view" aria-hidden="true"><div class="vl" id="v-back"></div><div class="vl mist" id="v-mist"></div><div class="vl" id="v-front"></div></div>
 <main id="stage">
-  <div id="wall" aria-hidden="true"><div class="glow"></div></div>
   <div id="scene">
+    <div id="room" aria-hidden="true">
+      <div class="pl l"></div><div class="pl r"></div><div class="pl t"></div><div class="pl b"></div>
+      <div class="win"><div class="glass" id="glass"></div><div class="wood head"></div><div class="wood jamb l"></div><div class="wood jamb r"></div><div class="sill"></div></div>
+    </div>
     <div class="frame" id="frame">
       <div id="board">
         <div id="corkclip" aria-hidden="true"><div id="cork" class="cork"></div></div>
@@ -527,6 +605,7 @@ body {
         <svg id="pinsh" aria-hidden="true"></svg>
         <svg id="pins" aria-hidden="true"></svg>
         <svg id="pinhl" aria-hidden="true"></svg>
+        <div id="lamp" aria-hidden="true"></div>
         <div id="dim" aria-hidden="true"></div>
       </div>
     </div>
@@ -868,7 +947,7 @@ const art = id => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slic
 
 // ---------- Build the board ----------
 const $ = id => document.getElementById(id);
-const stage = $('stage'), wall = $('wall'), scene = $('scene'), frameEl = $('frame'), board = $('board');
+const stage = $('stage'), viewEl = $('view'), scene = $('scene'), frameEl = $('frame'), board = $('board');
 const yarn = $('yarn'), pinsh = $('pinsh'), pinsEl = $('pins'), pinhl = $('pinhl'), dim = $('dim'), measure = $('measure-path');
 const bar = $('zoombar'), zvig = $('zvig'), live = $('live');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1249,9 +1328,11 @@ function layout() {
     pins: pins.map(p => ({ x: p.x + bo.x, y: p.y + bo.y })),
     // From a lifted (untilted, 1.06×) polaroid's pin to its center.
     offs: sizes.map(s => ({ x: 0, y: s.h * (.5 - PIN_TOP) * 1.06 })),
-    sizes, lens, samples, step,
-    wo: { x: wall.offsetLeft, y: wall.offsetTop }
+    sizes, lens, samples, step
   };
+  // Window panes: the mullion grid's rows divide the glass evenly.
+  const gh = glassEl.clientHeight, rows = Math.max(1, Math.round(gh / (phone.matches ? 640 : 560)));
+  glassEl.style.setProperty('--paneh', (gh / rows).toFixed(2) + 'px');
   stacks.forEach(st => st && placeStack(st));
 
   if (active >= 0 || running) {
@@ -1281,7 +1362,7 @@ function placeStack(st) {
 // (rather than raw translate/scale) keeps the target pinned to the screen center as it zooms.
 const K = 170, D = 26;          // camera spring (≈ critically damped)
 const KU = 120, DU = 22;        // progress spring for traveling along the yarn
-const PARALLAX = .85, PULL = .2;      // PULL .2 nets ≈15% after spring smoothing
+const VIEW_PAR = .3, PULL = .2;       // the view outside moves 30% as much as the board; PULL .2 nets ≈15%
 const cam = { x: 0, y: 0, s: 1, vx: 0, vy: 0, vs: 0 };
 let goal = { x: 0, y: 0, s: 1 }, travel = null;
 let origin = { x: 0, y: 0 }, vp = { w: 1, h: 1 };
@@ -1328,13 +1409,16 @@ function render() {
   const s = cam.s;
   const tx = vp.w / 2 - origin.x - s * cam.x, ty = vp.h / 2 - origin.y - s * cam.y;
   scene.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${s.toFixed(5)})`;
-  // The wall follows 85% of the camera move, so the framed board reads as raised off it.
-  const sw = 1 + PARALLAX * (s - 1);
-  wall.style.transform = `translate3d(${(PARALLAX * tx + (sw - 1) * geo.wo.x).toFixed(2)}px, ${(PARALLAX * ty + (sw - 1) * geo.wo.y).toFixed(2)}px, 0) scale(${sw.toFixed(5)})`;
+  // The mountains outside: 30% of the board's zoom about the same screen point, so the camera steps toward the
+  // board while they barely move. Kept covering the screen (the layer has a 15% margin on every side).
+  const sb = 1 + VIEW_PAR * (s - 1), m = viewBox.m;
+  const bx = Math.min(sb * m.x - 12, Math.max(vp.w - sb * (viewBox.w - m.x) + 12, VIEW_PAR * (tx + origin.x * (1 - s))));
+  const by = Math.min(sb * m.y - 12, Math.max(innerHeight - sb * (viewBox.h - m.y) + 12, VIEW_PAR * (ty + origin.y * (1 - s))));
+  viewEl.style.transform = `translate3d(${bx.toFixed(2)}px, ${by.toFixed(2)}px, 0) scale(${sb.toFixed(5)})`;
   if (tilt.fx || tilt.fy) tiltApply();
 }
 function clearCamera() {
-  scene.style.transform = wall.style.transform = '';
+  scene.style.transform = viewEl.style.transform = '';
 }
 
 function tick(now) {
@@ -1372,7 +1456,7 @@ function tick(now) {
     Object.assign(cam, goal, { vx: 0, vy: 0, vs: 0 });
     if (active < 0) clearCamera(); else render();
     // Dropping will-change once still lets the browser re-rasterize crisply at the zoomed scale.
-    scene.style.willChange = wall.style.willChange = 'auto';
+    scene.style.willChange = 'auto';
     camA.x = camA.y = 0;
     running = false;
     onSettle();
@@ -1386,7 +1470,7 @@ function kick() {
   if (reducedMotion.matches) return crossfade();
   if (running) return;
   running = true;
-  scene.style.willChange = wall.style.willChange = 'transform';
+  scene.style.willChange = 'transform';
   last = performance.now();
   camA.vx = cam.vx; camA.vy = cam.vy;
   requestAnimationFrame(tick);
@@ -1414,6 +1498,8 @@ function setActive(i) {
   active = i;
   board.classList.toggle('zoomed', i >= 0);
   zvig.classList.toggle('show', i >= 0);
+  viewEl.classList.toggle('deep', i >= 0);   // zoomed in: the view goes a little further out of focus
+  viewStill();
   bar.classList.toggle('show', i >= 0);
   if (i >= 0) {
     const st = stacks[i];
@@ -1950,7 +2036,7 @@ function stopLive() {
   // Unload after the 300ms fade back to the still.
   setTimeout(() => { if (playing !== el) { v.removeAttribute('src'); v.load(); } }, 320);
 }
-document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(syncVideo); });
+document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(syncVideo); viewStill(); });
 
 // Hover plays any front card on desktop, zoomed in or not; leaving stops it unless the camera is on it.
 // Phones: press and hold for 300ms on any front card.
@@ -2277,6 +2363,123 @@ function setYarnG(g) {
   wakeYarn();
 }
 
+// ---------- The view: the Smoky Mountains at dusk, out of focus behind the board ----------
+// Built as layered SVG (sky, stars, six ridgelines hazing bluer and lighter with distance, mist, a tree line) and
+// rasterized once per size into half-resolution canvases with the blur baked in, so nothing blurs per frame.
+// Three bitmaps: back (sky to the fifth ridge), mist (twice as wide, tiling, drifting), front (nearest ridge and
+// trees). Where zooming is possible each gets a blurrier twin that crossfades in while zoomed.
+const glassEl = $('glass');
+const viewBox = { w: 1, h: 1, m: { x: 0, y: 0 } };
+let viewKey = '', viewGen = 0;
+function viewStill() { viewEl.classList.toggle('still', document.hidden || active >= 0); }
+function rng(seed) {
+  return () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+// A soft, rounded ridgeline: a few long sine swells plus gentle bumps, smoothed through quadratic midpoints.
+function ridge(rand, w, h, base, amp, wl) {
+  const waves = [1, .55, .3, .14].map((a, k) => ({ a, l: wl / (1 + k * 1.1) * (.8 + rand() * .4), p: rand() * 7 }));
+  const pts = [];
+  for (let x = -60; x <= w + 60; x += 14) {
+    let y = 0;
+    for (const v of waves) y += v.a * Math.sin(x / v.l * 2 * Math.PI + v.p);
+    pts.push([x, base - amp * (y / 2 + .6)]);
+  }
+  let d = `M${pts[0][0]} ${h + 60}L${pts[0][0]} ${pts[0][1].toFixed(1)}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [x, y] = pts[i], [x2, y2] = pts[i + 1];
+    d += `Q${x} ${y.toFixed(1)} ${(x + x2) / 2} ${((y + y2) / 2).toFixed(1)}`;
+  }
+  return d + `L${pts[pts.length - 1][0]} ${h + 60}Z`;
+}
+function treeline(rand, w, h, base, U) {
+  let d = `M-40 ${h + 60}L-40 ${base}`;
+  for (let x = -40; x < w + 40;) {
+    const tw = 7 + rand() * 9, th = U * (.018 + rand() * .04), b = base + 5 * Math.sin(x / 210) + 3 * Math.sin(x / 67);
+    d += `L${(x + tw * .5).toFixed(1)} ${(b - th).toFixed(1)}L${(x + tw).toFixed(1)} ${b.toFixed(1)}`;
+    x += tw * (.55 + rand() * .3);
+  }
+  return d + `L${w + 40} ${h + 60}Z`;
+}
+const RIDGES = [   // far to near: crest color, hazy base color, crest line (fraction of the screen), amplitude, wavelength
+  ['#9d90b4', '#d1a7a8', .555, .032, 520], ['#8079a6', '#ae93ab', .6, .04, 640], ['#64668f', '#8d81a0', .655, .05, 760],
+  ['#4b5079', '#6f6d90', .72, .058, 900], ['#353c62', '#525578', .795, .066, 1050], ['#232846', '#373b5d', .875, .07, 1200]
+];
+function landscape(w, h, m, B) {
+  const rand = rng(1123), vh = h - 2 * m.y, Y = v => m.y + v * vh, U = Math.min(vh, 900);
+  const blur = (id, sd) => `<filter id="${id}" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="${sd.toFixed(2)}"/></filter>`;
+  // Sky, with the horizon glow behind the far ridges.
+  let back = `<defs><linearGradient id="sky" gradientUnits="userSpaceOnUse" x1="0" y1="${Y(0)}" x2="0" y2="${Y(.7)}">` +
+    `<stop offset="0" stop-color="#141b45"/><stop offset=".3" stop-color="#252b61"/><stop offset=".55" stop-color="#433873"/>` +
+    `<stop offset=".72" stop-color="#7a4d80"/><stop offset=".84" stop-color="#c06f78"/><stop offset=".93" stop-color="#ea946d"/><stop offset="1" stop-color="#f5b585"/></linearGradient>` +
+    `<radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="${w * .36}" cy="${Y(.62)}" r="${Math.max(w, vh) * .55}" gradientTransform="translate(${w * .36} ${Y(.62)}) scale(1 .45) translate(${-w * .36} ${-Y(.62)})">` +
+    `<stop offset="0" stop-color="#ffd09a" stop-opacity=".55"/><stop offset=".5" stop-color="#ff9e7a" stop-opacity=".18"/><stop offset="1" stop-color="#ff9e7a" stop-opacity="0"/></radialGradient>` +
+    blur('bs', B * .3) + RIDGES.map((r, i) => blur('b' + i, B * (1.3 - i * .06)) +
+      `<linearGradient id="r${i}" gradientUnits="userSpaceOnUse" x1="0" y1="${Y(r[2] - r[3] * 1.4)}" x2="0" y2="${Y(r[2]) + U * .12}"><stop offset="0" stop-color="${r[0]}"/><stop offset="1" stop-color="${r[1]}"/></linearGradient>`).join('') +
+    blur('bm', B * 1.9) + blur('bt', B) + `</defs>` +
+    `<rect x="-60" y="-60" width="${w + 120}" height="${h + 120}" fill="url(#sky)"/><rect x="-60" y="-60" width="${w + 120}" height="${h + 120}" fill="url(#glow)"/>`;
+  // Faint stars in the upper sky; the brightest three twinkle as separate elements.
+  const stars = [], n = Math.round(w * Y(.34) / 9000);
+  for (let i = 0; i < n; i++) stars.push({ x: rand() * w, y: Y(-.12) + rand() * (Y(.36) - Y(-.12)), r: .5 + rand() * .8, o: .25 + rand() * .45 });
+  const tw = stars.filter(st => st.y > m.y + 20 && st.y < Y(.3) && st.x > m.x && st.x < w - m.x).slice(0, 3);
+  back += `<g filter="url(#bs)" fill="#fff6e8">` + stars.filter(st => !tw.includes(st)).map(st =>
+    `<circle cx="${st.x.toFixed(1)}" cy="${st.y.toFixed(1)}" r="${st.r.toFixed(2)}" opacity="${(st.o * (1.2 - st.y / Y(.4))).toFixed(2)}"/>`).join('') + `</g>`;
+  const ridgeD = RIDGES.map((r, i) => `<path d="${ridge(rand, w, h, Y(r[2]), U * r[3], r[4])}" fill="url(#r${i})" filter="url(#b${i})"/>`);
+  back += ridgeD.slice(0, 5).join('');
+  const front = back.slice(0, back.indexOf('</defs>') + 7) + ridgeD[5] + `<path d="${treeline(rand, w, h, Y(.975), U)}" fill="#11142c" filter="url(#bt)"/>`;
+  // Mist: long low ellipses at the foot of the fourth and fifth ridges, repeating every w so the strip tiles.
+  let mist = back.slice(0, back.indexOf('</defs>') + 7) + `<g filter="url(#bm)" fill="#d3c8e2">`;
+  [[.765, 7, .2], [.85, 6, .16]].forEach(([v, k, o]) => {
+    for (let i = 0; i < k; i++) {
+      const x = rand() * w, y = Y(v) + (rand() - .5) * U * .03, rx = w * (.12 + rand() * .16), ry = U * (.012 + rand() * .014), op = (o * (.6 + rand() * .6)).toFixed(3);
+      for (const dx of [-w, 0, w, 2 * w]) mist += `<ellipse cx="${(x + dx).toFixed(1)}" cy="${y.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" opacity="${op}"/>`;
+    }
+  });
+  mist += `</g>`;
+  return { back, mist, front, tw };
+}
+// SVG → half-resolution canvas. The SVG's own size is the canvas size, so its blur is rasterized at that scale.
+function raster(body, w, h) {
+  const cw = Math.max(1, Math.round(w * .5)), ch = Math.max(1, Math.round(h * .5));
+  const img = new Image();
+  return new Promise((ok, fail) => {
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = cw; c.height = ch;
+      c.getContext('2d').drawImage(img, 0, 0, cw, ch);
+      ok(c);
+    };
+    img.onerror = fail;
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${cw}" height="${ch}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${body}</svg>`);
+  });
+}
+function bakeView() {
+  const w = viewEl.clientWidth, h = viewEl.clientHeight;
+  viewBox.w = w; viewBox.h = h;
+  viewBox.m = { x: -viewEl.offsetLeft, y: -viewEl.offsetTop };
+  viewEl.style.transformOrigin = `${viewBox.m.x}px ${viewBox.m.y}px`;   // scale about the screen's top-left
+  const zoomable = !phone.matches, B = phone.matches ? 4 : 6;
+  const key = [w, Math.round(h / 40), zoomable].join();
+  if (key === viewKey) return;
+  viewKey = key;
+  const gen = ++viewGen, L = landscape(w, h, viewBox.m, B), jobs = [[L.back, w], [L.mist, 2 * w], [L.front, w]];
+  if (zoomable) { const D = landscape(w, h, viewBox.m, B + 4); jobs.push([D.back, w], [D.mist, 2 * w], [D.front, w]); }
+  Promise.all(jobs.map(([body, jw]) => raster(body, jw, h))).then(cs => {
+    if (gen !== viewGen) return;
+    ['v-back', 'v-mist', 'v-front'].forEach((id, k) => {
+      const box = $(id);
+      cs[k + 3] && cs[k + 3].classList.add('d');
+      box.replaceChildren(...[cs[k], cs[k + 3]].filter(Boolean));
+    });
+    $('v-back').append(...L.tw.map((st, k) => {
+      const e = document.createElement('i');
+      e.className = 'tw';
+      e.style.cssText = `left:${st.x.toFixed(1)}px;top:${st.y.toFixed(1)}px;animation-duration:${(4.2 + k * 1.3).toFixed(1)}s;animation-delay:${(-k * 1.7).toFixed(1)}s`;
+      return e;
+    }));
+  }).catch(() => { viewKey = ''; });   // the CSS gradient stays as the view
+}
+
 // ---------- Tilt: the phone's angle (or, on desktop, the mouse) gives the board a little depth ----------
 // Calibrated to however the phone is held when tilt starts, re-centering over ~3s as the hold drifts, low-pass
 // filtered. Up to 6px of parallax on screen; the mouse gives half. Nothing here under reduced motion.
@@ -2323,6 +2526,8 @@ function tiltApply(force) {
   pinsh.style.translate = at(-.2);
   pinsEl.style.translate = at(.3);
   pinhl.style.translate = at(-.05);
+  // The mountains are the deepest layer: screen px, not board px, half again the cork's shift.
+  viewEl.style.translate = ox || oy ? `${(-tilt.fx * TILT_PX * 1.5).toFixed(2)}px ${(-tilt.fy * TILT_PX * 1.5).toFixed(2)}px` : '';
   const shade = at(-.5), pin = at(.3), hl = at(-.35);
   const gl = ox || oy ? `${(-tilt.fx * 55).toFixed(1)}% ${(-tilt.fy * 25).toFixed(1)}%` : '';   // the sheen slides across the print
   for (const e of tiltEls.shade) e.style.translate = shade;
@@ -2403,6 +2608,12 @@ let queued = false;
 function relayout() { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; layout(); }); }
 window.addEventListener('resize', relayout);
 window.addEventListener('orientationchange', relayout);
+// The view is re-baked only when its size really changes (debounced), never on scroll.
+let viewTimer = 0;
+const rebake = () => { clearTimeout(viewTimer); viewTimer = setTimeout(bakeView, 250); };
+window.addEventListener('resize', rebake);
+window.addEventListener('orientationchange', rebake);
+bakeView();
 if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(board);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
 readView();
