@@ -22,10 +22,12 @@
     order.txt      one filename per line, shown first in that order; otherwise capture-time order
     cover*.jpg     a file whose name starts with "cover" is always the top card
 
-  0 photos shows the cartoon; 1 shows a single polaroid; 2+ make a stack. Zoomed in, clicking a stack (or
-  the arrows) shuffles it: the front card slides out and tucks in at the back. Videos play muted on a loop,
-  cropped like the photos; zoomed in, the speaker button (or M) turns the sound on. Phones never zoom:
-  tapping or swiping a stack shuffles it in place, and video cards always show the speaker button.
+  0 photos shows the cartoon; 1 shows a single polaroid; 2+ make a stack. A stack is swiped like a deck: the
+  front card follows the finger (or mouse, or a two-finger trackpad swipe when zoomed in) and, once let go
+  far or fast enough, carries on out and tucks in at the back; swiping right pulls the back card over the
+  top. Taps, clicks and the arrows run the same motion. Phones never zoom: stacks are swiped and tapped in
+  place. Videos play muted on a loop, cropped like the photos; the speaker button (always on phones, zoomed
+  in elsewhere, or M) turns the sound on.
   Without a manifest entry the page still tries the old single file, photos/<id>.jpg (or .jpeg/.png/.JPG).
 
   Frames: polaroid-frame-a/b/c.webp sit next to this file (see FRAMES in the script for each window).
@@ -201,7 +203,7 @@ body {
 .polaroid.has-photo .photo svg { display: none; }
 .film { pointer-events: none; }
 .film img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: rotate(var(--fr)) scale(var(--fs, 1)); }
-.fimg { position: absolute; left: 0; top: 0; width: 100%; height: auto; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.fimg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
 .tab {
   position: absolute; left: 6%; right: 6%; top: var(--tt); bottom: 0;
   display: flex; align-items: center; justify-content: center;
@@ -224,12 +226,11 @@ body {
 }
 .ppin::after { content: ""; position: absolute; left: 2.5px; top: 2.5px; width: 4px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.8); }
 .polaroid.active .ppin { opacity: 1; animation: pop 460ms cubic-bezier(.3, 1.4, .5, 1) 180ms both; }
-.polaroid.lifted .ppin { opacity: 1; }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
 /* ---------- Stacks: several photos for one moment ----------
    The top card is the normal polaroid (pin, caption, yarn) and always shows the stack's front photo.
    Up to three back cards sit centered under it, placed in px by layout(); --px/--py/--pr/--ps is a card's
-   pose. Clicking a zoomed stack shuffles it: a flyer copy of the front card slides out and tucks in behind. */
+   pose. Each photo has its own frame; in a stack every card keeps the top card's size. */
 .polaroid.scard {
   position: absolute; margin: 0;
   transform-origin: 50% 50%;
@@ -241,11 +242,14 @@ body {
 }
 .polaroid.scard.hov { --hov: 1; }
 .polaroid.scard.near { z-index: 11; }          /* the zoomed moment's pile stays bright under the dimmer */
-.polaroid.scard.flyer { z-index: 13; transition: none; pointer-events: none; }
-.polaroid.scard.flyer.behind { z-index: 11; }
-/* Phones shuffle without zooming: the stack lifts and straightens like a zoomed card while it shuffles. */
-.polaroid.lifted {
-  z-index: 12; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1.06);
+/* While a stack moves, its cards are temporary "actors" driven frame by frame (transform only); the top
+   card keeps its place, pin and click target but hides its face, and the resting back cards step aside. */
+.polaroid.stack, .polaroid.scard { touch-action: pan-y; }
+.polaroid.ghost { filter: none; }
+.polaroid.ghost > :not(.ppin) { visibility: hidden; }
+.polaroid.scard.parked { visibility: hidden; }
+.polaroid.scard.actor { transition: none; will-change: transform; z-index: 2; }
+.polaroid.scard.actor.held, .polaroid.scard.actor.front {
   filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)) drop-shadow(0 22px 26px rgba(20,10,2,.5));
 }
 .scard .livebadge, .scard .vbadge { display: none; }
@@ -774,10 +778,11 @@ const SPEAKER = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
   '<g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path class="off" d="M15.6 9.6l4.8 4.8M20.4 9.6l-4.8 4.8"/>' +
   '<path class="on" d="M15.6 9.2a4 4 0 0 1 0 5.6M18.3 6.7a7.6 7.6 0 0 1 0 10.6"/></g></svg>';
 const clock = t => `${Math.floor(t / 60)}:${String(Math.round(t) % 60).padStart(2, '0')}`;
-function frameVars(el, key) {
-  const fr = FRAMES[key], [aw, ah] = fr.ar.split('/').map(Number);
+// boxKey: in a stack every card keeps the top card's size, so each photo's own frame stretches (≤2%) to fit.
+function frameVars(el, key, boxKey = key) {
+  const fr = FRAMES[key], [aw, ah] = FRAMES[boxKey].ar.split('/').map(Number);
   el._wa = (fr.width * aw) / (fr.height * ah);   // the photo window's own aspect ratio
-  for (const [k, v] of [['--ar', fr.ar], ['--wl', fr.left + '%'], ['--wt', fr.top + '%'], ['--ww', fr.width + '%'], ['--wh', fr.height + '%'], ['--tt', fr.tab + '%']]) el.style.setProperty(k, v);
+  for (const [k, v] of [['--ar', FRAMES[boxKey].ar], ['--wl', fr.left + '%'], ['--wt', fr.top + '%'], ['--ww', fr.width + '%'], ['--wh', fr.height + '%'], ['--tt', fr.tab + '%']]) el.style.setProperty(k, v);
 }
 // One polaroid's layers, bottom to top: photo, film overlay, frame, LIVE badge, caption.
 const cardInner = (key, photo) =>
@@ -806,9 +811,10 @@ const cards = TRIP.map((d, i) => {
     e.stopPropagation();
     if (swallowClick()) return;
     if (e.target.closest('.vsound')) return toggleSound(b);
-    if (phone.matches && active < 0) return stacks[i] ? shuffle(stacks[i], 1) : playLive(b);
+    if (dragClick) return;
+    if (phone.matches && active < 0) return stacks[i] ? advance(stacks[i], 1) : playLive(b);
     if (active !== i) return zoomTo(i);
-    if (stacks[i]) return shuffle(stacks[i], 1);
+    if (stacks[i]) return advance(stacks[i], 1);
     zoomOut();
   });
   board.insertBefore(b, yarn);
@@ -872,20 +878,25 @@ function buildStack(i, entries) {
   const d = TRIP[i], top = cards[i], rand = rng(i * 104729 + 3);
   top.classList.add('stack');
   top.setAttribute('aria-label', `${d.caption}, ${entries.length} photos`);
-  // Back cards use the other two frames first, so the cards nearest the front never repeat a frame.
-  const keys = ['a', 'b', 'c'].filter(k => k !== d.frame).concat(d.frame);
-  const st = { i, entries, order: entries.map((e, j) => j), back: [], pile: [], steps: 0, busy: false };
-  for (let k = 0; k < Math.min(STACK_BACK, entries.length - 1); k++) {
-    const key = keys[k], el = document.createElement('button');
+  // Each photo keeps its own frame, caption tilt and light leak as it moves through the pile. Frames cycle
+  // a, b, c from the top card's, so neighbors never match (the last one skips the first one's frame).
+  const ks = ['a', 'b', 'c'], f0 = ks.indexOf(d.frame), n = entries.length;
+  const st = { i, entries, order: entries.map((e, j) => j), back: [], pile: [], steps: 0, m: null };
+  st.looks = entries.map((e, j) => ({
+    key: ks[(f0 + j + (j && j === n - 1 && j % 3 === 0 ? 1 : 0)) % 3],
+    cr: j ? (rand() * 4 - 2).toFixed(2) + 'deg' : top.style.getPropertyValue('--cr'),
+    film: i + j
+  }));
+  top._look = st.looks[0];
+  for (let k = 0; k < Math.min(STACK_BACK, n - 1); k++) {
+    const el = document.createElement('button');
     el.type = 'button';
     el.className = 'polaroid scard';
     el.tabIndex = -1;
     el.setAttribute('aria-hidden', 'true');
-    frameVars(el, key);
-    el.style.setProperty('--cr', (rand() * 4 - 2).toFixed(2) + 'deg');
-    el.innerHTML = cardInner(key, '');
+    el.innerHTML = cardInner(d.frame, '');
     el.querySelector('.tab > span').textContent = d.caption;
-    addFilm(el, i + k + 1);
+    applyLook(el, st, k + 1);
     // Pile pose: 6–14px off the front card in a seeded direction, turned a further 3–9° either way.
     const a = rand() * Math.PI * 2, m = 6 + rand() * 8, turn = (3 + rand() * 6) * (rand() < .5 ? -1 : 1);
     st.pile.push({ x: Math.cos(a) * m, y: Math.sin(a) * m, r: d.r + turn });
@@ -895,10 +906,10 @@ function buildStack(i, entries) {
     setPose(el, st.pile[k], 1);
     el.addEventListener('click', e => {
       e.stopPropagation();
-      if (swallowClick()) return;
-      if (active === i || phone.matches && active < 0) shuffle(st, 1); else zoomTo(i);
+      if (swallowClick() || dragClick) return;
+      if (active === i || phone.matches && active < 0) advance(st, 1); else zoomTo(i);
     });
-    hookSwipe(el, i);
+    el.addEventListener('pointerdown', e => pointerDown(e, i));
     // back[0] sits right behind the front card, the last one deepest in the pile.
     board.insertBefore(el, k ? st.back[k - 1] : top);
     st.back.push(el);
@@ -910,7 +921,21 @@ function buildStack(i, entries) {
   stacks[i] = st;
 }
 function showBacks(st, load) {
-  st.back.forEach((el, k) => showEntry(el, st.entries[st.order[k + 1]], load || el._loaded));
+  return st.back.map((el, k) => showSlot(st, el, st.order[k + 1], load || el._loaded));
+}
+function applyLook(el, st, j) {
+  const lk = st.looks[j];
+  if (el._look === lk) return;
+  el._look = lk;
+  frameVars(el, lk.key, TRIP[st.i].frame);
+  el.querySelector('.fimg').src = FRAMES[lk.key].src;
+  el.style.setProperty('--cr', lk.cr);
+  addFilm(el, lk.film);
+}
+// Put photo j of a stack on a card, frame and all.
+function showSlot(st, el, j, load) {
+  applyLook(el, st, j);
+  return showEntry(el, st.entries[j], load);
 }
 function setPose(el, p, scale) {
   el.style.setProperty('--px', p.x.toFixed(2) + 'px');
@@ -938,15 +963,17 @@ async function loadPhotos() {
   // Back cards only start loading once every front photo has had its turn.
   await Promise.allSettled(tops);
   stacks.forEach(st => st && showBacks(st, true));
+  // Then warm the cache with every stack photo, so a card pulled into view mid-swipe is already decoded.
+  stacks.forEach(st => st && st.entries.forEach(e => { const im = new Image(); im.src = e.src; }));
 }
 (async () => {
   try { filmReady = (await fetch('film-overlay.webp', { method: 'HEAD' })).ok; } catch (e) { filmReady = false; }
   if (!filmReady) return;
-  cards.forEach((el, i) => addFilm(el, i));
-  stacks.forEach(st => st && st.back.forEach((el, k) => addFilm(el, st.i + k + 1)));
+  cards.forEach((el, i) => addFilm(el, el._look ? el._look.film : i));
+  stacks.forEach(st => st && st.back.forEach(el => addFilm(el, el._look.film)));
 })();
 cards.forEach(hookLive);
-cards.forEach(hookSwipe);
+cards.forEach((el, i) => el.addEventListener('pointerdown', e => pointerDown(e, i)));
 loadPhotos();
 
 
@@ -1039,8 +1066,8 @@ function layout() {
   }
 }
 
-// A stack's back cards sit centered on its front card. st.lift is where a card must start to match the
-// lifted front card exactly (tilt 0, 1.06× about the pin), which is where the shuffle's flyer begins.
+// A stack's back cards sit centered on its front card. st.lift is the zoomed front card's pose about its
+// center (tilt 0, 1.06× about the pin), the front slot when the stack moves while zoomed in.
 function placeStack(st) {
   const top = cards[st.i], tw = top.offsetWidth, th = top.offsetHeight;
   const c = { x: top.offsetLeft + tw / 2, y: top.offsetTop + th / 2 };
@@ -1240,108 +1267,371 @@ function onSettle() {
   if (!reducedMotion.matches) playLive(el);
 }
 
-// ---------- Shuffling a stack: one photo at a time, the front card cycles to the back ----------
-const T = (p, s) => `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) rotate(${p.r.toFixed(2)}deg) scale(${s})`;
-// side: which way the moving card leaves the pile (1 = right, -1 = left; a swipe sends it the way the finger went).
-function shuffle(st, dir, side) {
-  if (st.busy) return;
+// ---------- Stack motion: one spring model for swipes, drags, taps and arrows ----------
+// While a stack moves, each photo in view is a temporary "actor" card with its own pose (x, y, r, s, relative
+// to the stack's center) and velocity. Every frame each actor gets a target pose: from the finger while it's
+// dragging, from a spring on the shuffle's progress p afterwards. Actors follow the target exactly ("direct")
+// or spring to it ("spring", after being caught mid-flight), so any touch can pick the cards up where they are.
+// The top card stays put as the pin, caption-less click target and layout box; the resting back cards hide.
+const SPRING = { k: 320, c: 32 }, CATCH = { k: 900, c: 60 }, QUICK = { k: 1800, c: 85 };
+const NEAR = .55, COMMIT = .35, FLICK = .45;   // progress span and commit distance (× card width); flick px/ms
+const moving = new Set();
+let motionRaf = 0, dragClick = false;
+
+const poseCss = p => `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) rotate(${p.r.toFixed(3)}deg) scale(${p.s.toFixed(4)})`;
+const lerpPose = (a, b, f) => ({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, r: a.r + (b.r - a.r) * f, s: a.s + (b.s - a.s) * f });
+// Slot poses: 0 is the front card (lifted and straight when zoomed in), 1..k the pile behind it.
+function slots(st) {
+  const zoomed = active === st.i;
+  return [zoomed ? { x: st.lift.x, y: st.lift.y, r: 0, s: 1.06 } : { x: 0, y: 0, r: TRIP[st.i].r, s: 1 }]
+    .concat(st.pile.slice(0, st.back.length).map(p => ({ x: p.x, y: p.y, r: p.r, s: 1 })));
+}
+function slotAt(S, q) {
+  q = Math.max(0, Math.min(S.length - 1, q));
+  const a = Math.floor(q);
+  return a >= S.length - 1 ? S[S.length - 1] : lerpPose(S[a], S[a + 1], q - a);
+}
+// A held card: it follows the finger, rises a little and swings from its bottom center like a card in hand.
+function heldPose(base, dx, th) {
+  const turn = Math.max(-14, Math.min(14, dx * .05));
+  const h = th * base.s / 2, a = base.r * Math.PI / 180, t = turn * Math.PI / 180;
+  const bx = -Math.sin(a) * h, by = Math.cos(a) * h;                         // bottom center, from the card's center
+  const rx = bx * Math.cos(t) - by * Math.sin(t), ry = bx * Math.sin(t) + by * Math.cos(t);
+  return { x: base.x + dx + (bx - rx), y: base.y - Math.abs(dx) * .04 + (by - ry), r: base.r + turn, s: base.s };
+}
+
+function makeActor(st, j) {
+  const d = TRIP[st.i], el = document.createElement('div');
+  el.className = 'polaroid scard actor';
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = cardInner(d.frame, `<img src="${st.entries[j].src}" alt="" draggable="false">`);
+  el.querySelector('.tab > span').textContent = d.caption;
+  el.classList.add('has-photo');
+  applyLook(el, st, j);
+  const { c, tw, th } = st.box;
+  el.style.left = (c.x - tw / 2).toFixed(2) + 'px';
+  el.style.top = (c.y - th / 2).toFixed(2) + 'px';
+  el.addEventListener('pointerdown', e => pointerDown(e, st.i));
+  el.addEventListener('click', e => { e.stopPropagation(); if (!dragClick && !swallowClick()) advance(st, 1); });
+  return { el, j, x: 0, y: 0, r: 0, s: 1, vx: 0, vy: 0, vr: 0, vs: 0, mode: 'direct', way: null, zo: null };
+}
+// Which photos need a card: the visible pile, the one about to surface from under it, and the last one
+// (which a swipe right pulls out from the back).
+function windowOf(st) {
+  const n = st.order.length, k = st.back.length, want = new Set();
+  for (let q = 0; q <= Math.min(k + 1, n - 1); q++) want.add(st.order[q]);
+  want.add(st.order[n - 1]);
+  return want;
+}
+function syncActors(st) {
+  const m = st.m, want = windowOf(st), S = slots(st);
+  for (const [j, a] of m.actors) if (!want.has(j)) { a.el.remove(); m.actors.delete(j); }
+  for (const j of want) if (!m.actors.has(j)) {
+    const a = makeActor(st, j), pos = st.order.indexOf(j);
+    Object.assign(a, slotAt(S, pos));
+    a.el.style.transform = poseCss(a);
+    board.insertBefore(a.el, st.back[st.back.length - 1] || cards[st.i]);
+    m.actors.set(j, a);
+  }
+  m.zkey = '';
+}
+
+// Take hold of a stack: build its actors, or catch the ones already moving.
+function grab(st) {
+  const top = cards[st.i];
   stopLive();
-  const top = cards[st.i], d = TRIP[st.i], n = st.order.length, zoomed = active === st.i;
-  side = side || 1;
-  // Unzoomed (phones): lift the stack the way zooming does, and set it back down once shuffling stops.
-  const wasLifted = zoomed || top.classList.contains('lifted');
-  if (!zoomed) {
-    clearTimeout(st.drop);
-    top.classList.add('lifted');
-    st.back.forEach(c => c.classList.add('near'));
-  }
-  const settle = () => {
-    if (zoomed) return;
-    clearTimeout(st.drop);
-    st.drop = setTimeout(() => {
-      if (st.busy || active === st.i) return;
-      top.classList.remove('lifted');
-      st.back.forEach(c => c.classList.remove('near'));
-    }, 900);
-  };
-  st.order = dir > 0 ? st.order.slice(1).concat(st.order[0]) : [st.order[n - 1]].concat(st.order.slice(0, n - 1));
-  const front = st.entries[st.order[0]];
-  live.textContent = `${d.caption}: photo ${st.order[0] + 1} of ${n}`;
-  const land = () => { showBacks(st, true); syncVideo(top); settle(); if (!reducedMotion.matches && !running) playLive(top); };
-  if (reducedMotion.matches || !top.animate) {
-    showEntry(top, front, true);
-    return land();
-  }
-  // The flyer is a copy of the card that travels: the old front going to the back (dir > 0), or the
-  // card at the very back coming forward (dir < 0). It wears the front card's frame either way.
-  const fly = document.createElement('div');
-  fly.className = 'polaroid scard flyer' + (dir > 0 ? '' : ' behind');
-  frameVars(fly, d.frame);
-  fly.style.setProperty('--cr', top.style.getPropertyValue('--cr'));
-  fly.innerHTML = cardInner(d.frame, '');
-  fly.querySelector('.tab > span').textContent = d.caption;
-  addFilm(fly, st.i);
-  showEntry(fly, dir > 0 ? top._entry : front, true);
-  const { c, tw, th } = st.box, deep = st.back[st.back.length - 1];
-  fly.style.left = (c.x - tw / 2).toFixed(2) + 'px';
-  fly.style.top = (c.y - th / 2).toFixed(2) + 'px';
-  const lifted = T(st.lift, 1.06);
-  const out = T({ x: st.lift.x + side * tw * .66, y: st.lift.y - th * .03, r: side * 9 }, 1.04);
-  // A stack that was still resting starts from its tilt; the lift and the flyer then move together.
-  const start = wasLifted ? lifted : T({ x: 0, y: 0, r: d.r }, 1);
-  const back = T(st.pile[st.back.length - 1], 1);
-  st.busy = true;
-  if (dir > 0) {
-    fly.style.transform = start;
-    board.insertBefore(fly, top.nextSibling);
-    showEntry(top, front, true);          // revealed underneath as the flyer slides away
-    syncVideo(top);
-    fly.animate([{ transform: start }, { transform: out }], { duration: 230, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }).onfinish = () => {
-      fly.classList.add('behind');
-      board.insertBefore(fly, deep);       // now tucked under the whole pile
-      fly.animate([{ transform: out }, { transform: back }], { duration: 320, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).onfinish = () => {
-        fly.remove(); st.busy = false; land();
-      };
-    };
+  clearTimeout(holdTimer);
+  const v = top.querySelector('video.vid');
+  if (v) v.pause();
+  if (!st.m) {
+    st.m = { actors: new Map(), dx: 0, dxv: 0, p: 0, pv: 0, mode: null, phase: 'drag', commit: false, zoomed: active === st.i, buzzed: false };
+    syncActors(st);
+    top.classList.add('ghost');
+    st.back.forEach(el => el.classList.add('parked'));
   } else {
-    fly.style.transform = back;
-    board.insertBefore(fly, deep);
-    fly.animate([{ transform: back }, { transform: out }], { duration: 300, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }).onfinish = () => {
-      fly.classList.remove('behind');
-      board.insertBefore(fly, top.nextSibling);
-      fly.animate([{ transform: out }, { transform: lifted }], { duration: 260, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).onfinish = () => {
-        showEntry(top, front, true).then(() => fly.remove());
-        setTimeout(() => fly.remove(), 300);
-        st.busy = false; land();
-      };
-    };
+    const m = st.m;
+    m.finishing = null;
+    if (m.commit) {
+      // The shuffle already decided: make it official and carry on from wherever the cards are.
+      rotate(st, m.mode === 'next' ? 1 : -1);
+      m.commit = false; m.p = m.pv = 0; m.dx = m.dxv = 0; m.mode = null;
+      for (const a of m.actors.values()) a.mode = 'spring';
+      syncActors(st);
+    }
+    m.phase = 'drag';
+  }
+  st.m.dx0 = st.m.dx;
+  st.m.buzzed = false;
+  startMotion(st);
+}
+function rotate(st, dir) {
+  const n = st.order.length;
+  st.order = dir > 0 ? st.order.slice(1).concat(st.order[0]) : [st.order[n - 1]].concat(st.order.slice(0, n - 1));
+  live.textContent = `${TRIP[st.i].caption}: photo ${st.order[0] + 1} of ${n}`;
+}
+// Let go: commit (continue the card out and around) or cancel (spring back), seeded with the finger's speed.
+// v is in screen px/ms; scale is screen px per board px.
+function release(st, v = 0, scale = 1, force = 0) {
+  const m = st.m, tw = st.box.tw;
+  if (!m) return;
+  m.phase = 'release';
+  const dir = force || (m.dx ? -Math.sign(m.dx) : -Math.sign(v)) || 1;     // 1 = next (swipe left)
+  const vb = v * 1000 / scale;                                               // board px/s
+  const commit = force || (Math.abs(m.dx) > COMMIT * tw && -Math.sign(v) * dir > -FLICK) || -Math.sign(v) * dir * Math.abs(v) > FLICK;
+  if (!commit) { m.dxv = vb; return; }
+  if (st.order.length < 2) return;
+  m.commit = true;
+  m.mode = dir > 0 ? 'next' : 'prev';
+  m.pv = Math.max(0, -dir * vb) / (NEAR * tw);
+  const S = slots(st), j = mover(st), a = m.actors.get(j);
+  const base = dir > 0 ? S[0] : S[S.length - 1], side = -dir;
+  const fast = reducedMotion.matches;
+  if (a.mode === 'direct') {
+    const turnV = Math.abs(m.dx * .05) < 14 ? .05 * vb : 0;
+    Object.assign(a, { vx: vb, vy: -.04 * Math.sign(m.dx || side) * vb, vr: turnV, vs: 0 });
+  }
+  a.mode = 'spring';
+  a.way = fast ? null : { out: { x: base.x + side * tw * 1.2, y: base.y - st.box.th * .06, r: base.r + side * 18, s: base.s }, base, side };
+  // Next: over the pile until it's out at the side, then under. Previous: the reverse.
+  a.zo = fast ? (dir > 0 ? 'bottom' : 'top') : (dir > 0 ? 'top' : 'bottom');
+}
+const mover = st => st.m.mode === 'prev' ? st.order[st.order.length - 1] : st.order[0];
+// Taps, arrows and clicks: the same motion from a standstill.
+function advance(st, dir) {
+  grab(st);
+  st.m.dx = 0;
+  st.m.mode = dir > 0 ? 'next' : 'prev';
+  release(st, 0, 1, dir);
+}
+
+function startMotion(st) {
+  moving.add(st);
+  if (!motionRaf) { motionLast = performance.now(); motionRaf = requestAnimationFrame(motionTick); }
+}
+let motionLast = 0;
+function motionTick(now) {
+  const dt = Math.min(.05, (now - motionLast) / 1000);
+  motionLast = now;
+  for (const st of moving) stepStack(st, dt);
+  motionRaf = moving.size ? requestAnimationFrame(motionTick) : 0;
+}
+function springStep(o, key, vkey, target, sp, dt) {
+  // Semi-implicit Euler in 4ms substeps: stable for the stiff catch and reduced-motion springs too.
+  for (let t = 0; t < dt; t += .004) {
+    const h = Math.min(.004, dt - t);
+    o[vkey] += (-sp.k * (o[key] - target) - sp.c * o[vkey]) * h;
+    o[key] += o[vkey] * h;
   }
 }
-// Phones: a sideways swipe on a stack cycles it in place (left = next, right = back). touch-action: pan-y
-// leaves vertical scrolling to the browser.
-function hookSwipe(el, i) {
-  if (i === undefined) i = cards.indexOf(el);
-  let t0 = null;
-  el.addEventListener('touchstart', e => { const t = e.touches[0]; t0 = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
-  el.addEventListener('touchend', e => {
-    if (!t0 || !phone.matches || active >= 0 || !stacks[i]) return;
-    const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y;
-    t0 = null;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      clearTimeout(holdTimer);
-      held = true;                       // swallow the click a short swipe can end in
-      shuffle(stacks[i], dx < 0 ? 1 : -1, dx < 0 ? -1 : 1);
+function stepStack(st, dt) {
+  const m = st.m;
+  if (!m) return moving.delete(st);
+  const S = slots(st), k = S.length - 1, tw = st.box.tw, n = st.order.length;
+  const sp = reducedMotion.matches ? QUICK : SPRING;
+  // Zooming in or out mid-shuffle changes the slot poses: let everything spring over.
+  if (m.zoomed !== (active === st.i)) { m.zoomed = active === st.i; for (const a of m.actors.values()) a.mode = 'spring'; }
+  if (m.phase === 'drag') {
+    if (!m.commit) m.mode = m.dx < 0 ? 'next' : m.dx > 0 ? 'prev' : m.mode;
+  } else if (m.commit) {
+    springStep(m, 'p', 'pv', 1, sp, dt);
+  } else {
+    springStep(m, 'dx', 'dxv', 0, sp, dt);
+  }
+  if (!m.commit) m.p = Math.min(1, Math.abs(m.dx) / (NEAR * tw));
+  const moverJ = m.mode ? mover(st) : -1;
+  let still = m.phase !== 'drag';
+  const depth = new Map();
+  for (const a of m.actors.values()) {
+    const pos = st.order.indexOf(a.j);
+    let tgt, d;
+    if (a.j === moverJ && !m.commit) {
+      tgt = heldPose(m.mode === 'prev' ? S[k] : S[0], m.dx, st.box.th);
+      d = m.mode === 'prev' ? k + 1 : -1;
+    } else {
+      const q = a.j === moverJ ? (m.mode === 'prev' ? 0 : k)                 // committed: where it ends up
+        : m.mode === 'next' ? pos - m.p : m.mode === 'prev' ? pos + m.p : pos;
+      tgt = slotAt(S, q);
+      d = q + pos * 1e-3;
     }
-  }, { passive: true });
+    if (a.way) {
+      // On the way out: head for the side; once mostly clear, turn for home and swap sides of the pile
+      // at the outermost point.
+      if (a.way.out) {
+        tgt = a.way.out;
+        if (a.way.side * (a.x - a.way.base.x) >= .9 * tw) a.way.out = null;
+      } else if (Math.sign(a.vx) !== a.way.side && a.zo) {
+        a.zo = a.zo === 'top' ? 'bottom' : 'top';
+        a.way = null;
+      }
+    }
+    if (a.zo) d = a.zo === 'top' ? -2 : k + 2;
+    depth.set(a, d);
+    if (a.mode === 'direct') {
+      Object.assign(a, tgt);
+      a.vx = a.vy = a.vr = a.vs = 0;
+    } else {
+      const s = a.j === moverJ && m.phase === 'drag' ? CATCH : sp;
+      springStep(a, 'x', 'vx', tgt.x, s, dt); springStep(a, 'y', 'vy', tgt.y, s, dt);
+      springStep(a, 'r', 'vr', tgt.r, s, dt); springStep(a, 's', 'vs', tgt.s, s, dt);
+      const off = Math.abs(a.x - tgt.x) + Math.abs(a.y - tgt.y) + Math.abs(a.r - tgt.r) * 2;
+      // A caught card that has caught up with the finger follows it exactly from then on.
+      if (m.phase === 'drag' && !a.way && off < 2) a.mode = 'direct';
+      if (off > .3 || Math.abs(a.vx) + Math.abs(a.vy) + Math.abs(a.vr) > 4) still = false;
+    }
+    a.el.style.transform = poseCss(a);
+    a.el.classList.toggle('held', a.j === moverJ && (m.phase === 'drag' || !!a.way));
+    a.el.classList.toggle('front', m.zoomed && d < .5 && d > -1);
+  }
+  // Stacking: deepest first, only touching the DOM when the order changes.
+  const sorted = [...m.actors.values()].sort((a, b) => depth.get(b) - depth.get(a));
+  const key = sorted.map(a => a.j).join();
+  if (key !== m.zkey) {
+    m.zkey = key;
+    const anchor = st.back[st.back.length - 1] || cards[st.i];
+    sorted.forEach(a => board.insertBefore(a.el, anchor));
+    sorted.forEach(a => {
+      const d = depth.get(a);
+      a.el.style.zIndex = m.zoomed ? 11 : d < 0 ? 3 : d > k + 1 ? 1 : 2;
+    });
+  }
+  if (m.phase === 'drag') still = false;
+  if (m.commit && (Math.abs(m.p - 1) > .001 || Math.abs(m.pv) > .01)) still = false;
+  if (!m.commit && (Math.abs(m.dx) > .3 || Math.abs(m.dxv) > 4)) still = false;
+  if (still && !m.finishing) finish(st);
 }
+// Everything has landed: hand the stack back to the resting cards, then drop the actors.
+function finish(st) {
+  const m = st.m, top = cards[st.i];
+  if (m.commit) { rotate(st, m.mode === 'next' ? 1 : -1); m.commit = false; m.p = 0; m.mode = null; }
+  const token = m.finishing = {};
+  moving.delete(st);
+  const shown = [showSlot(st, top, st.order[0], true), ...showBacks(st, true)];
+  Promise.all(shown).then(() => {
+    if (st.m !== m || m.finishing !== token) return;
+    top.classList.remove('ghost');
+    st.back.forEach(el => el.classList.remove('parked'));
+    for (const a of m.actors.values()) a.el.remove();
+    st.m = null;
+    syncVideo(top);
+    if (!reducedMotion.matches && !running) playLive(top);
+  });
+}
+
+// ---------- Gestures: pointer drags (touch and mouse) and horizontal trackpad swipes ----------
+let gest = null;
+const canDrag = i => active === i || (phone.matches && active < 0);
+function pointerDown(e, i) {
+  if (gest || !canDrag(i) || e.button > 0 || e.target.closest('.vsound')) return;
+  const st = stacks[i];
+  if (!st && !(phone.matches && active < 0)) return;      // single photos only rubber-band on phones
+  const scale = active === i ? cam.s * 1.0 : 1;
+  gest = { id: e.pointerId, i, st, x0: e.clientX, y0: e.clientY, axis: null, samples: [[e.timeStamp, e.clientX]], scale, caught: false };
+  // A touch on a moving stack catches it straight away.
+  if (st && st.m) { grab(st); gest.caught = true; }
+  try { cards[i].setPointerCapture(e.pointerId); } catch (err) { /* fine without capture */ }
+}
+function pointerMove(e) {
+  const g = gest;
+  if (!g || e.pointerId !== g.id) return;
+  const dx = e.clientX - g.x0, dy = e.clientY - g.y0;
+  if (!g.axis) {
+    if (Math.hypot(dx, dy) < 8) return;
+    g.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    if (g.axis === 'y') { endGesture(e, true); return; }   // vertical: the page scrolls as usual
+    claimed = true;
+    clearTimeout(holdTimer);
+    if (g.st) { if (!g.caught) grab(g.st); }
+    else startBand(g.i);
+  }
+  g.samples.push([e.timeStamp, e.clientX]);
+  while (g.samples.length > 2 && e.timeStamp - g.samples[0][0] > 80) g.samples.shift();
+  if (g.st && g.st.m) {
+    const m = g.st.m;
+    m.dx = m.dx0 + dx / g.scale;
+    if (!m.buzzed && Math.abs(m.dx) > COMMIT * g.st.box.tw) { m.buzzed = true; if (navigator.vibrate) navigator.vibrate(8); }
+  } else if (!g.st) band.dx = dx;
+}
+function endGesture(e, vertical) {
+  const g = gest;
+  if (!g || e.pointerId !== g.id) return;
+  gest = null;
+  // Speed over the last ~80ms of movement; a finger that stopped before lifting has none.
+  const s = g.samples, end = s[s.length - 1];
+  const v = s.length > 1 && e.timeStamp - end[0] < 60 ? (end[1] - s[0][1]) / Math.max(1, end[0] - s[0][0]) : 0;
+  if (g.axis === 'x') {
+    dragClick = true;
+    setTimeout(() => { dragClick = false; }, 0);
+    if (g.st) release(g.st, e.type === 'pointercancel' ? 0 : v, g.scale); else endBand(v);
+  } else if (g.caught && g.st) {
+    release(g.st, 0, g.scale);       // caught and let go without a swipe: carry on from here
+  }
+}
+addEventListener('pointermove', pointerMove, { passive: true });
+addEventListener('pointerup', e => endGesture(e));
+addEventListener('pointercancel', e => endGesture(e));
+
+// Single photos on phones: iOS-style rubber band, then spring back.
+const band = { i: -1, dx: 0, x: 0, vx: 0, raf: 0, held: false };
+function startBand(i) {
+  if (band.i >= 0 && band.i !== i) clearBand();
+  band.i = i; band.held = true; band.dx = 0;
+  stopLive();
+  cards[i].style.transition = 'none';
+  if (!band.raf) { band.t = performance.now(); band.raf = requestAnimationFrame(bandTick); }
+}
+function endBand(v) { band.held = false; band.vx = v * 1000 * .25; }
+function clearBand() {
+  if (band.i >= 0) { cards[band.i].style.transform = cards[band.i].style.transition = ''; }
+  band.i = -1; band.x = band.vx = 0;
+}
+function bandTick(now) {
+  const dt = Math.min(.05, (now - band.t) / 1000);
+  band.t = now;
+  const w = cards[band.i].offsetWidth;
+  if (band.held) band.x = Math.sign(band.dx) * w * .5 * (1 - 1 / (1 + Math.abs(band.dx) * .25 / (w * .5)));
+  else springStep(band, 'x', 'vx', 0, reducedMotion.matches ? QUICK : SPRING, dt);
+  const el = cards[band.i];
+  el.style.transform = `translate(calc(var(--dx, 0px) + ${band.x.toFixed(2)}px), var(--dy, 0px)) rotate(var(--r))`;
+  if (!band.held && Math.abs(band.x) < .2 && Math.abs(band.vx) < 4) { band.raf = 0; clearBand(); return; }
+  band.raf = requestAnimationFrame(bandTick);
+}
+
+// Trackpad: a horizontal two-finger swipe on a zoomed stack is the same drag, let go 120ms after it stops.
+// The swipe's momentum tail is ignored once released, so one swipe shuffles once.
+let wheelDrag = null, wheelQuiet = 0;
+addEventListener('wheel', e => {
+  if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { if (active >= 0) zoomOut(); return; }
+  if (active < 0) return;
+  e.preventDefault();
+  const st = stacks[active];
+  if (!st) return;
+  const now = performance.now();
+  if (!wheelDrag && now < wheelQuiet) { wheelQuiet = now + 250; return; }
+  if (!wheelDrag) { grab(st); wheelDrag = { st, dx: 0, samples: [] }; }
+  const g = wheelDrag, px = e.deltaMode === 1 ? 16 : 1;
+  g.dx = Math.max(-1.1 * st.box.tw * cam.s, Math.min(1.1 * st.box.tw * cam.s, g.dx - e.deltaX * px));
+  g.samples.push([now, g.dx]);
+  while (g.samples.length > 2 && now - g.samples[0][0] > 80) g.samples.shift();
+  if (st.m) {
+    st.m.dx = st.m.dx0 + g.dx / cam.s;
+    if (!st.m.buzzed && Math.abs(st.m.dx) > COMMIT * st.box.tw) st.m.buzzed = true;
+  }
+  clearTimeout(g.timer);
+  g.timer = setTimeout(() => {
+    const s = g.samples, v = s.length > 1 ? (s[s.length - 1][1] - s[0][1]) / Math.max(1, s[s.length - 1][0] - s[0][0]) : 0;
+    wheelDrag = null;
+    wheelQuiet = performance.now() + 250;
+    release(st, v, cam.s);
+  }, 120);
+}, { passive: false });
+
 // Arrows and swipes: through the stack one shuffle at a time, then on along the yarn.
 function step(dir) {
   if (active < 0) return;
   const st = stacks[active];
   if (st && !travel && !running) {
-    if (st.busy) return;
-    if (dir > 0 && st.steps < st.order.length - 1) { st.steps++; return shuffle(st, 1); }
-    if (dir < 0 && st.steps > 0) { st.steps--; return shuffle(st, -1); }
+    if (dir > 0 && st.steps < st.order.length - 1) { st.steps++; return advance(st, 1); }
+    if (dir < 0 && st.steps > 0) { st.steps--; return advance(st, -1); }
   }
   zoomTo(active + dir);
 }
@@ -1389,7 +1679,7 @@ function toggleSound(el) {
 let playing = null, holdTimer = 0, held = false;
 function liveFocused(el) {
   const st = stacks[active];
-  return !running && active >= 0 && el === cards[active] && !(st && st.busy);
+  return !running && active >= 0 && el === cards[active] && !(st && st.m);
 }
 function playLive(el) {
   if (!el || !el._entry || !el._entry.live || el._entry.video || el._liveBroken) return;
@@ -1431,7 +1721,7 @@ document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(
 // Phones: press and hold for 300ms on any front card.
 function liveHoverable(el) {
   const st = stacks[cards.indexOf(el)];
-  return !running && !(st && st.busy);
+  return !running && !(st && st.m);
 }
 function hookLive(el) {
   el.addEventListener('mouseenter', () => { if (hoverable.matches && liveHoverable(el) && playing !== el) playLive(el); });
@@ -1465,15 +1755,15 @@ document.addEventListener('keydown', e => {
   else if (active >= 0 && (e.key === 'm' || e.key === 'M') && cards[active]._entry && cards[active]._entry.video) toggleSound(cards[active]);
 });
 
-let touch = null;
-stage.addEventListener('touchstart', e => { const t = e.touches[0]; touch = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
+// Swiping elsewhere while zoomed in travels along the yarn (a swipe a stack claimed is its own).
+let touch = null, claimed = false;
+stage.addEventListener('touchstart', e => { const t = e.touches[0]; claimed = false; touch = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
 stage.addEventListener('touchend', e => {
-  if (!touch || active < 0) return;
+  if (!touch || active < 0 || claimed) return;
   const t = e.changedTouches[0], dx = t.clientX - touch.x, dy = t.clientY - touch.y;
   touch = null;
   if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
 }, { passive: true });
-window.addEventListener('wheel', () => { if (active >= 0) zoomOut(); }, { passive: true });
 window.addEventListener('scroll', () => { if (active >= 0 && Math.abs(window.scrollY - zoomScrollY) > 40) zoomOut(); }, { passive: true });
 
 let queued = false;
