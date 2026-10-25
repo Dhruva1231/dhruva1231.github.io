@@ -224,6 +224,7 @@ body {
 }
 .ppin::after { content: ""; position: absolute; left: 2.5px; top: 2.5px; width: 4px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.8); }
 .polaroid.active .ppin { opacity: 1; animation: pop 460ms cubic-bezier(.3, 1.4, .5, 1) 180ms both; }
+.polaroid.lifted .ppin { opacity: 1; }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
 /* ---------- Stacks: several photos for one moment ----------
    The top card is the normal polaroid (pin, caption, yarn) and always shows the stack's front photo.
@@ -242,10 +243,11 @@ body {
 .polaroid.scard.near { z-index: 11; }          /* the zoomed moment's pile stays bright under the dimmer */
 .polaroid.scard.flyer { z-index: 13; transition: none; pointer-events: none; }
 .polaroid.scard.flyer.behind { z-index: 11; }
-/* On the resting board (phones) the front card sits at z 2 under the yarn, so the flyer goes just above it
-   on the way out and under the whole pile on the way back. */
-.polaroid.scard.flyer.rest { z-index: 3; }
-.polaroid.scard.flyer.rest.behind { z-index: 0; }
+/* Phones shuffle without zooming: the stack lifts and straightens like a zoomed card while it shuffles. */
+.polaroid.lifted {
+  z-index: 12; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1.06);
+  filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)) drop-shadow(0 22px 26px rgba(20,10,2,.5));
+}
 .scard .livebadge, .scard .vbadge { display: none; }
 
 /* ---------- Live Photos ---------- */
@@ -1245,12 +1247,27 @@ function shuffle(st, dir, side) {
   if (st.busy) return;
   stopLive();
   const top = cards[st.i], d = TRIP[st.i], n = st.order.length, zoomed = active === st.i;
-  // Unzoomed (phones), a tap sends the card toward the middle of the board, where there's room.
-  if (!side) side = zoomed ? 1 : (st.box.c.x < board.offsetWidth / 2 ? 1 : -1);
+  side = side || 1;
+  // Unzoomed (phones): lift the stack the way zooming does, and set it back down once shuffling stops.
+  const wasLifted = zoomed || top.classList.contains('lifted');
+  if (!zoomed) {
+    clearTimeout(st.drop);
+    top.classList.add('lifted');
+    st.back.forEach(c => c.classList.add('near'));
+  }
+  const settle = () => {
+    if (zoomed) return;
+    clearTimeout(st.drop);
+    st.drop = setTimeout(() => {
+      if (st.busy || active === st.i) return;
+      top.classList.remove('lifted');
+      st.back.forEach(c => c.classList.remove('near'));
+    }, 900);
+  };
   st.order = dir > 0 ? st.order.slice(1).concat(st.order[0]) : [st.order[n - 1]].concat(st.order.slice(0, n - 1));
   const front = st.entries[st.order[0]];
   live.textContent = `${d.caption}: photo ${st.order[0] + 1} of ${n}`;
-  const land = () => { showBacks(st, true); syncVideo(top); if (!reducedMotion.matches && !running) playLive(top); };
+  const land = () => { showBacks(st, true); syncVideo(top); settle(); if (!reducedMotion.matches && !running) playLive(top); };
   if (reducedMotion.matches || !top.animate) {
     showEntry(top, front, true);
     return land();
@@ -1258,7 +1275,7 @@ function shuffle(st, dir, side) {
   // The flyer is a copy of the card that travels: the old front going to the back (dir > 0), or the
   // card at the very back coming forward (dir < 0). It wears the front card's frame either way.
   const fly = document.createElement('div');
-  fly.className = 'polaroid scard flyer' + (zoomed ? '' : ' rest') + (dir > 0 ? '' : ' behind');
+  fly.className = 'polaroid scard flyer' + (dir > 0 ? '' : ' behind');
   frameVars(fly, d.frame);
   fly.style.setProperty('--cr', top.style.getPropertyValue('--cr'));
   fly.innerHTML = cardInner(d.frame, '');
@@ -1268,18 +1285,18 @@ function shuffle(st, dir, side) {
   const { c, tw, th } = st.box, deep = st.back[st.back.length - 1];
   fly.style.left = (c.x - tw / 2).toFixed(2) + 'px';
   fly.style.top = (c.y - th / 2).toFixed(2) + 'px';
-  // The front card's pose: lifted and straightened when zoomed in, else resting at its tilt (phones).
-  const rest = zoomed ? st.lift : { x: 0, y: 0, r: d.r };
-  const lifted = T(rest, zoomed ? 1.06 : 1);
-  const out = T({ x: rest.x + side * tw * (zoomed ? .66 : .56), y: rest.y - th * .03, r: rest.r + side * 9 }, zoomed ? 1.04 : 1.02);
+  const lifted = T(st.lift, 1.06);
+  const out = T({ x: st.lift.x + side * tw * .66, y: st.lift.y - th * .03, r: side * 9 }, 1.04);
+  // A stack that was still resting starts from its tilt; the lift and the flyer then move together.
+  const start = wasLifted ? lifted : T({ x: 0, y: 0, r: d.r }, 1);
   const back = T(st.pile[st.back.length - 1], 1);
   st.busy = true;
   if (dir > 0) {
-    fly.style.transform = lifted;
+    fly.style.transform = start;
     board.insertBefore(fly, top.nextSibling);
     showEntry(top, front, true);          // revealed underneath as the flyer slides away
     syncVideo(top);
-    fly.animate([{ transform: lifted }, { transform: out }], { duration: 230, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }).onfinish = () => {
+    fly.animate([{ transform: start }, { transform: out }], { duration: 230, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }).onfinish = () => {
       fly.classList.add('behind');
       board.insertBefore(fly, deep);       // now tucked under the whole pile
       fly.animate([{ transform: out }, { transform: back }], { duration: 320, easing: 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' }).onfinish = () => {
