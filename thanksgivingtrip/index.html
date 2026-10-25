@@ -24,7 +24,8 @@
 
   0 photos shows the cartoon; 1 shows a single polaroid; 2+ make a stack. Zoomed in, clicking a stack (or
   the arrows) shuffles it: the front card slides out and tucks in at the back. Videos play muted on a loop,
-  cropped like the photos; zoomed in, the speaker button (or M) turns the sound on.
+  cropped like the photos; zoomed in, the speaker button (or M) turns the sound on. Phones never zoom:
+  tapping or swiping a stack shuffles it in place, and video cards always show the speaker button.
   Without a manifest entry the page still tries the old single file, photos/<id>.jpg (or .jpeg/.png/.JPG).
 
   Frames: polaroid-frame-a/b/c.webp sit next to this file (see FRAMES in the script for each window).
@@ -310,6 +311,7 @@ body {
 .note h1 { margin: 0; font-size: clamp(1.5rem, 2.1vw, 2.1rem); font-weight: 700; line-height: 1.05; }
 .note p { margin: 6px 0 0; font-size: 1.35rem; line-height: 1.1; }
 .note .hint { font-size: 1.1rem; opacity: .65; margin-top: 10px; }
+.hint-phone { display: none; }
 .pinned::before {
   content: ""; position: absolute; left: 50%; top: 6px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
   background: radial-gradient(circle at 35% 32%, #fff 0 12%, var(--pin) 30%, var(--pin-dark) 100%);
@@ -383,6 +385,10 @@ body {
     flex: none;
   }
   .polaroid.alt { margin-left: calc(50% - var(--pw) / 2 + var(--zz)); }
+  .polaroid { touch-action: pan-y; }
+  .polaroid.is-video:not(.scard) .vsound { display: grid; }
+  .hint-wide { display: none; }
+  .hint-phone { display: inline; }
   .tab { font-size: max(16px, calc(var(--pw) * .09)); }
   .zoombar { top: auto; bottom: 16px; right: 50%; transform: translate(50%, 8px); }
   .zoombar.show { transform: translate(50%, 0); }
@@ -405,7 +411,7 @@ body {
         <div class="note pinned">
           <h1>Thanksgiving ’26 — boys’ trip</h1>
           <p>Shiva · Dhruva · Dhira</p>
-          <p class="hint">tap a polaroid to zoom in</p>
+          <p class="hint"><span class="hint-wide">tap a polaroid to zoom in</span><span class="hint-phone">tap or swipe a polaroid to flip through</span></p>
         </div>
         <a class="sticky pinned" href="/thanksgivingplanning">how we decided to drive →</a>
         <svg id="yarn" aria-hidden="true"></svg>
@@ -794,6 +800,7 @@ const cards = TRIP.map((d, i) => {
     e.stopPropagation();
     if (swallowClick()) return;
     if (e.target.closest('.vsound')) return toggleSound(b);
+    if (phone.matches && active < 0) return stacks[i] ? shuffle(stacks[i], 1) : playLive(b);
     if (active !== i) return zoomTo(i);
     if (stacks[i]) return shuffle(stacks[i], 1);
     zoomOut();
@@ -807,6 +814,7 @@ const cards = TRIP.map((d, i) => {
 const STACK_BACK = 3;                  // cards showing behind the front one in a pile
 const stacks = TRIP.map(() => null);   // per moment with 2+ photos: { i, entries, order, back, pile, ... }
 const hoverable = window.matchMedia('(hover: hover) and (pointer: fine)');
+const phone = window.matchMedia('(max-width: 899px)');   // the zig-zag column: no zooming, stacks cycle in place
 let filmReady = false;
 
 function addPhoto(el, url, entry) {
@@ -882,8 +890,9 @@ function buildStack(i, entries) {
     el.addEventListener('click', e => {
       e.stopPropagation();
       if (swallowClick()) return;
-      if (active !== i) zoomTo(i); else shuffle(st, 1);
+      if (active === i || phone.matches && active < 0) shuffle(st, 1); else zoomTo(i);
     });
+    hookSwipe(el, i);
     // back[0] sits right behind the front card, the last one deepest in the pile.
     board.insertBefore(el, k ? st.back[k - 1] : top);
     st.back.push(el);
@@ -931,6 +940,7 @@ async function loadPhotos() {
   stacks.forEach(st => st && st.back.forEach((el, k) => addFilm(el, st.i + k + 1)));
 })();
 cards.forEach(hookLive);
+cards.forEach(hookSwipe);
 loadPhotos();
 
 
@@ -1226,7 +1236,8 @@ function onSettle() {
 
 // ---------- Shuffling a stack: one photo at a time, the front card cycles to the back ----------
 const T = (p, s) => `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) rotate(${p.r.toFixed(2)}deg) scale(${s})`;
-function shuffle(st, dir) {
+// side: which way the moving card leaves the pile (1 = right, -1 = left; a swipe sends it the way the finger went).
+function shuffle(st, dir, side = 1) {
   if (st.busy) return;
   stopLive();
   const top = cards[st.i], d = TRIP[st.i], n = st.order.length;
@@ -1251,8 +1262,10 @@ function shuffle(st, dir) {
   const { c, tw, th } = st.box, deep = st.back[st.back.length - 1];
   fly.style.left = (c.x - tw / 2).toFixed(2) + 'px';
   fly.style.top = (c.y - th / 2).toFixed(2) + 'px';
-  const lifted = T(st.lift, 1.06);
-  const out = T({ x: st.lift.x + tw * .66, y: st.lift.y - th * .03, r: 9 }, 1.04);
+  // The front card's pose: lifted and straightened when zoomed in, else resting at its tilt (phones).
+  const zoomed = active === st.i, rest = zoomed ? st.lift : { x: 0, y: 0, r: d.r };
+  const lifted = T(rest, zoomed ? 1.06 : 1);
+  const out = T({ x: rest.x + side * tw * .66, y: rest.y - th * .03, r: rest.r + side * 9 }, zoomed ? 1.04 : 1.02);
   const back = T(st.pile[st.back.length - 1], 1);
   st.busy = true;
   if (dir > 0) {
@@ -1280,6 +1293,23 @@ function shuffle(st, dir) {
       };
     };
   }
+}
+// Phones: a sideways swipe on a stack cycles it in place (left = next, right = back). touch-action: pan-y
+// leaves vertical scrolling to the browser.
+function hookSwipe(el, i) {
+  if (i === undefined) i = cards.indexOf(el);
+  let t0 = null;
+  el.addEventListener('touchstart', e => { const t = e.touches[0]; t0 = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
+  el.addEventListener('touchend', e => {
+    if (!t0 || !phone.matches || active >= 0 || !stacks[i]) return;
+    const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y;
+    t0 = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      clearTimeout(holdTimer);
+      held = true;                       // swallow the click a short swipe can end in
+      shuffle(stacks[i], dx < 0 ? 1 : -1, dx < 0 ? -1 : 1);
+    }
+  }, { passive: true });
 }
 // Arrows and swipes: through the stack one shuffle at a time, then on along the yarn.
 function step(dir) {
