@@ -168,7 +168,7 @@ def write_standalone(src, dst):
     write_mp4(src, dst, audio=True)
     mb = dst.stat().st_size / 1e6
     if mb > SOFT_MB:
-        print(f'  {dst.name} is {mb:.0f}MB; re-encoding at crf 30')
+        print(f'  {src.name} is {mb:.0f}MB as MP4; re-encoding at crf 30')
         write_mp4(src, dst, audio=True, crf=30)
         mb = dst.stat().st_size / 1e6
     if mb > HARD_MB:
@@ -187,12 +187,26 @@ def poster(video, dst, tmp, at=1.0):
     write_jpg(f, dst)
 
 
-def free_name(folder, stem, ext, taken):
+def free_name(folder, stem, ext, taken, own=None):
+    """An unused filename. `own` is the source being replaced: IMG.JPG -> IMG.jpg is fine even on macOS,
+    where the two names are the same file."""
     name, k = stem + ext, 2
-    while name in taken or ((folder / name).exists() and name not in taken):
+    while name.lower() != (own or '').lower() and (name in taken or (folder / name).exists()):
         name, k = f'{stem}-{k}{ext}', k + 1
     taken.add(name)
     return name
+
+
+def convert(folder, n, out, write):
+    """Write `out` from source `n` via a staging file, then drop the source. Staging keeps this safe when
+    the names differ only by case (one file on macOS). False (from `write`) keeps the source."""
+    stage = folder / ('.conv-' + out)
+    if write(stage) is False:
+        return False
+    if out != n:
+        (folder / n).unlink()
+    stage.replace(folder / out)
+    return True
 
 
 def read_captions(folder):
@@ -239,10 +253,8 @@ def process_folder(folder, old_entries):
         tmp = Path(td)
         for n in (n for n in raw if Path(n).suffix.lower() in STILL_IN):
             src, ext = folder / n, Path(n).suffix.lower()
-            out = n if n.endswith('.jpg') else free_name(folder, Path(n).stem, '.jpg', taken)
-            write_jpg(decode_heic(src, tmp) if ext in {'.heic', '.heif'} else src, folder / out)
-            if out != n:
-                src.unlink()
+            out = n if n.endswith('.jpg') else free_name(folder, Path(n).stem, '.jpg', taken, own=n)
+            convert(folder, n, out, lambda dst: write_jpg(decode_heic(src, tmp) if ext in {'.heic', '.heif'} else src, dst))
             new_stills[out] = times.get(n)
             print(f'  {folder.name}/{n} -> {out}')
 
@@ -277,14 +289,14 @@ def process_folder(folder, old_entries):
                 near = sorted((abs(t - vt), s) for s, t in new_stills.items()
                               if t is not None and not by_src[s].get('live') and abs(t - vt) <= PAIR_SECONDS)
                 match = near[0][1] if near else None
-            out = n if n.endswith('.mp4') else free_name(folder, Path(n).stem, '.mp4', taken)
+            out = n if n.endswith('.mp4') else free_name(folder, Path(n).stem, '.mp4', taken, own=n)
             if match and dur <= LIVE_MAX:
                 if n in raw:
-                    write_mp4(src, folder / out, audio=False)
+                    convert(folder, n, out, lambda dst: write_mp4(src, dst, audio=False))
                 by_src[match]['live'] = f'{folder.name}/{out}'
                 print(f'  {folder.name}/{n} -> {out} (Live Photo for {match})')
             else:
-                if n in raw and not write_standalone(src, folder / out):
+                if n in raw and not convert(folder, n, out, lambda dst: write_standalone(src, dst)):
                     continue
                 post = free_name(folder, Path(out).stem + '-poster', '.jpg', taken | stills)
                 poster(folder / out, folder / post, tmp)
@@ -294,8 +306,6 @@ def process_folder(folder, old_entries):
                 by_src[post] = e
                 added.append((vt, e))
                 print(f'  {folder.name}/{n} -> {out} + {post} ({dur:.0f}s video)')
-            if out != n:
-                src.unlink()
     for t, e in sorted(added, key=lambda x: (x[0] is None, x[0] or 0, x[1]['src'])):
         entries.append(e)
     # cover* first, then order.txt, then the order built above (old order, then new by capture time).

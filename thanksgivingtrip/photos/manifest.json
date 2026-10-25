@@ -1,15 +1,116 @@
 {
-  "andrews-bald": [],
-  "atl": [],
-  "black-rock": [],
-  "drive-home": [],
-  "elk": [],
-  "gorge-floor": [],
-  "kuwohi": [],
-  "newfound-gap": [],
+  "andrews-bald": [
+    {
+      "src": "andrews-bald/IMG_3161.jpg",
+      "caption": null
+    },
+    {
+      "src": "andrews-bald/IMG_3076.jpg",
+      "caption": null
+    },
+    {
+      "src": "andrews-bald/IMG_3093-poster.jpg",
+      "video": "andrews-bald/IMG_3093.mp4",
+      "duration": 12,
+      "aspect": 1.78,
+      "caption": null
+    }
+  ],
+  "atl": [
+    {
+      "src": "atl/IMG_3612.jpg",
+      "caption": null
+    },
+    {
+      "src": "atl/IMG_5665.jpg",
+      "caption": null
+    },
+    {
+      "src": "atl/IMG_1858.jpg",
+      "caption": null
+    },
+    {
+      "src": "atl/IMG_1691.jpg",
+      "caption": null
+    }
+  ],
+  "black-rock": [
+    {
+      "src": "black-rock/IMG_3910.jpg",
+      "caption": null
+    },
+    {
+      "src": "black-rock/IMG_1130.jpg",
+      "caption": null
+    }
+  ],
+  "drive-home": [
+    {
+      "src": "drive-home/IMG_4498.jpg",
+      "caption": null
+    }
+  ],
+  "elk": [
+    {
+      "src": "elk/IMG_3704-poster.jpg",
+      "video": "elk/IMG_3704.mp4",
+      "duration": 15,
+      "aspect": 1.78,
+      "caption": null
+    },
+    {
+      "src": "elk/IMG_2944.jpg",
+      "caption": null
+    }
+  ],
+  "gorge-floor": [
+    {
+      "src": "gorge-floor/IMG_9571.jpg",
+      "caption": null
+    },
+    {
+      "src": "gorge-floor/1eb4f76b-f809-47e2-a243-aed25e213a3f.jpg",
+      "caption": null
+    },
+    {
+      "src": "gorge-floor/IMG_9577.jpg",
+      "caption": null
+    }
+  ],
+  "kuwohi": [
+    {
+      "src": "kuwohi/IMG_4155.jpg",
+      "caption": null
+    },
+    {
+      "src": "kuwohi/IMG_3066.jpg",
+      "caption": null
+    }
+  ],
+  "newfound-gap": [
+    {
+      "src": "newfound-gap/IMG_3616.jpg",
+      "caption": null
+    }
+  ],
   "pickleball": [],
-  "rabun-bald": [],
-  "roadtrip-up": [],
-  "steaks": [],
+  "rabun-bald": [
+    {
+      "src": "rabun-bald/IMG_1127.jpg",
+      "caption": null
+    }
+  ],
+  "roadtrip-up": [
+    {
+      "src": "roadtrip-up/8AE66026-4FDE-4D04-AD23-494776B915EE.jpg",
+      "caption": null
+    }
+  ],
+  "steaks": [
+    {
+      "src": "steaks/IMG_2389.jpg",
+      "caption": null
+    }
+  ],
   "tallulah-rim": []
 }
