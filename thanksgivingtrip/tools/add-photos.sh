@@ -4,6 +4,8 @@
 #
 #   thanksgivingtrip/tools/add-photos.sh steaks ~/Desktop/IMG_4412.HEIC ~/Desktop/IMG_4412.MOV ...
 #
+# A back.txt among the files becomes the note on the back of that moment's card (copied into the manifest as is).
+#
 # Needs: brew install ffmpeg exiftool   (plus libheif for HEIC; macOS sips is the fallback)
 #        python3 with Pillow           (python3 -m pip install --user pillow)
 #

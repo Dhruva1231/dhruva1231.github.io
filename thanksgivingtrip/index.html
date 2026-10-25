@@ -21,6 +21,14 @@
   Every card shows its moment's caption (from TRIP below). Per folder, optionally:
     order.txt      one filename per line, shown first in that order; otherwise capture-time order
     cover*.jpg     a file whose name starts with "cover" is always the top card
+    back.txt       the back of the moment's card. Optional "key: value" lines, a blank line, then a note:
+                       date: Sat, Nov 21
+                       miles: 2.2
+                       by: Dhira
+
+                       Dad burnt the first steak. Still the best one.
+                   date is stamped, by signs it, other keys are listed in order (unknown ones as "key — value").
+                   The card gets a curled corner; tap the corner, double-tap the card, or press F to flip it.
 
   0 photos shows the cartoon; 1 shows a single polaroid; 2+ make a stack. A stack is swiped like a deck: the
   front card follows the finger (or mouse, or a two-finger trackpad swipe when zoomed in) and, once let go
@@ -29,6 +37,10 @@
   place. Videos play muted on a loop, cropped like the photos; the speaker button (always on phones, zoomed
   in elsewhere, or M) turns the sound on.
   Without a manifest entry the page still tries the old single file, photos/<id>.jpg (or .jpeg/.png/.JPG).
+
+  Photos develop like instant film the first time they're seen (remembered in localStorage; visit with
+  ?develop=reset to see it again). The yarn is a rope simulation that sleeps when still. Tilting a phone (or the
+  mouse on desktop) adds a little parallax; iPhones ask first, through the "tap to tilt" note.
 
   Frames: polaroid-frame-a/b/c.webp sit next to this file (see FRAMES in the script for each window).
   film-overlay.webp is optional; when it exists it's laid over every photo.
@@ -67,6 +79,10 @@
   --blotch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .27 0 0 0 0 .12 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
   --plaster: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 -.24'/%3E%3C/filter%3E%3Cfilter id='q'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.04' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .5 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23q)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0035 .2' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .07 0 0 0 0 .035 0 0 0 0 .01 0 0 0 1.7 -.62'/%3E%3C/filter%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .35' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .62 0 0 0 0 .42 0 0 0 0 .26 0 0 0 1.4 -.78'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+  /* Undeveloped instant film: a flat blue-gray-green (#4f5a52 to #66705f) with soft low-frequency mottling */
+  --chem: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='c' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.011' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.2 0 0 0 .25 .2 0 0 0 .29 .12 0 0 0 .28 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  --fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .18 0 0 0 .5 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --inkmask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cfilter id='i'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.35' numOctaves='3' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.4 0 0 0 -.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23i)'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -130,16 +146,21 @@ body {
   height: calc(var(--pw) * 5.2 + 260px);
   box-shadow:
     0 0 0 2px var(--frame-bevel),
-    0 0 0 3px var(--frame-wood-dark),
-    inset 0 2px 10px rgba(30,15,5,.55),
-    inset 0 0 0 1px rgba(30,15,5,.35);
+    0 0 0 3px var(--frame-wood-dark);
+  --cu: calc(var(--pw) * .09);   /* size of a flippable card's curled corner */
 }
+/* The cork is its own layer, a little larger than the board, so tilting can slide it under everything else. */
+#corkclip { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+#corkclip::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 2px 10px rgba(30,15,5,.55), inset 0 0 0 1px rgba(30,15,5,.35); }
+#cork { position: absolute; inset: -8px; }
 @supports (width: 1cqw) {
   #board { --pw: clamp(150px, 20cqw, 240px); --zz: min(12cqw, 80px); --sw: min(34cqw, 150px); }
 }
 
 /* Yarn + pushpins sit above the polaroids */
-#yarn { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 5; }
+#yarn, #pinsh, #pins, #pinhl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 5; }
+/* Tilt parallax moves these layers (and each card's shade, gloss and pin) with inline translates; see tiltApply. */
+#board.tilting :is(#cork, #yarn, #pinsh, #pins, #pinhl, .shade, .gl) { will-change: transform; }
 #measure { position: absolute; width: 0; height: 0; visibility: hidden; }
 
 /* Dims everything except the focused polaroid while zoomed */
@@ -180,19 +201,26 @@ body {
   /* Pivot on the pushpin; --dx/--dy (set in layout) keep the resting pose identical to a center rotation. */
   transform-origin: 50% 2.5%;
   transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r));
-  filter: drop-shadow(0 1px 1px rgba(40,25,10,.4)) drop-shadow(0 8px 12px rgba(40,25,10,.25));
+  filter: drop-shadow(0 1px 1px rgba(40,25,10,.4));
   z-index: 2;
   -webkit-tap-highlight-color: transparent;
   transition: transform 650ms cubic-bezier(.3, 1.25, .5, 1);
 }
 .polaroid.active {
   z-index: 12; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1.06); will-change: transform;
-  filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)) drop-shadow(0 22px 26px rgba(20,10,2,.5));
+  filter: drop-shadow(0 2px 2px rgba(30,18,6,.45));
 }
+/* Soft shadow: a blurred card-sized layer under the card, shifted against the tilt like a fixed overhead light. */
+.shade {
+  position: absolute; inset: 0; z-index: -1; display: block; pointer-events: none;
+  background: var(--sc, rgba(40,25,10,.25)); border-radius: 3px; filter: blur(var(--sb, 6px));
+  transform: translateY(var(--sy, 8px)) scaleX(var(--fsx, 1));
+}
+.polaroid.active, .polaroid.flipping, .polaroid.scard.actor.held, .polaroid.scard.actor.front { --sc: rgba(20,10,2,.5); --sb: 13px; --sy: 22px; }
 .polaroid:focus { outline: none; }
 .polaroid:focus-visible { outline: 3px solid #fff7d6; outline-offset: 5px; }
-/* Photo and film overlay share one box: the frame's window, 0.3% larger on every side so no seam shows. */
-.photo, .film {
+/* Photo, film overlay and gloss share one box: the frame's window, 0.3% larger on every side so no seam shows. */
+.photo, .film, .gloss {
   position: absolute; display: block; overflow: hidden;
   left: calc(var(--wl) - .3%); top: calc(var(--wt) - .3%);
   width: calc(var(--ww) + .6%); height: calc(var(--wh) + .6%);
@@ -201,7 +229,17 @@ body {
 .photo svg, .photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .photo img { object-fit: cover; object-position: center; }
 .polaroid.has-photo .photo svg { display: none; }
-.film { pointer-events: none; }
+.film { pointer-events: none; transition: opacity 600ms ease; }
+/* Developing: the photo's own filter moves onto the image (driven frame by frame) over the film's base color. */
+.photo.undev { filter: none; background: var(--chem) center / cover, #5a6558; }
+.photo.undev ~ .film { opacity: 0; }   /* light leaks come up with the picture */
+/* Gloss: a faint sheen band across the print (not the paper), sliding with the tilt. White at 7% blends the
+   same as screen would. */
+.gloss { pointer-events: none; }
+.gl {
+  position: absolute; inset: 0;
+  background: linear-gradient(112deg, rgba(255,255,255,0) 34%, rgba(255,255,255,.07) 50%, rgba(255,255,255,0) 66%);
+}
 .film img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: rotate(var(--fr)) scale(var(--fs, 1)); }
 .fimg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
 .tab {
@@ -224,7 +262,7 @@ body {
   box-shadow: 2px 3px 3px rgba(40,20,5,.45), inset -1px -1px 1px rgba(0,0,0,.15);
   opacity: 0; pointer-events: none;
 }
-.ppin::after { content: ""; position: absolute; left: 2.5px; top: 2.5px; width: 4px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.8); }
+.ppin::after { content: ""; position: absolute; left: 2.5px; top: 2.5px; width: 4px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.8); translate: var(--hl, 0px 0px); }
 .polaroid.active .ppin { opacity: 1; animation: pop 460ms cubic-bezier(.3, 1.4, .5, 1) 180ms both; }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
 /* ---------- Stacks: several photos for one moment ----------
@@ -249,10 +287,56 @@ body {
 .polaroid.ghost > :not(.ppin) { visibility: hidden; }
 .polaroid.scard.parked { visibility: hidden; }
 .polaroid.scard.actor { transition: none; will-change: transform; z-index: 2; }
-.polaroid.scard.actor.held, .polaroid.scard.actor.front {
-  filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)) drop-shadow(0 22px 26px rgba(20,10,2,.5));
-}
+.polaroid.scard.actor.held, .polaroid.scard.actor.front { filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)); }
 .scard .livebadge, .scard .vbadge { display: none; }
+
+/* ---------- Card backs ----------
+   A moment with photos/<id>/back.txt can flip its front card. The card's layers move into a front face, the back
+   face sits beside it, and the script turns them (rotateY with perspective) and shows whichever faces the viewer.
+   The curled bottom-right corner is the hint: the frame's corner is clipped away and a folded flap drawn over. */
+.face { position: absolute; inset: 0; display: block; transform-origin: 50% 50%; }
+.face.back { visibility: hidden; display: flex; flex-direction: column; padding: 9% 9% 7%; text-align: left; }
+.polaroid.flipping .face { will-change: transform; }
+.canflip .fimg { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cu)), calc(100% - var(--cu)) 100%, 0 100%); }
+.cb-paper {
+  position: absolute; inset: 0; border-radius: 3px;
+  background: var(--fiber), linear-gradient(165deg, rgba(255,255,255,.18), rgba(0,0,0,0) 55%), var(--paper-tone, #e7e3d4);
+  box-shadow: inset 0 0 calc(var(--pw) * .07) rgba(84,64,36,.24), inset 0 0 0 1px rgba(84,64,36,.12);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cu) 100%, 0 calc(100% - var(--cu)));
+}
+.cb-stamp {
+  position: relative; align-self: flex-start;
+  font: 700 max(10px, calc(var(--pw) * .05)) / 1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(140,52,34,.6); border: max(1px, calc(var(--pw) * .006)) solid currentColor; border-radius: 3px;
+  padding: .35em .5em .3em; transform: rotate(-4deg);
+  -webkit-mask-image: var(--inkmask); mask-image: var(--inkmask); -webkit-mask-size: 90px; mask-size: 90px;
+}
+.cb-stats {
+  position: relative; display: block; margin-top: 6%;
+  font-family: var(--hand); font-weight: 500; font-size: max(13px, calc(var(--pw) * .068)); line-height: 1.12;
+  color: rgba(84,84,90,.78);
+}
+.cb-stats span { display: block; }
+.cb-note {
+  position: relative; display: block; flex: 1 1 auto; min-height: 0; margin-top: 5%;
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+  font-family: var(--hand); font-weight: 500; font-size: max(15px, calc(var(--pw) * .088)); line-height: 1.1;
+  color: #2b3a67; mix-blend-mode: multiply; white-space: pre-wrap; overflow-wrap: anywhere;
+  -webkit-mask-image: linear-gradient(#000 82%, transparent); mask-image: linear-gradient(#000 82%, transparent);
+  padding-bottom: .6em;   /* a long note scrolls; its last line can always clear the fade */
+}
+.cb-by {
+  position: relative; align-self: flex-end; margin: 3% 4% 0 0;
+  font-family: var(--hand); font-weight: 700; font-size: max(14px, calc(var(--pw) * .078)); line-height: 1;
+  color: #2b3a67; mix-blend-mode: multiply;
+}
+.curl { position: absolute; right: 0; bottom: 0; width: var(--cu); height: var(--cu); cursor: pointer; }
+.curl::before { content: ""; position: absolute; right: 0; bottom: 0; width: max(44px, 170%); height: max(44px, 170%); }
+.curl svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(-1px -1.5px 1.5px rgba(40,25,10,.35)); }
+.back .curl { right: auto; left: 0; }
+.back .curl svg { transform: scaleX(-1); }
+.scard .curl { pointer-events: none; }
 
 /* ---------- Live Photos ---------- */
 .photo video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 300ms ease; }
@@ -348,6 +432,17 @@ body {
 }
 .sticky:hover { background: linear-gradient(170deg, #fff4b4, #ffe880); }
 .sticky:focus-visible { outline: 3px solid #fff7d6; outline-offset: 4px; }
+/* Shown on phones that ask before sharing their orientation (iPhone): tapping asks. */
+.tiltnote {
+  --pin: #f08a24; --pin-dark: #8a4a0c;
+  position: absolute; left: 13%; top: 82%; z-index: 3;
+  width: 104px; padding: 20px 8px 9px; border: 0; border-radius: 0;
+  background: linear-gradient(170deg, #c9f0ff, #a8e2fa); color: var(--ink);
+  font-family: var(--hand); font-size: 1.15rem; font-weight: 700; line-height: 1.02;
+  transform: rotate(-3deg); box-shadow: 0 1px 1px rgba(40,20,5,.2), 0 10px 12px -7px rgba(40,20,5,.5);
+  cursor: pointer;
+}
+.tiltnote[hidden] { display: none; }
 
 /* ---------- Zoom controls ---------- */
 .zoombar {
@@ -400,6 +495,7 @@ body {
   .hint-wide { display: none; }
   .hint-phone { display: inline; }
   .tab { font-size: max(16px, calc(var(--pw) * .09)); }
+  .tiltnote { left: auto; right: 6px; top: calc(var(--sw) + 52px); width: 86px; font-size: 1.02rem; padding: 18px 6px 8px; }
   .zoombar { top: auto; bottom: 16px; right: 50%; transform: translate(50%, 8px); }
   .zoombar.show { transform: translate(50%, 0); }
 }
@@ -409,6 +505,7 @@ body {
   .polaroid.active .ppin { animation: none; }
   .polaroid.playing .livebadge svg { animation: none; }
   .photo video, .photo video.vid { transition: none; }
+  #board.tilting * { will-change: auto !important; }
 }
 </style>
 </head>
@@ -417,19 +514,24 @@ body {
   <div id="wall" aria-hidden="true"><div class="glow"></div></div>
   <div id="scene">
     <div class="frame" id="frame">
-      <div id="board" class="cork">
+      <div id="board">
+        <div id="corkclip" aria-hidden="true"><div id="cork" class="cork"></div></div>
         <div class="note pinned">
           <h1>Thanksgiving ’26 — boys’ trip</h1>
           <p>Shiva · Dhruva · Dhira</p>
           <p class="hint"><span class="hint-wide">tap a polaroid to zoom in</span><span class="hint-phone">tap or swipe a polaroid to flip through</span></p>
         </div>
         <a class="sticky pinned" href="/thanksgivingplanning">how we decided to drive →</a>
+        <button type="button" class="tiltnote pinned" id="tiltnote" hidden>tap to tilt the board ✦</button>
         <svg id="yarn" aria-hidden="true"></svg>
+        <svg id="pinsh" aria-hidden="true"></svg>
+        <svg id="pins" aria-hidden="true"></svg>
+        <svg id="pinhl" aria-hidden="true"></svg>
         <div id="dim" aria-hidden="true"></div>
       </div>
     </div>
   </div>
-  <svg id="measure" aria-hidden="true"><path id="measure-path"/></svg>
+  <svg id="measure" aria-hidden="true"><defs><linearGradient id="curlg" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f6f3ea"/><stop offset=".55" stop-color="#e8e3d5"/><stop offset="1" stop-color="#d3ccba"/></linearGradient></defs><path id="measure-path"/></svg>
 </main>
 
 <div class="zvig" id="zvig" aria-hidden="true"></div>
@@ -460,10 +562,11 @@ const TRIP = [
 const PHOTO_EXTS = ['jpg', 'jpeg', 'png', 'JPG'];
 // Polaroid frame images (1200px wide, transparent photo window). Percentages are of the frame image:
 // left/width of its width, top/height/tab of its height. tab = where the caption strip starts.
+// paper = the frame's paper tone, used for the card's back.
 const FRAMES = {
-  a: { src: 'polaroid-frame-a.webp', ar: '1200 / 1443', left: 6.429, top: 5.938, width: 86.857, height: 74.703, tab: 80.641 },
-  b: { src: 'polaroid-frame-b.webp', ar: '1200 / 1463', left: 6.15,  top: 5.921, width: 87.701, height: 74.123, tab: 80.044 },
-  c: { src: 'polaroid-frame-c.webp', ar: '1200 / 1472', left: 6.269, top: 5.736, width: 87.462, height: 73.691, tab: 79.426 }
+  a: { src: 'polaroid-frame-a.webp', ar: '1200 / 1443', left: 6.429, top: 5.938, width: 86.857, height: 74.703, tab: 80.641, paper: '#e8e4d3' },
+  b: { src: 'polaroid-frame-b.webp', ar: '1200 / 1463', left: 6.15,  top: 5.921, width: 87.701, height: 74.123, tab: 80.044, paper: '#dcdfe2' },
+  c: { src: 'polaroid-frame-c.webp', ar: '1200 / 1472', left: 6.269, top: 5.736, width: 87.462, height: 73.691, tab: 79.426, paper: '#e4cfb2' }
 };
 const PIN_TOP = .025; // pushpin sits on the top border, this fraction of the polaroid's height down
 const PIN_COLORS = [['#d93b30', '#ff9a8c', '#7a1a14'], ['#2f6fd1', '#9cc0ff', '#183c78'], ['#2f9e5a', '#9be0b2', '#175a31'],
@@ -766,7 +869,7 @@ const art = id => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slic
 // ---------- Build the board ----------
 const $ = id => document.getElementById(id);
 const stage = $('stage'), wall = $('wall'), scene = $('scene'), frameEl = $('frame'), board = $('board');
-const yarn = $('yarn'), dim = $('dim'), measure = $('measure-path');
+const yarn = $('yarn'), pinsh = $('pinsh'), pinsEl = $('pins'), pinhl = $('pinhl'), dim = $('dim'), measure = $('measure-path');
 const bar = $('zoombar'), zvig = $('zvig'), live = $('live');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const LIVE_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" aria-hidden="true">' +
@@ -782,11 +885,11 @@ const clock = t => `${Math.floor(t / 60)}:${String(Math.round(t) % 60).padStart(
 function frameVars(el, key, boxKey = key) {
   const fr = FRAMES[key], [aw, ah] = FRAMES[boxKey].ar.split('/').map(Number);
   el._wa = (fr.width * aw) / (fr.height * ah);   // the photo window's own aspect ratio
-  for (const [k, v] of [['--ar', FRAMES[boxKey].ar], ['--wl', fr.left + '%'], ['--wt', fr.top + '%'], ['--ww', fr.width + '%'], ['--wh', fr.height + '%'], ['--tt', fr.tab + '%']]) el.style.setProperty(k, v);
+  for (const [k, v] of [['--ar', FRAMES[boxKey].ar], ['--wl', fr.left + '%'], ['--wt', fr.top + '%'], ['--ww', fr.width + '%'], ['--wh', fr.height + '%'], ['--tt', fr.tab + '%'], ['--paper-tone', fr.paper]]) el.style.setProperty(k, v);
 }
-// One polaroid's layers, bottom to top: photo, film overlay, frame, LIVE badge, caption.
+// One polaroid's layers, bottom to top: soft shadow, photo, film overlay, gloss, frame, LIVE badge, caption.
 const cardInner = (key, photo) =>
-  `<span class="photo">${photo}</span><span class="film"></span>` +
+  `<span class="shade"></span><span class="photo">${photo}</span><span class="film"></span><span class="gloss"><i class="gl"></i></span>` +
   `<img class="fimg" src="${FRAMES[key].src}" alt="" draggable="false">` +
   `<span class="livebadge" aria-hidden="true">${LIVE_ICON}<span>live</span></span>` +
   `<span class="vbadge" aria-hidden="true">${FILM_CAM}<span></span></span>` +
@@ -811,11 +914,14 @@ const cards = TRIP.map((d, i) => {
     e.stopPropagation();
     if (swallowClick()) return;
     if (e.target.closest('.vsound')) return toggleSound(b);
+    if (e.target.closest('.curl')) return toggleFlip(i);
     if (dragClick) return;
-    if (phone.matches && active < 0) return stacks[i] ? advance(stacks[i], 1) : playLive(b);
-    if (active !== i) return zoomTo(i);
-    if (stacks[i]) return advance(stacks[i], 1);
-    zoomOut();
+    tap(i, () => {
+      if (phone.matches && active < 0) return stacks[i] ? advance(stacks[i], 1) : playLive(b);
+      if (active !== i) return zoomTo(i);
+      if (stacks[i]) return advance(stacks[i], 1);
+      zoomOut();
+    });
   });
   board.insertBefore(b, yarn);
   return b;
@@ -828,6 +934,7 @@ const stacks = TRIP.map(() => null);   // per moment with 2+ photos: { i, entrie
 const hoverable = window.matchMedia('(hover: hover) and (pointer: fine)');
 const phone = window.matchMedia('(max-width: 899px)');   // the zig-zag column: no zooming, stacks cycle in place
 let filmReady = false;
+const backs = {};                      // per moment id with a back.txt: { keys: [[key, value]...], note }
 
 function addPhoto(el, url, entry) {
   return new Promise(res => {
@@ -839,6 +946,8 @@ function addPhoto(el, url, entry) {
       if (entry && el._entry !== entry) return res(false);   // the card moved on to another photo meanwhile
       el.querySelector('.photo').appendChild(im);
       el.classList.add('has-photo');
+      devPrep(im, entry ? entry.src : url);
+      if (cards.includes(el)) { el._devSrc = entry ? entry.src : url; maybeDevelop(el); }
       res(true);
     };
     im.onerror = () => res(false);
@@ -856,7 +965,9 @@ async function findPhoto(d, el) {
 function showEntry(el, entry, load) {
   if (el._entry === entry && (el._loaded || !load)) return Promise.resolve(true);
   el._entry = entry;
+  el._livePending = false;
   el.querySelectorAll('.photo img, .photo video').forEach(n => n.remove());
+  el.querySelector('.photo').classList.remove('undev');
   el.classList.toggle('is-video', !!entry.video);
   el.classList.toggle('is-live', !!entry.live && !entry.video);
   el.classList.remove('playing', 'vplaying');
@@ -904,10 +1015,11 @@ function buildStack(i, entries) {
     el.style.setProperty('--hy', (Math.sin(a) * 5).toFixed(2) + 'px');
     el.style.setProperty('--hr', Math.sign(turn) * 2.5 + 'deg');
     setPose(el, st.pile[k], 1);
+    if (backs[d.id]) addCurl(el);
     el.addEventListener('click', e => {
       e.stopPropagation();
       if (swallowClick() || dragClick) return;
-      if (active === i || phone.matches && active < 0) advance(st, 1); else zoomTo(i);
+      tap(i, () => { if (active === i || phone.matches && active < 0) advance(st, 1); else zoomTo(i); });
     });
     el.addEventListener('pointerdown', e => pointerDown(e, i));
     // back[0] sits right behind the front card, the last one deepest in the pile.
@@ -947,6 +1059,14 @@ function setPose(el, p, scale) {
 async function loadPhotos() {
   let man = null;
   try { const r = await fetch('photos/manifest.json', { cache: 'no-cache' }); if (r.ok) man = await r.json(); } catch (e) { man = null; }
+  // Card backs: the manifest carries each photos/<id>/back.txt as written ("backs": {"<id>": {"text": ...}}).
+  const mb = man && man.backs && typeof man.backs === 'object' ? man.backs : {};
+  TRIP.forEach((d, i) => {
+    const text = mb[d.id] && (typeof mb[d.id] === 'string' ? mb[d.id] : mb[d.id].text);
+    if (typeof text !== 'string' || !text.trim()) return;
+    backs[d.id] = parseBack(text);
+    wrapFaces(cards[i], i);
+  });
   const tops = TRIP.map((d, i) => {
     const list = man && Array.isArray(man[d.id]) ? man[d.id].filter(e => e && typeof e.src === 'string') : [];
     if (!list.length) return findPhoto(d, cards[i]);
@@ -972,6 +1092,83 @@ async function loadPhotos() {
   cards.forEach((el, i) => addFilm(el, el._look ? el._look.film : i));
   stacks.forEach(st => st && st.back.forEach(el => addFilm(el, el._look.film)));
 })();
+
+// ---------- Developing: a real photo comes up like instant film the first time it's seen ----------
+// Seen photos (by manifest src) are remembered in localStorage; without storage every visit develops them again.
+// ?develop=reset forgets them. A photo develops once it's a front card and 60% on screen, or swiped to the front.
+// Until then, every card showing it (front, pile or a moving card) holds the undeveloped look.
+const DEV_KEY = 'tgtrip.developed', DEV_MS = 5000, DEV_STAGGER = 150;
+const devSeen = new Set(), devRuns = new Map(), devImgs = new Map();   // seen srcs; src -> start time; src -> imgs
+let devNext = 0, devRaf = 0;
+try {
+  if (new URLSearchParams(location.search).get('develop') === 'reset') localStorage.removeItem(DEV_KEY);
+  JSON.parse(localStorage.getItem(DEV_KEY) || '[]').forEach(s => devSeen.add(s));
+} catch (e) { /* no storage: develop every time */ }
+const devReady = src => !src || (devSeen.has(src) && !devRuns.has(src));
+const smooth = t => t * t * (3 - 2 * t);
+// u: 0 undeveloped .. 1 the normal faded-film look (the .photo filter, here moved onto the image).
+function devPaint(im, u) {
+  if (reducedMotion.matches) {
+    im.style.opacity = u.toFixed(3);
+    im.style.filter = 'sepia(.25) saturate(.85) contrast(.94) brightness(1.03)';
+    return;
+  }
+  // 0–40%: dark shapes come up out of the base, flat and soft. 40–100%: contrast, color and sharpness arrive;
+  // the base showing through keeps it cool until the warmth (sepia) comes in at the end.
+  const a = smooth(Math.min(1, u / .4)), b = smooth(Math.max(0, (u - .4) / .6)), w = smooth(Math.max(0, (u - .7) / .3));
+  im.style.opacity = (.5 * a + .5 * b).toFixed(3);
+  im.style.filter = `sepia(${(.25 * w).toFixed(3)}) saturate(${(.03 + .82 * b).toFixed(3)}) contrast(${(.6 + .34 * b).toFixed(3)}) ` +
+    `brightness(${(.5 + .15 * a + .38 * b).toFixed(3)}) blur(${(4 * (1 - b)).toFixed(2)}px)`;
+}
+const devAt = (t0, now) => Math.max(0, Math.min(1, (now - t0) / (reducedMotion.matches ? 400 : DEV_MS)));
+function devPrep(im, src) {
+  if (devReady(src) || !im.parentNode) return;
+  let set = devImgs.get(src);
+  if (!set) devImgs.set(src, set = new Set());
+  set.add(im);
+  im.parentNode.classList.add('undev');
+  devPaint(im, devRuns.has(src) ? devAt(devRuns.get(src), performance.now()) : 0);
+}
+function develop(src) {
+  if (!src || devSeen.has(src)) return;
+  devSeen.add(src);
+  try { localStorage.setItem(DEV_KEY, JSON.stringify([...devSeen])); } catch (e) { /* this visit only */ }
+  // Photos coming into view together develop together, 150ms apart.
+  const t0 = Math.max(performance.now(), devNext);
+  devNext = t0 + DEV_STAGGER;
+  devRuns.set(src, t0);
+  if (!devRaf) devRaf = requestAnimationFrame(devTick);
+}
+function devTick(now) {
+  for (const [src, t0] of devRuns) {
+    const u = devAt(t0, now), set = devImgs.get(src);
+    if (set) for (const im of set) if (im.isConnected) devPaint(im, u); else set.delete(im);
+    if (u >= 1) devDone(src);
+  }
+  devRaf = devRuns.size ? requestAnimationFrame(devTick) : 0;
+}
+// Developed: back to the plain filter, then whatever playback was waiting (a video, a Live Photo).
+function devDone(src) {
+  devRuns.delete(src);
+  for (const im of devImgs.get(src) || []) {
+    im.style.opacity = im.style.filter = '';
+    if (im.parentNode) im.parentNode.classList.remove('undev');
+  }
+  devImgs.delete(src);
+  cards.forEach(el => {
+    if (!el._entry || el._entry.src !== src) return;
+    syncVideo(el);
+    if (el._livePending) { el._livePending = false; if (liveHoverable(el)) playLive(el); }
+  });
+}
+function maybeDevelop(el) {
+  if (el._vis && el._devSrc) develop(el._devSrc);
+}
+const devWatch = 'IntersectionObserver' in window
+  ? new IntersectionObserver(list => list.forEach(e => { e.target._vis = e.intersectionRatio >= .59; maybeDevelop(e.target); }), { threshold: [0, .6, 1] })
+  : null;
+cards.forEach(el => { if (devWatch) devWatch.observe(el); else el._vis = true; });
+
 cards.forEach(hookLive);
 cards.forEach((el, i) => el.addEventListener('pointerdown', e => pointerDown(e, i)));
 loadPhotos();
@@ -995,54 +1192,53 @@ function layout() {
     return { x: el.offsetLeft + el.offsetWidth / 2 + dx, y: el.offsetTop + sizes[i].h * PIN_TOP + dy };
   });
 
+  // One rope per span. Across a row it hangs free with 5% slack; down to the next row it keeps its swing out
+  // around the side of the polaroid (a soft pull toward that shape), so it never lies across a photo.
   const f = n => n.toFixed(1);
-  const segs = [];
+  ropes = [];
   for (let i = 1; i < pins.length; i++) {
     const p0 = pins[i - 1], p1 = pins[i], dx = p1.x - p0.x, dy = p1.y - p0.y;
-    let c1, c2;
     if (Math.abs(dy) > Math.abs(dx)) {
       // Going down a row: swing out around the side of the polaroid instead of across its photo.
       const s = Math.abs(dx) > pw * .15 ? Math.sign(dx) : (p0.x > W / 2 ? 1 : -1);
       const B = pw * (window.innerWidth >= 900 ? 1.02 : .62);
-      c1 = { x: p0.x + s * B, y: p0.y + dy * .05 };
-      c2 = { x: p1.x + s * B, y: p1.y - dy * .2 };
+      const c1 = { x: p0.x + s * B, y: p0.y + dy * .05 }, c2 = { x: p1.x + s * B, y: p1.y - dy * .2 };
+      ropes.push(makeRope(sampleCurve(t => cubicAt(p0, c1, c2, p1, t)), true));
     } else {
-      const sag = Math.min(40, Math.abs(dx) * .1);
-      c1 = { x: p0.x + dx * .3, y: p0.y + sag };
-      c2 = { x: p1.x - dx * .3, y: p1.y + sag };
+      ropes.push(hangRope(p0, p1));
     }
-    segs.push(`C${f(c1.x)} ${f(c1.y)} ${f(c2.x)} ${f(c2.y)} ${f(p1.x)} ${f(p1.y)}`);
   }
-  const start = `M${f(pins[0].x)} ${f(pins[0].y)}`, d = start + segs.join('');
   const a = pins[0], z = pins[pins.length - 1];
+  yarnStart = `M${f(a.x)} ${f(a.y)}`;
   // Loose ends curl up onto the cork above the first and last pins.
-  const tails = `M${f(a.x)} ${f(a.y)}c-8 -4 -18 -14 -30 -12c-9 2 -12 -6 -20 -8M${f(a.x - 50)} ${f(a.y - 20)}l-4 -3M${f(a.x - 50)} ${f(a.y - 20)}l-5 1` +
-                `M${f(z.x)} ${f(z.y)}c8 -5 16 -16 28 -15c9 1 12 -6 20 -9M${f(z.x + 48)} ${f(z.y - 24)}l4 -3M${f(z.x + 48)} ${f(z.y - 24)}l5 1`;
+  yarnTail = `M${f(a.x)} ${f(a.y)}c-8 -4 -18 -14 -30 -12c-9 2 -12 -6 -20 -8M${f(a.x - 50)} ${f(a.y - 20)}l-4 -3M${f(a.x - 50)} ${f(a.y - 20)}l-5 1` +
+             `M${f(z.x)} ${f(z.y)}c8 -5 16 -16 28 -15c9 1 12 -6 20 -9M${f(z.x + 48)} ${f(z.y - 24)}l4 -3M${f(z.x + 48)} ${f(z.y - 24)}l5 1`;
 
-  const pinSvg = pins.map((p, i) => {
-    const c = i % PIN_COLORS.length;
-    return `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="7" fill="none" stroke="#9e1f22" stroke-width="2.6"/>` +
-      `<circle cx="${f(p.x + 2)}" cy="${f(p.y + 3)}" r="6.5" fill="#2a1505" opacity=".35" filter="url(#pinblur)"/>` +
-      `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="6.5" fill="url(#pin${c})"/>` +
-      `<ellipse cx="${f(p.x - 2)}" cy="${f(p.y - 2.4)}" rx="2" ry="1.4" fill="#fff" opacity=".8"/>`;
-  }).join('');
+  // Pins in three layers for the tilt parallax: shadows, heads, specular highlights.
+  const each = fn => pins.map(fn).join('');
+  pinsh.innerHTML = `<defs><filter id="pinblur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter></defs>` +
+    each(p => `<circle cx="${f(p.x + 2)}" cy="${f(p.y + 3)}" r="6.5" fill="#2a1505" opacity=".35" filter="url(#pinblur)"/>`);
+  pinsEl.innerHTML = `<defs>${PIN_COLORS.map(([c, l, k], i) => `<radialGradient id="pin${i}" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="${l}"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="${k}"/></radialGradient>`).join('')}</defs>` +
+    each((p, i) => `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="6.5" fill="url(#pin${i % PIN_COLORS.length})"/>`);
+  pinhl.innerHTML = each(p => `<ellipse cx="${f(p.x - 2)}" cy="${f(p.y - 2.4)}" rx="2" ry="1.4" fill="#fff" opacity=".8"/>`);
+  // The yarn: shadow, body, twist and fiber strokes share one path, rebuilt from the ropes while they move.
+  yarn.innerHTML = `<g fill="none" stroke-linecap="round" stroke-linejoin="round">` +
+    `<path class="y" stroke="#3a1505" stroke-opacity=".28" stroke-width="4.5" transform="translate(1.5 3)"/>` +
+    `<path class="y" stroke="var(--yarn)" stroke-width="3.4"/>` +
+    `<path class="y" stroke="#7a1517" stroke-width="3.4" stroke-dasharray="1.3 2.7" opacity=".7"/>` +
+    `<path class="y" stroke="#e8625a" stroke-width="1" stroke-dasharray="3 3" stroke-dashoffset="1.5" opacity=".75" transform="translate(-.4 -.7)"/>` +
+    `</g>` + each(p => `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="7" fill="none" stroke="#9e1f22" stroke-width="2.6"/>`);
+  yarnPaths = [...yarn.querySelectorAll('path.y')];
+  drawYarn();
 
-  yarn.innerHTML = `<defs><filter id="pinblur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter>` +
-    PIN_COLORS.map(([c, l, k], i) => `<radialGradient id="pin${i}" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="${l}"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="${k}"/></radialGradient>`).join('') +
-    `</defs><g fill="none" stroke-linecap="round" stroke-linejoin="round">` +
-    `<path d="${d}${tails}" stroke="#3a1505" stroke-opacity=".28" stroke-width="4.5" transform="translate(1.5 3)"/>` +
-    `<path d="${d}${tails}" stroke="var(--yarn)" stroke-width="3.4"/>` +
-    `<path d="${d}${tails}" stroke="#7a1517" stroke-width="3.4" stroke-dasharray="1.3 2.7" opacity=".7"/>` +
-    `<path d="${d}${tails}" stroke="#e8625a" stroke-width="1" stroke-dasharray="3 3" stroke-dashoffset="1.5" opacity=".75" transform="translate(-.4 -.7)"/>` +
-    `</g>${pinSvg}`;
-
-  // Sample the yarn so the camera can follow it without touching the DOM mid-flight.
+  // Sample the yarn at rest so the camera can follow it without touching the DOM mid-flight.
+  const restD = ropes.map(r => ropeD(r.R));
   const lens = [0];
   for (let i = 1; i < pins.length; i++) {
-    measure.setAttribute('d', start + segs.slice(0, i).join(''));
+    measure.setAttribute('d', yarnStart + restD.slice(0, i).join(''));
     lens.push(measure.getTotalLength());
   }
-  measure.setAttribute('d', d);
+  measure.setAttribute('d', yarnStart + restD.join(''));
   const total = measure.getTotalLength(), step = 4, samples = [];
   for (let L = 0; L <= total + step; L += step) {
     const p = measure.getPointAtLength(Math.min(L, total));
@@ -1135,6 +1331,7 @@ function render() {
   // The wall follows 85% of the camera move, so the framed board reads as raised off it.
   const sw = 1 + PARALLAX * (s - 1);
   wall.style.transform = `translate3d(${(PARALLAX * tx + (sw - 1) * geo.wo.x).toFixed(2)}px, ${(PARALLAX * ty + (sw - 1) * geo.wo.y).toFixed(2)}px, 0) scale(${sw.toFixed(5)})`;
+  if (tilt.fx || tilt.fy) tiltApply();
 }
 function clearCamera() {
   scene.style.transform = wall.style.transform = '';
@@ -1161,6 +1358,13 @@ function tick(now) {
       spring(cam, 's', 'vs', goal.s, K, D, h);
     }
   }
+  // The yarn feels the camera's acceleration (a very slight sway).
+  if (dt > 0) {
+    camA.x = Math.max(-2500, Math.min(2500, (cam.vx - camA.vx) / dt));
+    camA.y = Math.max(-2500, Math.min(2500, (cam.vy - camA.vy) / dt));
+    camA.vx = cam.vx; camA.vy = cam.vy;
+    if (Math.abs(camA.x) + Math.abs(camA.y) > 150) wakeYarn();
+  }
   const settled = !travel &&
     Math.abs(cam.x - goal.x) < .1 && Math.abs(cam.y - goal.y) < .1 && Math.abs(cam.s - goal.s) < 5e-4 &&
     Math.abs(cam.vx) < .5 && Math.abs(cam.vy) < .5 && Math.abs(cam.vs) < 5e-3;
@@ -1169,6 +1373,7 @@ function tick(now) {
     if (active < 0) clearCamera(); else render();
     // Dropping will-change once still lets the browser re-rasterize crisply at the zoomed scale.
     scene.style.willChange = wall.style.willChange = 'auto';
+    camA.x = camA.y = 0;
     running = false;
     onSettle();
     return;
@@ -1183,6 +1388,7 @@ function kick() {
   running = true;
   scene.style.willChange = wall.style.willChange = 'transform';
   last = performance.now();
+  camA.vx = cam.vx; camA.vy = cam.vy;
   requestAnimationFrame(tick);
 }
 // Reduced motion: no camera move, just a quick fade into the new framing.
@@ -1308,11 +1514,24 @@ function makeActor(st, j) {
   el.querySelector('.tab > span').textContent = d.caption;
   el.classList.add('has-photo');
   applyLook(el, st, j);
+  devPrep(el.querySelector('.photo img'), st.entries[j].src);
+  // The front card was showing its back: this card takes over the flip (and turns it back if it's swiped away).
+  const m = st.m, top = cards[st.i];
+  if (m && m.flipFrom === j && !m.flipActor) {
+    wrapFaces(el, st.i);
+    Object.assign(el._fl, top._fl);
+    renderFlip(el);
+    if (flipping.delete(top)) flipping.add(el);
+    top._fl.a = top._fl.v = top._fl.t = 0;
+    top.classList.remove('flipping');
+    renderFlip(top);
+    m.flipActor = el;
+  } else if (backs[TRIP[st.i].id]) addCurl(el);
   const { c, tw, th } = st.box;
   el.style.left = (c.x - tw / 2).toFixed(2) + 'px';
   el.style.top = (c.y - th / 2).toFixed(2) + 'px';
   el.addEventListener('pointerdown', e => pointerDown(e, st.i));
-  el.addEventListener('click', e => { e.stopPropagation(); if (!dragClick && !swallowClick()) advance(st, 1); });
+  el.addEventListener('click', e => { e.stopPropagation(); if (!dragClick && !swallowClick()) tap(st.i, () => advance(st, 1)); });
   return { el, j, x: 0, y: 0, r: 0, s: 1, vx: 0, vy: 0, vr: 0, vs: 0, mode: 'direct', way: null, zo: null };
 }
 // Which photos need a card: the visible pile, the one about to surface from under it, and the last one
@@ -1333,6 +1552,7 @@ function syncActors(st) {
     board.insertBefore(a.el, st.back[st.back.length - 1] || cards[st.i]);
     m.actors.set(j, a);
   }
+  if (tilt.ox || tilt.oy) tiltApply(true);
   m.zkey = '';
 }
 
@@ -1344,7 +1564,8 @@ function grab(st) {
   const v = top.querySelector('video.vid');
   if (v) v.pause();
   if (!st.m) {
-    st.m = { actors: new Map(), dx: 0, dxv: 0, p: 0, pv: 0, mode: null, phase: 'drag', commit: false, zoomed: active === st.i, buzzed: false };
+    st.m = { actors: new Map(), dx: 0, dxv: 0, p: 0, pv: 0, mode: null, phase: 'drag', commit: false, zoomed: active === st.i, buzzed: false,
+             flipFrom: isFlipped(top) ? st.order[0] : -1, flipActor: null };
     syncActors(st);
     top.classList.add('ghost');
     st.back.forEach(el => el.classList.add('parked'));
@@ -1375,6 +1596,7 @@ function release(st, v = 0, scale = 1, force = 0) {
   const m = st.m, tw = st.box.tw;
   if (!m) return;
   m.phase = 'release';
+  nudgeYarn(st.i, force ? -force * .6 : v);
   const dir = force || (m.dx ? -Math.sign(m.dx) : -Math.sign(v)) || 1;     // 1 = next (swipe left)
   const vb = v * 1000 / scale;                                               // board px/s
   const commit = force || (Math.abs(m.dx) > COMMIT * tw && -Math.sign(v) * dir > -FLICK) || -Math.sign(v) * dir * Math.abs(v) > FLICK;
@@ -1382,6 +1604,8 @@ function release(st, v = 0, scale = 1, force = 0) {
   if (st.order.length < 2) return;
   m.commit = true;
   m.mode = dir > 0 ? 'next' : 'prev';
+  if (m.flipActor) flipTo(m.flipActor, 0);                                    // a flipped card turns back as it leaves
+  develop(st.entries[dir > 0 ? st.order[1] : st.order[st.order.length - 1]].src);
   m.pv = Math.max(0, -dir * vb) / (NEAR * tw);
   const S = slots(st), j = mover(st), a = m.actors.get(j);
   const base = dir > 0 ? S[0] : S[S.length - 1], side = -dir;
@@ -1497,6 +1721,7 @@ function stepStack(st, dt) {
   if (m.phase === 'drag') still = false;
   if (m.commit && (Math.abs(m.p - 1) > .001 || Math.abs(m.pv) > .01)) still = false;
   if (!m.commit && (Math.abs(m.dx) > .3 || Math.abs(m.dxv) > 4)) still = false;
+  if (m.flipActor && flipping.has(m.flipActor)) still = false;
   if (still && !m.finishing) finish(st);
 }
 // Everything has landed: hand the stack back to the resting cards, then drop the actors.
@@ -1508,6 +1733,9 @@ function finish(st) {
   const shown = [showSlot(st, top, st.order[0], true), ...showBacks(st, true)];
   Promise.all(shown).then(() => {
     if (st.m !== m || m.finishing !== token) return;
+    // Swiped and let go without leaving the front: the card is still showing its back.
+    const fa = m.flipActor;
+    if (fa && st.order[0] === m.flipFrom && isFlipped(fa)) { Object.assign(top._fl, fa._fl); renderFlip(top); }
     top.classList.remove('ghost');
     st.back.forEach(el => el.classList.remove('parked'));
     for (const a of m.actors.values()) a.el.remove();
@@ -1521,7 +1749,7 @@ function finish(st) {
 let gest = null;
 const canDrag = i => active === i || (phone.matches && active < 0);
 function pointerDown(e, i) {
-  if (gest || !canDrag(i) || e.button > 0 || e.target.closest('.vsound')) return;
+  if (gest || !canDrag(i) || e.button > 0 || e.target.closest('.vsound, .curl')) return;
   const st = stacks[i];
   if (!st && !(phone.matches && active < 0)) return;      // single photos only rubber-band on phones
   const scale = active === i ? cam.s * 1.0 : 1;
@@ -1579,7 +1807,7 @@ function startBand(i) {
   cards[i].style.transition = 'none';
   if (!band.raf) { band.t = performance.now(); band.raf = requestAnimationFrame(bandTick); }
 }
-function endBand(v) { band.held = false; band.vx = v * 1000 * .25; }
+function endBand(v) { band.held = false; band.vx = v * 1000 * .25; nudgeYarn(band.i, v); }
 function clearBand() {
   if (band.i >= 0) { cards[band.i].style.transform = cards[band.i].style.transition = ''; }
   band.i = -1; band.x = band.vx = 0;
@@ -1600,7 +1828,12 @@ function bandTick(now) {
 // The swipe's momentum tail is ignored once released, so one swipe shuffles once.
 let wheelDrag = null, wheelQuiet = 0;
 addEventListener('wheel', e => {
-  if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { if (active >= 0) zoomOut(); return; }
+  if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) {
+    const note = e.target.closest && e.target.closest('.cb-note');   // a long note on a card's back scrolls instead
+    if (note && note.scrollHeight > note.clientHeight + 1) return;
+    if (active >= 0) zoomOut();
+    return;
+  }
   if (active < 0) return;
   e.preventDefault();
   const st = stacks[active];
@@ -1645,7 +1878,8 @@ if (onScreen) cards.forEach(el => onScreen.observe(el));
 function syncVideo(el) {
   const e = el._entry, box = el.querySelector('.photo');
   let v = box.querySelector('video.vid');
-  const want = !!(e && e.video) && el._onscreen !== false && !document.hidden && (!reducedMotion.matches || el._sound);
+  const want = !!(e && e.video) && el._onscreen !== false && !document.hidden && (!reducedMotion.matches || el._sound) &&
+    devReady(e.src) && !isFlipped(el);
   if (!want) {
     if (v) { v.pause(); v.removeAttribute('src'); v.load(); v.remove(); }
     el.classList.remove('vplaying');
@@ -1679,10 +1913,11 @@ function toggleSound(el) {
 let playing = null, holdTimer = 0, held = false;
 function liveFocused(el) {
   const st = stacks[active];
-  return !running && active >= 0 && el === cards[active] && !(st && st.m);
+  return !running && active >= 0 && el === cards[active] && !(st && st.m) && !isFlipped(el);
 }
 function playLive(el) {
-  if (!el || !el._entry || !el._entry.live || el._entry.video || el._liveBroken) return;
+  if (!el || !el._entry || !el._entry.live || el._entry.video || el._liveBroken || isFlipped(el)) return;
+  if (!devReady(el._entry.src)) { el._livePending = true; return; }   // plays once it has developed
   stopLive();
   const box = el.querySelector('.photo');
   let v = box.querySelector('video.lv');
@@ -1721,11 +1956,15 @@ document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(
 // Phones: press and hold for 300ms on any front card.
 function liveHoverable(el) {
   const st = stacks[cards.indexOf(el)];
-  return !running && !(st && st.m);
+  return !running && !(st && st.m) && !isFlipped(el);
 }
 function hookLive(el) {
   el.addEventListener('mouseenter', () => { if (hoverable.matches && liveHoverable(el) && playing !== el) playLive(el); });
-  el.addEventListener('mouseleave', () => { if (hoverable.matches && playing === el && el !== cards[active]) stopLive(); });
+  el.addEventListener('mouseleave', () => {
+    if (!hoverable.matches || el === cards[active]) return;
+    el._livePending = false;
+    if (playing === el) stopLive();
+  });
   el.addEventListener('touchstart', () => {
     clearTimeout(holdTimer);
     holdTimer = setTimeout(() => { if (liveHoverable(el) && el._entry && el._entry.live) { held = true; playLive(el); } }, 300);
@@ -1744,6 +1983,399 @@ function swallowClick() {
   return true;
 }
 
+// ---------- Card backs: flip a polaroid over ----------
+// photos/<id>/back.txt: optional "key: value" lines, a blank line, then a free-form note. date is stamped, by signs
+// it, every other key is listed in the order given. The flip is a spring on the angle (the swipe spring), and the
+// faces are turned separately, each shown only while it faces the viewer.
+const CURL = '<span class="curl" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M100 0L0 100C9 76 13 47 23 23C47 13 76 9 100 0Z" fill="url(#curlg)"/>' +
+  '<path d="M100 0L0 100" stroke="rgba(255,255,255,.55)" stroke-width="2"/></svg></span>';
+const STAT_LABELS = { miles: v => `${v} miles`, elevation: v => `${v} elevation` };
+const flipping = new Set();
+let flipRaf = 0, flipLast = 0;
+const tapWait = new Map();
+
+function parseBack(text) {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const blank = lines.findIndex(l => !l.trim()), head = blank < 0 ? lines : lines.slice(0, blank);
+  const isKey = l => /^\s*[^:\s][^:]{0,40}:\s*\S/.test(l) && !/^\s*https?:/i.test(l);
+  if (!head.length || !head.every(isKey)) return { keys: [], note: text.trim() };
+  return {
+    keys: head.map(l => { const k = l.indexOf(':'); return [l.slice(0, k).trim(), l.slice(k + 1).trim()]; }),
+    note: blank < 0 ? '' : lines.slice(blank + 1).join('\n').trim()
+  };
+}
+function backFace(i) {
+  const b = backs[TRIP[i].id], face = document.createElement('span'), add = (cls, text) => {
+    const n = document.createElement('span');
+    n.className = cls;
+    if (text != null) n.textContent = text;
+    face.appendChild(n);
+    return n;
+  };
+  face.className = 'face back';
+  add('cb-paper');
+  const date = b.keys.find(([k]) => k.toLowerCase() === 'date'), by = b.keys.find(([k]) => k.toLowerCase() === 'by');
+  if (date) add('cb-stamp', date[1]);
+  const rest = b.keys.filter(kv => kv !== date && kv !== by);
+  if (rest.length) {
+    const list = add('cb-stats');
+    for (const [k, v] of rest) {
+      const n = document.createElement('span'), fmt = STAT_LABELS[k.toLowerCase()];
+      n.textContent = fmt ? fmt(v) : `${k} — ${v}`;
+      list.appendChild(n);
+    }
+  }
+  add('cb-note', b.note);
+  if (by) add('cb-by', `— ${by[1]}`);
+  face.insertAdjacentHTML('beforeend', CURL);
+  return face;
+}
+// A card's layers (all but its pin) move into a front face; the back face goes beside it.
+function wrapFaces(el, i) {
+  const front = document.createElement('span');
+  front.className = 'face front';
+  for (const n of [...el.childNodes]) if (!(n.classList && (n.classList.contains('ppin') || n.classList.contains('shade')))) front.appendChild(n);
+  front.insertAdjacentHTML('beforeend', CURL);
+  el.insertBefore(front, el.firstChild);
+  const back = backFace(i);
+  el.insertBefore(back, front.nextSibling);
+  el.classList.add('canflip');
+  el._faces = { front, back };
+  el._fl = { a: 0, v: 0, t: 0 };
+}
+function addCurl(el) {
+  el.classList.add('canflip');
+  el.insertAdjacentHTML('beforeend', CURL);
+}
+const isFlipped = el => !!(el._fl && (el._fl.t || el._fl.a));
+function renderFlip(el) {
+  const f = el._fl, { front, back } = el._faces, a = f.a, rad = a * Math.PI / 180;
+  const showBack = a > 90, still = a === 0 || a === 180;
+  // Lifts a little toward the viewer mid-flip.
+  const tf = ang => still ? '' : `perspective(1200px) translateZ(${(Math.sin(rad) * 36).toFixed(1)}px) rotateY(${ang.toFixed(2)}deg)`;
+  front.style.visibility = showBack ? 'hidden' : '';
+  back.style.visibility = showBack ? 'visible' : '';
+  front.style.transform = showBack ? '' : tf(a);
+  back.style.transform = showBack ? tf(a - 180) : '';
+  const sh = el.querySelector(':scope > .shade');
+  if (still) sh.style.removeProperty('--fsx'); else sh.style.setProperty('--fsx', Math.max(.08, Math.abs(Math.cos(rad))).toFixed(3));
+}
+function flipTo(el, t) {
+  const f = el._fl;
+  if (!f || f.t === t && !flipping.has(el) && f.a === t) return;
+  f.t = t;
+  if (t) {                                   // Live Photos and videos wait while the back is showing
+    if (playing === el) stopLive();
+    el._livePending = false;
+    syncVideo(el);
+  }
+  flipping.add(el);
+  el.classList.add('flipping');
+  if (!flipRaf) { flipLast = performance.now(); flipRaf = requestAnimationFrame(flipTick); }
+}
+function flipTick(now) {
+  const dt = Math.min(.05, (now - flipLast) / 1000);
+  flipLast = now;
+  for (const el of flipping) {
+    const f = el._fl;
+    springStep(f, 'a', 'v', f.t, reducedMotion.matches ? QUICK : SPRING, dt);
+    const done = Math.abs(f.a - f.t) < .3 && Math.abs(f.v) < 3;
+    if (done) { f.a = f.t; f.v = 0; }
+    f.a = Math.max(-8, Math.min(188, f.a));
+    renderFlip(el);
+    if (!done && el.isConnected) continue;
+    flipping.delete(el);
+    el.classList.remove('flipping');
+    if (!f.t && cards.includes(el)) {        // face up again: carry on playing
+      syncVideo(el);
+      if (liveFocused(el)) playLive(el);
+    }
+  }
+  flipRaf = flipping.size ? requestAnimationFrame(flipTick) : 0;
+}
+function toggleFlip(i) {
+  const el = cards[i], st = stacks[i];
+  clearTimeout(tapWait.get(i));
+  tapWait.delete(i);
+  if (!el._fl || (st && st.m) || band.i === i) return;
+  flipTo(el, el._fl.t ? 0 : 180);
+  live.textContent = el._fl.t ? `${TRIP[i].caption}: the back of the photo` : TRIP[i].caption;
+}
+// Cards that can flip wait 250ms on a tap, so a double tap (or double click) flips instead.
+function tap(i, action) {
+  if (!backs[TRIP[i].id]) return action();
+  if (tapWait.has(i)) return toggleFlip(i);
+  tapWait.set(i, setTimeout(() => { tapWait.delete(i); action(); }, 250));
+}
+
+// ---------- Yarn: a verlet rope on each span between pins ----------
+// Ends fixed at the pins, 14 points a span, a fixed 60Hz step. Spans fall asleep once still, and the loop stops
+// when every span is asleep. Only spans on screen are simulated; one that leaves the screen goes back to rest.
+// Spans that keep a shape lie on the cork, so they get a little friction on top of the damping.
+const ROPE_N = 14, SLACK = 1.05, GRAV = 900, YSTEP = 1 / 60, YDAMP = .985, YFRICTION = .975, YITER = 8, YPULL = 40;
+let ropes = [], yarnPaths = [], yarnStart = '', yarnTail = '', yarnRaf = 0, yarnLast = 0, yarnAcc = 0, yarnG = 0;
+const camA = { x: 0, y: 0, vx: 0, vy: 0 };     // camera acceleration (scene px/s²), felt by the yarn
+
+const cubicAt = (p0, c1, c2, p1, t) => {
+  const u = 1 - t;
+  return { x: u * u * u * p0.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * p1.x,
+           y: u * u * u * p0.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * p1.y };
+};
+function sampleCurve(fn, m = 160) {
+  const out = [];
+  for (let k = 0; k <= m; k++) out.push(fn(k / m));
+  return out;
+}
+// n points evenly spaced along a polyline.
+function resample(poly, n) {
+  const cum = [0];
+  for (let k = 1; k < poly.length; k++) cum.push(cum[k - 1] + Math.hypot(poly[k].x - poly[k - 1].x, poly[k].y - poly[k - 1].y));
+  const L = cum[cum.length - 1], out = new Float64Array(n * 2);
+  for (let q = 0, k = 1; q < n; q++) {
+    const want = L * q / (n - 1);
+    while (k < poly.length - 1 && cum[k] < want) k++;
+    const f = (want - cum[k - 1]) / ((cum[k] - cum[k - 1]) || 1);
+    out[2 * q] = poly[k - 1].x + (poly[k].x - poly[k - 1].x) * f;
+    out[2 * q + 1] = poly[k - 1].y + (poly[k].y - poly[k - 1].y) * f;
+  }
+  return { pts: out, L };
+}
+function makeRope(poly, pull) {
+  const { pts, L } = resample(poly, ROPE_N);
+  const r = { P: pts, Q: pts.slice(), R: pts.slice(), seg: L / (ROPE_N - 1), pull, awake: false, calm: 0, d: '' };
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (let k = 0; k < ROPE_N; k++) { x0 = Math.min(x0, pts[2 * k]); x1 = Math.max(x1, pts[2 * k]); y0 = Math.min(y0, pts[2 * k + 1]); y1 = Math.max(y1, pts[2 * k + 1]); }
+  r.box = { x0: x0 - 60, y0: y0 - 60, x1: x1 + 60, y1: y1 + 60 };
+  return r;
+}
+// A free span: start from the parabola with 5% slack, then let it settle under gravity into its catenary.
+function hangRope(p0, p1) {
+  const L0 = Math.hypot(p1.x - p0.x, p1.y - p0.y), sag = Math.sqrt(3 * L0 * L0 * (SLACK - 1) / 8);
+  const r = makeRope(sampleCurve(t => ({ x: p0.x + (p1.x - p0.x) * t, y: p0.y + (p1.y - p0.y) * t + 4 * sag * t * (1 - t) })), false);
+  r.seg = L0 * SLACK / (ROPE_N - 1);
+  const g = yarnG, ca = { x: camA.x, y: camA.y };
+  yarnG = camA.x = camA.y = 0;
+  for (let k = 0; k < 150; k++) stepRope(r, .9);
+  yarnG = g; camA.x = ca.x; camA.y = ca.y;
+  r.Q.set(r.P);
+  r.R.set(r.P);
+  return r;
+}
+function stepRope(r, damp = r.pull ? YDAMP * YFRICTION : YDAMP) {
+  const P = r.P, Q = r.Q, R = r.R, n = ROPE_N, h2 = YSTEP * YSTEP;
+  // Gravity, nudged sideways by the tilt; spans that keep a shape only feel the nudge (and their pull home).
+  const gx = yarnG * GRAV + camA.x * .03, gy = (r.pull ? 0 : GRAV) + camA.y * .03;
+  for (let k = 1; k < n - 1; k++) {
+    const i = 2 * k;
+    let ax = gx, ay = gy;
+    if (r.pull) { ax += YPULL * (R[i] - P[i]); ay += YPULL * (R[i + 1] - P[i + 1]); }
+    const vx = (P[i] - Q[i]) * damp, vy = (P[i + 1] - Q[i + 1]) * damp;
+    Q[i] = P[i]; Q[i + 1] = P[i + 1];
+    P[i] += vx + ax * h2; P[i + 1] += vy + ay * h2;
+  }
+  for (let it = 0; it < YITER; it++) {
+    for (let k = 0; k < n - 1; k++) {
+      const a = 2 * k, b = a + 2, dx = P[b] - P[a], dy = P[b + 1] - P[a + 1], d = Math.hypot(dx, dy) || 1e-6;
+      const f = (d - r.seg) / d, wa = k === 0 ? 0 : k === n - 2 ? 1 : .5, wb = k === 0 ? 1 : k === n - 2 ? 0 : .5;
+      P[a] += dx * f * wa; P[a + 1] += dy * f * wa;
+      P[b] -= dx * f * wb; P[b + 1] -= dy * f * wb;
+    }
+  }
+  let e = 0;
+  for (let k = 1; k < n - 1; k++) { const i = 2 * k, vx = P[i] - Q[i], vy = P[i + 1] - Q[i + 1]; e += vx * vx + vy * vy; }
+  r.d = '';
+  return e;
+}
+// A smooth curve through the points (Catmull-Rom as cubic Béziers), continuing from the previous span's end.
+function ropeD(P) {
+  const n = ROPE_N, x = k => P[2 * Math.max(0, Math.min(n - 1, k))], y = k => P[2 * Math.max(0, Math.min(n - 1, k)) + 1];
+  let d = '';
+  for (let k = 0; k < n - 1; k++) {
+    d += `C${(x(k) + (x(k + 1) - x(k - 1)) / 6).toFixed(1)} ${(y(k) + (y(k + 1) - y(k - 1)) / 6).toFixed(1)} ` +
+         `${(x(k + 1) - (x(k + 2) - x(k)) / 6).toFixed(1)} ${(y(k + 1) - (y(k + 2) - y(k)) / 6).toFixed(1)} ${x(k + 1).toFixed(1)} ${y(k + 1).toFixed(1)}`;
+  }
+  return d;
+}
+function drawYarn() {
+  const d = yarnStart + ropes.map(r => r.d || (r.d = ropeD(r.P))).join('') + yarnTail;
+  for (const p of yarnPaths) p.setAttribute('d', d);
+}
+function wakeYarn(r) {
+  if (reducedMotion.matches || !ropes.length) return;
+  for (const x of r ? [r] : ropes) { x.awake = true; x.calm = 0; }
+  if (!yarnRaf) { yarnLast = performance.now(); yarnAcc = 0; yarnRaf = requestAnimationFrame(yarnTick); }
+}
+function yarnTick(now) {
+  yarnAcc += Math.min(.1, (now - yarnLast) / 1000);
+  yarnLast = now;
+  let steps = 0;
+  while (yarnAcc >= YSTEP && steps < 4) { yarnAcc -= YSTEP; steps++; }
+  if (steps === 4) yarnAcc = 0;
+  const br = board.getBoundingClientRect(), sc = br.width / (board.clientWidth || 1), vw = innerWidth, vh = innerHeight;
+  let awake = 0, dirty = false;
+  for (const r of ropes) {
+    if (!r.awake) continue;
+    const b = r.box;
+    if (br.left + b.x1 * sc < 0 || br.left + b.x0 * sc > vw || br.top + b.y1 * sc < 0 || br.top + b.y0 * sc > vh) {
+      r.P.set(r.R); r.Q.set(r.R); r.d = ''; r.awake = false; dirty = true;   // off screen: back to rest, asleep
+      continue;
+    }
+    // Asleep once it's barely moving (under ~0.06px a step per point) for half a second.
+    for (let k = 0; k < steps; k++) r.calm = stepRope(r) < .04 ? r.calm + 1 : 0;
+    if (steps) dirty = true;
+    if (r.calm > 30) r.awake = false; else awake++;
+  }
+  if (dirty) drawYarn();
+  yarnRaf = awake ? requestAnimationFrame(yarnTick) : 0;
+}
+// Push a rope's points (by their velocity, i.e. their previous positions); w(u) shapes it along the span.
+function pushRope(r, vx, vy, w) {
+  for (let k = 1; k < ROPE_N - 1; k++) {
+    const s = w(k / (ROPE_N - 1)) * YSTEP;
+    if (!s) continue;
+    r.Q[2 * k] -= vx * s;
+    r.Q[2 * k + 1] -= vy * s;
+  }
+  wakeYarn(r);
+}
+// A swipe or shuffle tugs the span(s) on that moment's pin, harder for a faster swipe (v in screen px/ms).
+function nudgeYarn(i, v) {
+  if (reducedMotion.matches || !ropes.length || !v) return;
+  const sp = Math.max(-1, Math.min(1, v / 1.6)) * 340;
+  if (ropes[i - 1]) pushRope(ropes[i - 1], sp, -Math.abs(sp) * .3, u => Math.sin(Math.PI * u) * u * 1.8);
+  if (ropes[i]) pushRope(ropes[i], sp, -Math.abs(sp) * .3, u => Math.sin(Math.PI * u) * (1 - u) * 1.8);
+}
+// A pointer moving fast within 16px of the yarn flicks it. The yarn never takes pointer events itself.
+let flick = null;
+addEventListener('pointermove', e => {
+  const prev = flick;
+  flick = { t: e.timeStamp, x: e.clientX, y: e.clientY };
+  if (!prev || reducedMotion.matches || !ropes.length) return;
+  const dt = flick.t - prev.t;
+  if (dt <= 0 || dt > 60) return;
+  const vx = (flick.x - prev.x) / dt, vy = (flick.y - prev.y) / dt;
+  if (Math.hypot(vx, vy) < .7) return;
+  const br = board.getBoundingClientRect(), sc = br.width / (board.clientWidth || 1), R = 16 / sc;
+  const ax = (prev.x - br.left) / sc, ay = (prev.y - br.top) / sc, bx = (flick.x - br.left) / sc, by = (flick.y - br.top) / sc;
+  const sx = bx - ax, sy = by - ay, sl = sx * sx + sy * sy || 1;
+  const speed = Math.min(900, Math.hypot(vx, vy) * 1000 / sc * .45), ux = sx / Math.sqrt(sl), uy = sy / Math.sqrt(sl);
+  for (const r of ropes) {
+    const b = r.box;
+    if (Math.max(ax, bx) + R < b.x0 || Math.min(ax, bx) - R > b.x1 || Math.max(ay, by) + R < b.y0 || Math.min(ay, by) - R > b.y1) continue;
+    const near = [];
+    for (let k = 1; k < ROPE_N - 1; k++) {
+      const px = r.P[2 * k], py = r.P[2 * k + 1], t = Math.max(0, Math.min(1, ((px - ax) * sx + (py - ay) * sy) / sl));
+      const d = Math.hypot(px - ax - sx * t, py - ay - sy * t);
+      near[k] = d < R ? 1 - d / R : 0;
+    }
+    if (near.some(Boolean)) pushRope(r, ux * speed, uy * speed, u => near[Math.round(u * (ROPE_N - 1))] || 0);
+  }
+}, { passive: true });
+function setYarnG(g) {
+  if (Math.abs(g - yarnG) < .004) return;
+  yarnG = g;
+  wakeYarn();
+}
+
+// ---------- Tilt: the phone's angle (or, on desktop, the mouse) gives the board a little depth ----------
+// Calibrated to however the phone is held when tilt starts, re-centering over ~3s as the hold drifts, low-pass
+// filtered. Up to 6px of parallax on screen; the mouse gives half. Nothing here under reduced motion.
+const TILT_PX = 6, TILT_KEY = 'tgtrip.tilt', tiltNote = $('tiltnote');
+const tilt = { tx: 0, ty: 0, fx: 0, fy: 0, ox: 0, oy: 0, raf: 0, last: 0, base: null, raw: null, dev: false, evt: 0 };
+const clamp1 = v => Math.max(-1, Math.min(1, v));
+function tiltStart() {
+  if (!tilt.raf) { tilt.last = performance.now(); tilt.raf = requestAnimationFrame(tiltTick); }
+}
+function tiltTick(now) {
+  const dt = Math.min(.1, (now - tilt.last) / 1000);
+  tilt.last = now;
+  let drifting = false;
+  if (tilt.dev && tilt.raw) {
+    const b = tilt.base, k = 1 - Math.exp(-dt / 3);
+    b.x += (tilt.raw.x - b.x) * k;
+    b.y += (tilt.raw.y - b.y) * k;
+    tilt.tx = clamp1((tilt.raw.x - b.x) / 18);
+    tilt.ty = clamp1((tilt.raw.y - b.y) / 18);
+    drifting = Math.abs(tilt.raw.x - b.x) + Math.abs(tilt.raw.y - b.y) > .05;
+  }
+  const k = 1 - Math.exp(-dt / .12);
+  tilt.fx += (tilt.tx - tilt.fx) * k;
+  tilt.fy += (tilt.ty - tilt.fy) * k;
+  const settling = Math.abs(tilt.tx - tilt.fx) + Math.abs(tilt.ty - tilt.fy) > .002;
+  if (!settling) { tilt.fx = tilt.tx; tilt.fy = tilt.ty; }
+  tiltApply();
+  tilt.raf = settling || drifting ? requestAnimationFrame(tiltTick) : 0;
+  if (!tilt.raf && !tilt.fx && !tilt.fy) board.classList.remove('tilting');
+}
+// Offsets are in board px; the camera's zoom is divided out so they stay screen-sized. They're written inline on
+// the few things that move (layers, and each card's shade, gloss and pin) rather than as variables on the board,
+// which would restyle every node on it each frame. Depths: cork 0, yarn 0.4, cards 1.0, pins 1.3; the cards stay
+// put and everything else moves relative to them. Shadows and pin highlights drift against the tilt.
+const tiltEls = { shade: board.getElementsByClassName('shade'), gl: board.getElementsByClassName('gl'), pin: board.getElementsByClassName('ppin') };
+const corkEl = $('cork');
+function tiltApply(force) {
+  const s = active >= 0 || running ? cam.s : 1, ox = tilt.fx * TILT_PX / s, oy = tilt.fy * TILT_PX / s;
+  if (!force && Math.abs(ox - tilt.ox) < .01 && Math.abs(oy - tilt.oy) < .01) return;
+  tilt.ox = ox; tilt.oy = oy;
+  const at = k => ox || oy ? `${(ox * k).toFixed(2)}px ${(oy * k).toFixed(2)}px` : '';
+  corkEl.style.translate = at(-1);
+  yarn.style.translate = at(-.6);
+  pinsh.style.translate = at(-.2);
+  pinsEl.style.translate = at(.3);
+  pinhl.style.translate = at(-.05);
+  const shade = at(-.5), pin = at(.3), hl = at(-.35);
+  const gl = ox || oy ? `${(-tilt.fx * 55).toFixed(1)}% ${(-tilt.fy * 25).toFixed(1)}%` : '';   // the sheen slides across the print
+  for (const e of tiltEls.shade) e.style.translate = shade;
+  for (const e of tiltEls.gl) e.style.translate = gl;
+  for (const e of tiltEls.pin) { e.style.translate = pin; e.style.setProperty('--hl', hl || '0px 0px'); }
+  setYarnG(tilt.fx * .3);                                   // and the yarn sags toward the low side
+}
+function onOrient(e) {
+  if (e.beta == null || e.gamma == null || reducedMotion.matches) return;
+  const ang = (screen.orientation && screen.orientation.angle) || +window.orientation || 0, b = e.beta, g = e.gamma;
+  const raw = ang === 90 ? { x: b, y: -g } : ang === -90 || ang === 270 ? { x: -b, y: g } : ang === 180 ? { x: -g, y: -b } : { x: g, y: b };
+  if (!tilt.base) tilt.base = { ...raw };                   // calibrate to the angle it's held at now
+  if (!tilt.dev) { tilt.dev = true; board.classList.add('tilting'); tiltNote.hidden = true; }
+  tilt.raw = raw;
+  tilt.evt = performance.now();
+  tiltStart();
+}
+const listenTilt = () => addEventListener('deviceorientation', onOrient);
+addEventListener('orientationchange', () => { tilt.base = null; });
+if (!reducedMotion.matches && 'DeviceOrientationEvent' in window) {
+  const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* ask again next time */ } } };
+  // Android sends orientation without asking. An iPhone sends nothing until permission is asked for from a tap,
+  // so when nothing arrives (and the browser can ask), a sticky note offers it. A "no" hides the note for good.
+  listenTilt();
+  if (typeof DeviceOrientationEvent.requestPermission === 'function' && matchMedia('(pointer: coarse)').matches) {
+    setTimeout(() => { if (!tilt.dev && store.get(TILT_KEY) !== 'denied') tiltNote.hidden = false; }, 900);
+    tiltNote.addEventListener('click', e => {
+      e.stopPropagation();
+      DeviceOrientationEvent.requestPermission().then(r => {
+        store.set(TILT_KEY, r);
+        tiltNote.hidden = true;
+        if (r === 'granted') listenTilt();
+      }).catch(() => { tiltNote.hidden = true; });
+    });
+  }
+}
+// Desktop: the mouse over the board stands in for the tilt, at half strength.
+if (!reducedMotion.matches) {
+  board.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse' || tilt.dev || !hoverable.matches) return;
+    tilt.tx = -.5 * clamp1(e.clientX / innerWidth * 2 - 1);
+    tilt.ty = -.5 * clamp1(e.clientY / innerHeight * 2 - 1);
+    board.classList.add('tilting');
+    tiltStart();
+  });
+  board.addEventListener('pointerleave', e => {
+    if (e.pointerType !== 'mouse' || tilt.dev || !hoverable.matches) return;
+    tilt.tx = tilt.ty = 0;
+    tiltStart();
+  });
+}
+
 stage.addEventListener('click', e => { if (active >= 0 && !e.target.closest('.polaroid, a')) zoomOut(); });
 $('out').addEventListener('click', zoomOut);
 $('prev').addEventListener('click', () => step(-1));
@@ -1753,6 +2385,7 @@ document.addEventListener('keydown', e => {
   else if (active >= 0 && e.key === 'ArrowRight') { e.preventDefault(); step(1); }
   else if (active >= 0 && e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
   else if (active >= 0 && (e.key === 'm' || e.key === 'M') && cards[active]._entry && cards[active]._entry.video) toggleSound(cards[active]);
+  else if (active >= 0 && (e.key === 'f' || e.key === 'F') && !e.metaKey && !e.ctrlKey && !e.altKey) toggleFlip(active);
 });
 
 // Swiping elsewhere while zoomed in travels along the yarn (a swipe a stack claimed is its own).

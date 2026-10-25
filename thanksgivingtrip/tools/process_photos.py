@@ -9,6 +9,8 @@ Used by .github/workflows/convert-photos.yml and tools/add-photos.sh. For every 
     Over 50MB it's re-encoded at crf 30; still over 90MB it's skipped with a warning (GitHub's limit is 100MB).
   - captions.txt ("filename: caption" per line) sets per-photo captions
   - order.txt (one filename per line) puts those files first, in that order
+  - back.txt (the note on the back of the moment's card) is copied into the manifest exactly as written, under
+    "backs": {"<id>": {"text": ...}}. It's text, so it's never converted or stripped.
   - ALL metadata (EXIF, GPS, XMP, ICC, QuickTime tags) is removed from every output file. Capture times
     are read only to order the photos and are never written anywhere.
 Then photos/manifest.json is regenerated from what's in the folders.
@@ -333,12 +335,20 @@ def main():
     for folder in sorted(p for p in PHOTOS.iterdir() if p.is_dir() and not p.name.startswith('.')):
         prev = [e for e in old.get(folder.name, []) if isinstance(e, dict) and isinstance(e.get('src'), str)]
         manifest[folder.name] = process_folder(folder, prev)
+    backs = {}
+    for folder in sorted(p for p in PHOTOS.iterdir() if p.is_dir() and not p.name.startswith('.')):
+        back = folder / 'back.txt'
+        if back.is_file():
+            backs[folder.name] = {'text': back.read_text(encoding='utf-8')}
+    if backs:
+        manifest['backs'] = backs
     text = json.dumps(manifest, indent=2, ensure_ascii=False) + '\n'
     if not MANIFEST.exists() or MANIFEST.read_text(encoding='utf-8') != text:
         MANIFEST.write_text(text, encoding='utf-8')
         print('manifest.json updated')
-    total = sum(map(len, manifest.values()))
-    print(f'{total} photo(s) across {sum(1 for v in manifest.values() if v)} moment(s)')
+    moments = {k: v for k, v in manifest.items() if k != 'backs'}
+    total = sum(map(len, moments.values()))
+    print(f'{total} photo(s) across {sum(1 for v in moments.values() if v)} moment(s), {len(backs)} card back(s)')
 
 
 if __name__ == '__main__':
