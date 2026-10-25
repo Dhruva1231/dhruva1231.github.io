@@ -11,6 +11,8 @@ Used by .github/workflows/convert-photos.yml and tools/add-photos.sh. For every 
   - order.txt (one filename per line) puts those files first, in that order
   - back.txt (the note on the back of the moment's card) is copied into the manifest exactly as written, under
     "backs": {"<id>": {"text": ...}}. It's text, so it's never converted or stripped.
+  - Any .gpx is turned into route.json (trimmed, no timestamps, home cut; see process_routes.py) and deleted;
+    each moment's route goes into the manifest under "routes": {"<id>": ...}.
   - ALL metadata (EXIF, GPS, XMP, ICC, QuickTime tags) is removed from every output file. Capture times
     are read only to order the photos and are never written anywhere.
 Then photos/manifest.json is regenerated from what's in the folders.
@@ -31,6 +33,9 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 from PIL import Image, ImageCms, ImageOps
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from process_routes import build_routes  # noqa: E402
 
 PHOTOS = Path(__file__).resolve().parent.parent / 'photos'
 MANIFEST = PHOTOS / 'manifest.json'
@@ -342,13 +347,17 @@ def main():
             backs[folder.name] = {'text': back.read_text(encoding='utf-8')}
     if backs:
         manifest['backs'] = backs
+    routes = build_routes(PHOTOS)
+    if routes:
+        manifest['routes'] = routes
     text = json.dumps(manifest, indent=2, ensure_ascii=False) + '\n'
     if not MANIFEST.exists() or MANIFEST.read_text(encoding='utf-8') != text:
         MANIFEST.write_text(text, encoding='utf-8')
         print('manifest.json updated')
-    moments = {k: v for k, v in manifest.items() if k != 'backs'}
+    moments = {k: v for k, v in manifest.items() if k not in ('backs', 'routes')}
     total = sum(map(len, moments.values()))
-    print(f'{total} photo(s) across {sum(1 for v in moments.values() if v)} moment(s), {len(backs)} card back(s)')
+    print(f'{total} photo(s) across {sum(1 for v in moments.values() if v)} moment(s), {len(backs)} card back(s), '
+          f'{len(routes)} route(s)')
 
 
 if __name__ == '__main__':

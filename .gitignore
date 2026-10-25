@@ -1,3 +1,5 @@
 tools/schedule/schedule.txt
 .DS_Store
 .claude/
+# Home coordinate for the trail-map privacy cut (tools/process_routes.py); never commit it
+.home

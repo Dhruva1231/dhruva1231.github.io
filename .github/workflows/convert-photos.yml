@@ -28,13 +28,17 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install ffmpeg, libheif, exiftool, Pillow
+      - name: Install ffmpeg, libheif, exiftool, Pillow, gpxpy
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q ffmpeg libheif-examples libimage-exiftool-perl
-          pip install -q pillow
+          pip install -q pillow gpxpy
 
-      - name: Convert, pair, strip metadata, rebuild manifest
+      # GPX uploads become route.json (and the .gpx is deleted in the same commit). HOME_LATLON ("lat, lon", a repo
+      # secret) cuts any track points within 5 km of home; without it, only the 250 m end trims apply.
+      - name: Convert, pair, strip metadata, process routes, rebuild manifest
+        env:
+          HOME_LATLON: ${{ secrets.HOME_LATLON }}
         run: python thanksgivingtrip/tools/process_photos.py
 
       - name: Commit results

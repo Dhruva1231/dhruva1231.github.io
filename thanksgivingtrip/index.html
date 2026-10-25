@@ -42,6 +42,11 @@
   ?develop=reset to see it again). The yarn is a rope simulation that sleeps when still. Tilting a phone (or the
   mouse on desktop) adds a little parallax; iPhones ask first, through the "tap to tilt" note.
 
+  Trail maps: drop a .gpx into photos/<id>/ (or pass it to tools/add-photos.sh). It's processed into
+  photos/<id>/route.json (ends trimmed, no timestamps, the .gpx deleted) and the moment gets a pencil-drawn map
+  pinned by its stack, plus the route's stats on its card back (back.txt values win). Drawn maps are remembered
+  like developed photos; ?develop=reset redraws them too.
+
   Frames: polaroid-frame-a/b/c.webp sit next to this file (see FRAMES in the script for each window).
   film-overlay.webp is optional; when it exists it's laid over every photo.
 
@@ -516,6 +521,45 @@ body {
 }
 .tiltnote[hidden] { display: none; }
 
+/* ---------- Trail maps ----------
+   A moment with a route (photos/<id>/route.json, from a GPX upload) gets a field-notebook scrap of graph paper in
+   its frame's paper tone, pinned beside its stack. The script places it off the yarn, draws the route in pencil
+   and writes in the stats (see the trail map section). */
+.tmap {
+  position: absolute; left: 0; top: 0; z-index: 4;
+  width: calc(var(--pw) * .62); padding: 0; border: 0; border-radius: 2px;
+  color: inherit; font: inherit; text-align: left; cursor: pointer;
+  background:
+    var(--fiber),
+    radial-gradient(ellipse 40% 30% at 78% 82%, rgba(150,104,48,.16), rgba(150,104,48,0)),
+    linear-gradient(rgba(64,96,128,.14) 1px, rgba(0,0,0,0) 1px) 0 0 / 100% calc(var(--pw) * .042),
+    linear-gradient(90deg, rgba(64,96,128,.14) 1px, rgba(0,0,0,0) 1px) 0 0 / calc(var(--pw) * .042) 100%,
+    linear-gradient(165deg, rgba(255,255,255,.16), rgba(0,0,0,0) 55%),
+    var(--paper-tone, #e8e4d3);
+  box-shadow: inset 0 0 calc(var(--pw) * .07) rgba(110,76,36,.34), inset 0 0 0 1px rgba(84,64,36,.16),
+    0 1px 1px rgba(40,20,5,.25), 0 12px 14px -8px rgba(40,20,5,.55);
+  transform: rotate(var(--mr, -4deg));
+  transition: transform 450ms cubic-bezier(.2, .8, .2, 1);
+}
+.tmap svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tmap.active { z-index: 12; transform: rotate(0deg) scale(1.03); }
+.tmap:focus-visible { outline: 3px solid #fff7d6; outline-offset: 3px; }
+.tmap .mpin {
+  position: absolute; left: 50%; top: 3.5%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, var(--pl), var(--pc) 45%, var(--pk));
+  box-shadow: 2px 3px 3px rgba(40,20,5,.45), inset -1px -1px 1px rgba(0,0,0,.15); pointer-events: none;
+}
+.tmap .mpin::after { content: ""; position: absolute; left: 2.4px; top: 2.4px; width: 3.6px; height: 2.6px; border-radius: 50%; background: rgba(255,255,255,.8); }
+.tmap .pn { fill: none; stroke: #3a3a3a; stroke-opacity: .85; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tmap .pn.p2 { stroke-opacity: .22; stroke-width: 1.1; }
+.tmap .pn.thin { stroke-width: 1.2; }
+.tmap .ct { fill: none; stroke: #3a3a3a; stroke-opacity: .08; stroke-width: 1; }
+.tmap text { font-family: var(--hand); font-weight: 700; fill: #3a3a3a; fill-opacity: .85; }
+.tmap .lz { transition: opacity 260ms ease; }
+.tmap.drawing .lz:not(.on) { opacity: 0; }
+.tmap .pencil { display: none; }
+.tmap.drawing .pencil { display: inline; }
+
 /* ---------- Zoom controls ---------- */
 .zoombar {
   position: fixed; top: 12px; right: 12px; z-index: 30;
@@ -567,6 +611,8 @@ body {
   .hint-wide { display: none; }
   .hint-phone { display: inline; }
   .tab { font-size: max(16px, calc(var(--pw) * .09)); }
+  .tmap { position: relative; left: auto; top: auto; flex: none; width: calc(var(--pw) * .8); margin: calc(var(--pw) * -.1) 0 0 12px; }
+  .tmap.drawing .pfx { filter: none; }   /* the pencil's displacement only goes on once the drawing is done */
   .tiltnote { left: auto; right: 6px; top: calc(var(--sw) + 52px); width: 86px; font-size: 1.02rem; padding: 18px 6px 8px; }
   .zoombar { top: auto; bottom: 16px; right: 50%; transform: translate(50%, 8px); }
   .zoombar.show { transform: translate(50%, 0); }
@@ -575,6 +621,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .polaroid, .zoombar, .zvig, #dim { transition-duration: 150ms; transition-timing-function: ease; }
   .polaroid.active .ppin { animation: none; }
+  .tmap { transition-duration: 150ms; }
   .polaroid.playing .livebadge svg { animation: none; }
   .photo video, .photo video.vid { transition: none; }
   #board.tilting * { will-change: auto !important; }
@@ -1013,6 +1060,7 @@ const stacks = TRIP.map(() => null);   // per moment with 2+ photos: { i, entrie
 const hoverable = window.matchMedia('(hover: hover) and (pointer: fine)');
 const phone = window.matchMedia('(max-width: 899px)');   // the zig-zag column: no zooming, stacks cycle in place
 let filmReady = false;
+const routes = {};                     // per moment id with a route.json: { tracks, stats, box, metersPerUnit }
 const backs = {};                      // per moment id with a back.txt: { keys: [[key, value]...], note }
 
 function addPhoto(el, url, entry) {
@@ -1139,13 +1187,19 @@ async function loadPhotos() {
   let man = null;
   try { const r = await fetch('photos/manifest.json', { cache: 'no-cache' }); if (r.ok) man = await r.json(); } catch (e) { man = null; }
   // Card backs: the manifest carries each photos/<id>/back.txt as written ("backs": {"<id>": {"text": ...}}).
+  // Routes ("routes": {"<id>": route.json}) add a trail map and fill in the stats on that card's back.
   const mb = man && man.backs && typeof man.backs === 'object' ? man.backs : {};
+  const mr = man && man.routes && typeof man.routes === 'object' ? man.routes : {};
   TRIP.forEach((d, i) => {
     const text = mb[d.id] && (typeof mb[d.id] === 'string' ? mb[d.id] : mb[d.id].text);
-    if (typeof text !== 'string' || !text.trim()) return;
-    backs[d.id] = parseBack(text);
+    const route = validRoute(mr[d.id]);
+    if (route) routes[d.id] = route;
+    const own = typeof text === 'string' && text.trim();
+    if (!own && !route) return;
+    backs[d.id] = withRouteStats(parseBack(own ? text : ''), route);
     wrapFaces(cards[i], i);
   });
+  TRIP.forEach((d, i) => { if (routes[d.id]) buildMap(i); });
   const tops = TRIP.map((d, i) => {
     const list = man && Array.isArray(man[d.id]) ? man[d.id].filter(e => e && typeof e.src === 'string') : [];
     if (!list.length) return findPhoto(d, cards[i]);
@@ -1158,7 +1212,7 @@ async function loadPhotos() {
     syncVideo(cards[i]);
     return shown;
   });
-  if (stacks.some(Boolean)) relayout();
+  if (stacks.some(Boolean) || maps.length) relayout();
   // Back cards only start loading once every front photo has had its turn.
   await Promise.allSettled(tops);
   stacks.forEach(st => st && showBacks(st, true));
@@ -1309,6 +1363,7 @@ function layout() {
     `</g>` + each(p => `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="7" fill="none" stroke="#9e1f22" stroke-width="2.6"/>`);
   yarnPaths = [...yarn.querySelectorAll('path.y')];
   drawYarn();
+  placeMaps(W, pins);
 
   // Sample the yarn at rest so the camera can follow it without touching the DOM mid-flight.
   const restD = ropes.map(r => ropeD(r.R));
@@ -1335,7 +1390,7 @@ function layout() {
   glassEl.style.setProperty('--paneh', (gh / rows).toFixed(2) + 'px');
   stacks.forEach(st => st && placeStack(st));
 
-  if (active >= 0 || running) {
+  if (active >= 0 || mapActive || running) {
     readView();
     travel = null;
     goal = currentGoal();
@@ -1366,7 +1421,7 @@ const VIEW_PAR = .3, PULL = .2;       // the view outside moves 30% as much as t
 const cam = { x: 0, y: 0, s: 1, vx: 0, vy: 0, vs: 0 };
 let goal = { x: 0, y: 0, s: 1 }, travel = null;
 let origin = { x: 0, y: 0 }, vp = { w: 1, h: 1 };
-let active = -1, running = false, last = 0, zoomScrollY = 0;
+let active = -1, running = false, last = 0, zoomScrollY = 0, mapActive = null;
 
 
 function viewport() {
@@ -1392,7 +1447,7 @@ function focusGoal(i) {
   return { x: p.x + o.x, y: p.y + o.y, s: zoomFor(i) };
 }
 function currentGoal() {
-  return active < 0 ? overviewGoal() : focusGoal(active);
+  return mapActive ? mapGoal(mapActive) : active < 0 ? overviewGoal() : focusGoal(active);
 }
 function pathAt(L) {
   const s = geo.samples, n = s.length / 2 - 1;
@@ -1454,7 +1509,7 @@ function tick(now) {
     Math.abs(cam.vx) < .5 && Math.abs(cam.vy) < .5 && Math.abs(cam.vs) < 5e-3;
   if (settled) {
     Object.assign(cam, goal, { vx: 0, vy: 0, vs: 0 });
-    if (active < 0) clearCamera(); else render();
+    if (active < 0 && !mapActive) clearCamera(); else render();
     // Dropping will-change once still lets the browser re-rasterize crisply at the zoomed scale.
     scene.style.willChange = 'auto';
     camA.x = camA.y = 0;
@@ -1479,7 +1534,7 @@ function kick() {
 function crossfade() {
   travel = null;
   Object.assign(cam, goal, { vx: 0, vy: 0, vs: 0 });
-  const show = () => { if (active < 0) clearCamera(); else render(); onSettle(); };
+  const show = () => { if (active < 0 && !mapActive) clearCamera(); else render(); onSettle(); };
   if (!stage.animate) return show();
   stage.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: 'ease-out' }).onfinish = () => {
     show();
@@ -1489,6 +1544,7 @@ function crossfade() {
 
 function setActive(i) {
   stopLive();
+  if (mapActive) { mapActive.classList.remove('active'); mapActive = null; }
   if (active >= 0) {
     const prev = cards[active];
     prev.classList.remove('active', 'settled');
@@ -1522,7 +1578,7 @@ function zoomTo(i) {
   i = Math.max(0, Math.min(TRIP.length - 1, i));
   const from = active;
   if (i === from && !travel) return;
-  if (from < 0 && !running) {
+  if (from < 0 && !running && !mapActive) {
     readView();
     Object.assign(cam, overviewGoal(), { vx: 0, vy: 0, vs: 0 });
   } else {
@@ -1543,7 +1599,7 @@ function zoomTo(i) {
   kick();
 }
 function zoomOut() {
-  if (active < 0) return;
+  if (active < 0 && !mapActive) return;
   readView();
   setActive(-1);
   travel = null;
@@ -1917,7 +1973,7 @@ addEventListener('wheel', e => {
   if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) {
     const note = e.target.closest && e.target.closest('.cb-note');   // a long note on a card's back scrolls instead
     if (note && note.scrollHeight > note.clientHeight + 1) return;
-    if (active >= 0) zoomOut();
+    if (active >= 0 || mapActive) zoomOut();
     return;
   }
   if (active < 0) return;
@@ -1946,6 +2002,7 @@ addEventListener('wheel', e => {
 
 // Arrows and swipes: through the stack one shuffle at a time, then on along the yarn.
 function step(dir) {
+  if (mapActive) return zoomTo(mapActive._i + (dir > 0 ? 1 : 0));   // from a map: its polaroid, or the next one
   if (active < 0) return;
   const st = stacks[active];
   if (st && !travel && !running) {
@@ -2075,7 +2132,10 @@ function swallowClick() {
 // faces are turned separately, each shown only while it faces the viewer.
 const CURL = '<span class="curl" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M100 0L0 100C9 76 13 47 23 23C47 13 76 9 100 0Z" fill="url(#curlg)"/>' +
   '<path d="M100 0L0 100" stroke="rgba(255,255,255,.55)" stroke-width="2"/></svg></span>';
-const STAT_LABELS = { miles: v => `${v} miles`, elevation: v => `${v} elevation` };
+const STAT_LABELS = {
+  miles: v => `${v} miles`, elevation: v => `${v} elevation`,
+  gain: v => `${v} gain`, 'high point': v => `high point ${v}`, time: v => `${v} moving`, route: v => v
+};
 const flipping = new Set();
 let flipRaf = 0, flipLast = 0;
 const tapWait = new Map();
@@ -2363,6 +2423,342 @@ function setYarnG(g) {
   wakeYarn();
 }
 
+// ---------- Trail maps: a GPX route sketched in pencil on a scrap of graph paper ----------
+// route.json (built from photos/<id>/*.gpx by tools/process_routes.py) has each track's points in a 0-1000 box,
+// north up, with smoothed elevations (ft) and the high point's index. The first time a map is 60% on screen (or
+// zoomed into) the pencil draws the route start to finish, the profile in step with it, then writes the stats in
+// line by line. Drawn maps are remembered like developed photos (?develop=reset forgets both); tapping one redraws it.
+const MAP_KEY = 'tgtrip.maps', maps = [], mapSeen = new Set(), mapRuns = new Set();
+let mapRaf = 0;
+try {
+  if (new URLSearchParams(location.search).get('develop') === 'reset') localStorage.removeItem(MAP_KEY);
+  JSON.parse(localStorage.getItem(MAP_KEY) || '[]').forEach(s => mapSeen.add(s));
+} catch (e) { /* no storage: draw every visit */ }
+const mapWatch = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (e.intersectionRatio >= .59 && !e.target._drawn && !e.target._run) drawMap(e.target);
+}), { threshold: [0, .6] }) : null;
+
+function validRoute(r) {
+  if (!r || !Array.isArray(r.tracks) || !r.stats || !Array.isArray(r.box)) return null;
+  const tracks = r.tracks.filter(t => Array.isArray(t.points) && t.points.length > 1 && t.points.every(p => Array.isArray(p) && isFinite(p[0]) && isFinite(p[1])));
+  return tracks.length ? { ...r, tracks } : null;
+}
+// The back of a moment with a route lists its stats; any of them in back.txt (by the same name, or the usual
+// alternatives) wins. The note, date and signature only ever come from back.txt.
+function withRouteStats(b, route) {
+  const s = route && route.stats;
+  if (!s) return b;
+  const num = n => Number(n).toLocaleString('en-US');
+  const auto = [['miles', s.miles], ['gain', s.gainFt != null ? num(s.gainFt) + ' ft' : null],
+    ['high point', s.highFt != null ? num(s.highFt) + ' ft' : null], ['time', s.movingTime], ['route', s.type]]
+    .filter(([, v]) => v != null && v !== '');
+  const ALIAS = { distance: 'miles', mi: 'miles', elevation: 'gain', 'elevation gain': 'gain', climb: 'gain', high: 'high point',
+    summit: 'high point', 'moving time': 'time', duration: 'time', type: 'route' };
+  const name = k => ALIAS[k.toLowerCase()] || k.toLowerCase();
+  const own = new Map(b.keys.map(kv => [name(kv[0]), kv]));
+  const keys = auto.map(([k, v]) => own.get(k) || [k, String(v)]);
+  return { keys: keys.concat(b.keys.filter(kv => !keys.includes(kv))), note: b.note };
+}
+
+const MAP_W = 300, MX = 22, MY = 48, MW = 256;
+const polyD = pts => 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L');
+const cumLen = pts => { const c = [0]; for (let k = 1; k < pts.length; k++) c.push(c[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1])); return c; };
+// A point (and heading) a distance L along a polyline with cumulative lengths c.
+function along(pts, c, L) {
+  let k = 1;
+  while (k < c.length - 1 && c[k] < L) k++;
+  const a = pts[k - 1], b = pts[k], u = Math.max(0, Math.min(1, (L - c[k - 1]) / ((c[k] - c[k - 1]) || 1)));
+  return { x: a[0] + (b[0] - a[0]) * u, y: a[1] + (b[1] - a[1]) * u, ang: Math.atan2(b[1] - a[1], b[0] - a[0]) };
+}
+// Hand-drawn bits: a wobbly circle, an X, a sketched arrow.
+function wobble(cx, cy, r, rand, n = 14, amp = .12) {
+  const ph = rand() * 6.3, pts = [];
+  for (let k = 0; k <= n + 1; k++) {
+    const a = ph + k / n * Math.PI * 2, rr = r * (1 + amp * Math.sin(3 * a + ph) + amp * .6 * (rand() - .5));
+    pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]);
+  }
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let k = 1; k < pts.length - 1; k++) d += `Q${pts[k][0].toFixed(1)} ${pts[k][1].toFixed(1)} ${((pts[k][0] + pts[k + 1][0]) / 2).toFixed(1)} ${((pts[k][1] + pts[k + 1][1]) / 2).toFixed(1)}`;
+  return d;
+}
+const PENCIL = '<g transform="rotate(-38)"><path d="M0 0L7.5 -2.7V2.7Z" fill="#e8c597"/><path d="M0 0L2.6 -.95V.95Z" fill="#2d2d2d"/>' +
+  '<rect x="7.5" y="-2.7" width="24" height="5.4" fill="#f0b431"/><rect x="7.5" y="-.8" width="24" height="1.6" fill="#d99c1c"/>' +
+  '<rect x="31.5" y="-2.8" width="3.6" height="5.6" fill="#b8b8b8"/><rect x="35" y="-2.7" width="3.6" height="5.4" rx="1.3" fill="#e5899a"/></g>';
+
+function buildMap(i) {
+  const d = TRIP[i], route = routes[d.id], rand = rng(i * 4243 + 911), id = 'tm' + i;
+  const [bw, bh] = [Math.max(1, +route.box[0] || 1000), Math.max(1, +route.box[1] || 1000)];
+  const k = Math.min(MW / bw, 200 / bh), RH = Math.max(130, bh * k), ox = MX + (MW - bw * k) / 2, oy = MY + (RH - bh * k) / 2;
+  const tracks = route.tracks.map(t => {
+    const pts = t.points.map(p => [ox + p[0] * k, oy + p[1] * k]), c = cumLen(pts);
+    const si = Math.max(0, Math.min(pts.length - 1, t.summitIndex | 0));
+    return { pts, c, len: c[c.length - 1], summitL: c[si], summit: pts[si], elev: Array.isArray(t.elev) && t.elev.length === pts.length ? t.elev : null, type: t.type || (t.loop ? 'loop' : '') };
+  });
+  let start = 0;
+  tracks.forEach(t => { t.start = start; start += t.len; });
+  const total = start, st = route.stats, num = n => Number(n).toLocaleString('en-US');
+
+  let y = MY + RH + 16, svg = '';
+  // Background: a few made-up contour squiggles (decoration, not terrain).
+  let ct = '';
+  for (let c = 0; c < 3; c++) {
+    const cx = MX + rand() * MW, cy = MY + rand() * RH, r0 = 18 + rand() * 22;
+    for (let n = 0; n < 4; n++) ct += `<path class="ct" d="${wobble(cx, cy, r0 + n * (12 + rand() * 6), rand, 16, .16)}"/>`;
+  }
+  svg += `<defs><clipPath id="${id}-c"><rect x="${MX - 6}" y="${MY - 6}" width="${MW + 12}" height="${RH + 12}"/></clipPath>` +
+    `<filter id="${id}-f" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="${i}"/><feDisplacementMap in="SourceGraphic" scale="1.7" xChannelSelector="R" yChannelSelector="G"/></filter>` +
+    `<pattern id="${id}-h" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V5" stroke="#3a3a3a" stroke-opacity=".32" stroke-width=".9"/></pattern></defs>` +
+    `<g clip-path="url(#${id}-c)">${ct}</g>`;
+  // North arrow and scale bar, sketched in whichever top and bottom corners the route leaves emptiest.
+  const all = tracks.flatMap(t => t.pts), busy = (x0, y0) => all.filter(([x, y2]) => x > x0 && x < x0 + 80 && y2 > y0 && y2 < y0 + 46).length;
+  const right = busy(MX + MW - 80, MY - 6) <= busy(MX, MY - 6), bottomR = busy(MX + MW - 80, MY + RH - 40) < busy(MX, MY + RH - 40);
+  const nx = right ? MX + MW - 10 : MX + 14, ny = MY - 2;
+  svg += `<g class="pfx" filter="url(#${id}-f)"><path class="pn thin" d="M${nx} ${ny + 30}L${nx} ${ny + 4}M${nx - 4} ${ny + 11}L${nx} ${ny + 3}L${nx + 4.2} ${ny + 11.5}"/>` +
+    `<text x="${nx - 13.5}" y="${ny + 22}" font-size="14">N</text>`;
+  const mPerUnit = (+route.metersPerUnit || 1) / k, MILE = 1609.344;
+  const NICE = [[.1, '⅒ mi'], [.25, '¼ mi'], [.5, '½ mi'], [1, '1 mi'], [2, '2 mi'], [5, '5 mi']];
+  const fit = NICE.filter(([mi]) => mi * MILE / mPerUnit <= MW * .34);
+  const [smi, slab] = fit.length ? fit[fit.length - 1] : NICE[0], sl = smi * MILE / mPerUnit;
+  const sx = bottomR ? MX + MW - sl - 40 : MX + 2, sy = MY + RH + 2;
+  svg += `<path class="pn thin" d="M${sx} ${sy - 3}L${sx} ${sy + 1}L${(sx + sl).toFixed(1)} ${sy + .6}L${(sx + sl).toFixed(1)} ${sy - 3.4}"/>` +
+    `<text x="${(sx + sl + 5).toFixed(1)}" y="${sy + 3}" font-size="13">${slab}</text></g>`;
+  // The route: a pencil line with a faint second pass, start circles, end crosses (or an arrow home for loops),
+  // and a summit triangle with its elevation where the high point is.
+  const hi = tracks.reduce((b, t) => t.elev && (!b || Math.max(...t.elev) > Math.max(...b.elev)) ? t : b, null);
+  tracks.forEach((t, j) => {
+    const a = t.pts[0], z = t.pts[t.pts.length - 1], dd = polyD(t.pts), L = t.len.toFixed(2);
+    svg += `<g class="pfx" filter="url(#${id}-f)">` +
+      `<path class="pn rt" d="${dd}" stroke-dasharray="${L} ${L}" data-t="${j}"/>` +
+      `<path class="pn p2 rt" d="${dd}" transform="translate(.6 .45)" stroke-dasharray="${L} ${L}" data-t="${j}"/>` +
+      `<path class="pn lz mk-s" data-t="${j}" d="${wobble(a[0], a[1], 4.6, rand, 9, .1)}"/>`;
+    if (t.type === 'loop') {
+      const mx = (a[0] + z[0]) / 2 + (a[1] - z[1]) * .35, my = (a[1] + z[1]) / 2 - (a[0] - z[0]) * .35;
+      const ang = Math.atan2(a[1] - my, a[0] - mx), hx = a[0] - Math.cos(ang) * 6, hy = a[1] - Math.sin(ang) * 6;
+      const w = (s2, r) => `${(hx - Math.cos(ang + s2) * r).toFixed(1)} ${(hy - Math.sin(ang + s2) * r).toFixed(1)}`;
+      svg += `<path class="pn thin lz mk-e" data-t="${j}" stroke-dasharray="3 2.6" d="M${z[0].toFixed(1)} ${z[1].toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${hx.toFixed(1)} ${hy.toFixed(1)}"/>` +
+        `<path class="pn thin lz mk-e" data-t="${j}" d="M${w(.5, 5)}L${hx.toFixed(1)} ${hy.toFixed(1)}L${w(-.5, 5)}"/>`;
+    } else {
+      svg += `<path class="pn lz mk-e" data-t="${j}" d="M${(z[0] - 4).toFixed(1)} ${(z[1] - 4).toFixed(1)}L${(z[0] + 4).toFixed(1)} ${(z[1] + 4.3).toFixed(1)}M${(z[0] + 4.2).toFixed(1)} ${(z[1] - 3.8).toFixed(1)}L${(z[0] - 3.8).toFixed(1)} ${(z[1] + 4).toFixed(1)}"/>`;
+    }
+    if (t.elev) {
+      const [sx2, sy2] = t.summit, lab = t === hi && st.highFt != null ? `<text x="${(sx2 + (sx2 > MX + MW - 60 ? -58 : 9)).toFixed(1)}" y="${(sy2 - 4).toFixed(1)}" font-size="13">${num(st.highFt)} ft</text>` : '';
+      svg += `<g class="lz mk-h" data-t="${j}"><path class="pn thin" d="M${(sx2 - 5).toFixed(1)} ${(sy2 + 4).toFixed(1)}L${sx2.toFixed(1)} ${(sy2 - 5).toFixed(1)}L${(sx2 + 5.3).toFixed(1)} ${(sy2 + 4.2).toFixed(1)}Z"/>${lab}</g>`;
+    }
+    svg += `</g>`;
+  });
+  // Elevation profile under the map: a pencil line over light hatching, revealed with the route.
+  let prof = null;
+  const withElev = tracks.every(t => t.elev);
+  if (withElev) {
+    const es = tracks.flatMap(t => t.elev), lo = Math.min(...es), hi2 = Math.max(...es), PH = 42;
+    const pts = [];
+    tracks.forEach(t => t.pts.forEach((_, q) => pts.push([MX + (t.start + t.c[q]) / (total || 1) * MW, y + PH - (t.elev[q] - lo) / ((hi2 - lo) || 1) * (PH - 4)])));
+    const c = cumLen(pts), L = c[c.length - 1];
+    svg += `<path d="${polyD(pts)}L${MX + MW} ${y + PH}L${MX} ${y + PH}Z" fill="url(#${id}-h)" clip-path="url(#${id}-pc)"/>` +
+      `<clipPath id="${id}-pc"><rect class="pcr" x="${MX}" y="${y - 4}" width="${MW}" height="${PH + 8}"/></clipPath>` +
+      `<g class="pfx" filter="url(#${id}-f)"><path class="pn thin pf" d="${polyD(pts)}" stroke-dasharray="${L.toFixed(2)} ${L.toFixed(2)}"/>` +
+      `<path class="pn thin" stroke-opacity=".35" d="M${MX} ${y + PH + .5}L${MX + MW} ${y + PH - .3}"/></g>`;
+    prof = { pts, c, L };
+    y += PH + 20;
+  }
+  // Stats, written in last.
+  const kind = (st.type || '').replace(/-/g, ' ');
+  const lines = [[st.miles != null && `${st.miles} mi`, st.gainFt != null && `${num(st.gainFt)} ft gain`], [st.movingTime, kind]]
+    .map(l => l.filter(Boolean).join(' · ')).filter(Boolean);
+  lines.forEach((l, q) => {
+    svg += `<clipPath id="${id}-s${q}"><rect class="scr" x="${MX - 2}" y="${y + q * 22 - 18}" width="${MW + 4}" height="26"/></clipPath>` +
+      `<text class="sl" clip-path="url(#${id}-s${q})" x="${MX}" y="${y + q * 22}" font-size="18">${l.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text>`;
+  });
+  y += lines.length * 22 + 4;
+  svg += `<g class="pencil" transform="translate(-99 -99)">${PENCIL}</g>`;
+
+  const el = document.createElement('button');
+  el.type = 'button';
+  el.className = 'tmap';
+  el.setAttribute('aria-label', `Trail map: ${d.caption}${lines.length ? ' — ' + lines.join(', ') : ''}`);
+  const [pc, pl, pk] = PIN_COLORS[(i + 3) % PIN_COLORS.length];
+  el.style.cssText = `--pc:${pc};--pl:${pl};--pk:${pk};--mr:${((rand() < .5 ? -1 : 1) * (3 + rand() * 4)).toFixed(2)}deg;--paper-tone:${FRAMES[d.frame].paper}`;
+  el.innerHTML = `<svg viewBox="0 0 ${MAP_W} ${y.toFixed(1)}" aria-hidden="true" focusable="false">${svg}</svg><span class="mpin"></span>`;
+  const q = sel => [...el.querySelectorAll(sel)];
+  el._i = i;
+  el._m = {
+    tracks, total, prof, nLines: lines.length,
+    rt: q('.rt'), marks: q('.lz'), pcr: el.querySelector('.pcr'), pf: el.querySelector('.pf'),
+    scr: q('.scr'), sl: q('.sl'), pencil: el.querySelector('.pencil'), widths: null,
+    dur: Math.max(2500, Math.min(4000, 2500 + ((+st.miles || 1) - 1) * 500))
+  };
+  el._drawn = mapSeen.has(d.id) || reducedMotion.matches;
+  paintMap(el, el._drawn ? total : 0, el._drawn ? 1 : 0);
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    if (swallowClick()) return;
+    if (phone.matches || mapActive === el || !geo) return drawMap(el);   // tap: (re)draw it
+    zoomMap(el);
+    if (!el._drawn && !el._run) drawMap(el);
+  });
+  cards[i].after(el);
+  maps.push(el);
+  if (mapWatch) mapWatch.observe(el);
+  else if (!el._drawn) drawMap(el);
+}
+
+// Paint a map at route distance L (0..total) with the stats written in to fraction w (0..1 over all lines).
+function paintMap(el, L, w) {
+  const m = el._m;
+  m.rt.forEach(p => {
+    const t = m.tracks[+p.dataset.t], off = Math.max(0, t.len - Math.max(0, L - t.start));
+    if (p._off !== off) { p._off = off; p.style.strokeDashoffset = off.toFixed(2); }
+  });
+  m.marks.forEach(n => {
+    const t = m.tracks[+n.dataset.t], on = n.classList.contains('mk-s') ? L >= t.start && (L > 0 || w > 0)
+      : n.classList.contains('mk-h') ? L >= t.start + t.summitL : L >= t.start + t.len - .01;
+    if (n._on !== on) { n._on = on; n.classList.toggle('on', on); }
+  });
+  const u = m.total ? L / m.total : 1;
+  if (m.prof) {
+    const x = MX + u * MW, pts = m.prof.pts, c = m.prof.c;
+    let k = 1;
+    while (k < pts.length - 1 && pts[k][0] < x) k++;
+    const f = Math.max(0, Math.min(1, (x - pts[k - 1][0]) / ((pts[k][0] - pts[k - 1][0]) || 1)));
+    m.pf.style.strokeDashoffset = (m.prof.L - (c[k - 1] + (c[k] - c[k - 1]) * f)).toFixed(2);
+    m.pcr.setAttribute('transform', `translate(${MX} 0) scale(${u.toFixed(4)} 1) translate(${-MX} 0)`);
+  }
+  m.scr.forEach((r, q) => {
+    const f = Math.max(0, Math.min(1, w * m.nLines - q));
+    r.setAttribute('transform', `translate(${MX} 0) scale(${f.toFixed(4)} 1) translate(${-MX} 0)`);
+  });
+}
+function drawMap(el) {
+  if (reducedMotion.matches) {
+    el._drawn = true;
+    paintMap(el, el._m.total, 1);
+    return rememberMap(el);
+  }
+  const m = el._m;
+  if (!m.widths) m.widths = m.sl.map(t => { try { return t.getComputedTextLength(); } catch (e) { return MW * .7; } });
+  el._run = { t0: performance.now(), ang: null };
+  el.classList.add('drawing');
+  paintMap(el, 0, 0);
+  mapRuns.add(el);
+  if (!mapRaf) mapRaf = requestAnimationFrame(mapTick);
+}
+function rememberMap(el) {
+  mapSeen.add(TRIP[el._i].id);
+  try { localStorage.setItem(MAP_KEY, JSON.stringify([...mapSeen])); } catch (e) { /* this visit only */ }
+}
+const easeIO = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const LINE_MS = 560;
+function mapTick(now) {
+  for (const el of mapRuns) {
+    const m = el._m, r = el._run, t = now - r.t0;
+    let x, y, ang;
+    if (t < m.dur) {
+      const L = easeIO(t / m.dur) * m.total;
+      paintMap(el, L, 0);
+      const tr = m.tracks.find(tk => L <= tk.start + tk.len) || m.tracks[m.tracks.length - 1];
+      ({ x, y, ang } = along(tr.pts, tr.c, Math.min(tr.len, L - tr.start)));
+    } else {
+      const ts = t - m.dur, w = Math.min(1, ts / (LINE_MS * Math.max(1, m.nLines)));
+      paintMap(el, m.total, w);
+      const q = Math.min(m.nLines - 1, Math.floor(w * m.nLines)), f = w * m.nLines - q, txt = m.sl[q];
+      if (txt && w < 1) { x = MX + f * m.widths[q]; y = +txt.getAttribute('y') - 3; ang = 0; }
+      if (w >= 1 || !txt) {
+        mapRuns.delete(el);
+        el._run = null;
+        el._drawn = true;
+        el.classList.remove('drawing');
+        rememberMap(el);
+        continue;
+      }
+    }
+    // The pencil's body trails back along its direction of travel (PENCIL is drawn body up-right, so +38° undoes
+    // that lean); the heading eases so switchbacks don't spin it.
+    const target = ang * 180 / Math.PI + 180 + 38;
+    if (r.ang == null) r.ang = target;
+    r.ang += ((((target - r.ang) % 360) + 540) % 360 - 180) * .18;
+    m.pencil.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.ang.toFixed(1)})`);
+  }
+  mapRaf = mapRuns.size ? requestAnimationFrame(mapTick) : 0;
+}
+
+// Desktop: a map zooms like a polaroid (a tap while zoomed into it redraws it).
+function mapGoal(m) {
+  const bo = { x: frameEl.offsetLeft + board.offsetLeft, y: frameEl.offsetTop + board.offsetTop };
+  const w = m.offsetWidth, h = m.offsetHeight;
+  return { x: bo.x + m.offsetLeft + w / 2, y: bo.y + m.offsetTop + h / 2, s: Math.min(3, .84 * vp.h / (h * 1.03), .9 * vp.w / (w * 1.03)) };
+}
+function zoomMap(m) {
+  if (!geo) return;
+  readView();
+  if (active < 0 && !mapActive && !running) Object.assign(cam, overviewGoal(), { vx: 0, vy: 0, vs: 0 });
+  if (active >= 0) setActive(-1);
+  if (mapActive) mapActive.classList.remove('active');
+  mapActive = m;
+  m.classList.add('active');
+  board.classList.add('zoomed');
+  zvig.classList.add('show');
+  bar.classList.add('show');
+  viewEl.classList.add('deep');
+  viewStill();
+  zoomScrollY = window.scrollY;
+  live.textContent = m.getAttribute('aria-label');
+  travel = null;
+  goal = mapGoal(m);
+  kick();
+}
+
+// Each map goes by its stack's lower corner, wherever it covers the least yarn, other photos and notes. On phones
+// it sits in the column right under its stack and only its side is chosen.
+function placeMaps(W, geo0) {
+  if (!maps.length) return;
+  const yarnPts = [];
+  for (const r of ropes) {
+    const R = r.R;
+    for (let k = 0; k < ROPE_N - 1; k++) for (let f = 0; f < 6; f++) {
+      yarnPts.push(R[2 * k] + (R[2 * k + 2] - R[2 * k]) * f / 6, R[2 * k + 1] + (R[2 * k + 3] - R[2 * k + 1]) * f / 6);
+    }
+  }
+  const box = n => ({ x: n.offsetLeft, y: n.offsetTop, w: n.offsetWidth, h: n.offsetHeight });
+  const over = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+  const notes = [...board.querySelectorAll('.note, .sticky, .tiltnote:not([hidden])')].map(box);
+  const placed = [];
+  const cost = (rc, own) => {
+    let c = 0;
+    for (let k = 0; k < yarnPts.length; k += 2) {
+      const x = yarnPts[k], y = yarnPts[k + 1];
+      if (x > rc.x - 10 && x < rc.x + rc.w + 10 && y > rc.y - 10 && y < rc.y + rc.h + 10) c += 6;
+    }
+    const A = rc.w * rc.h;
+    for (const p of geo0) if (p.x > rc.x - 12 && p.x < rc.x + rc.w + 12 && p.y > rc.y - 12 && p.y < rc.y + rc.h + 12) c += 40;
+    cards.forEach((cd, j) => { if (j !== own) c += 90 * over(rc, box(cd)) / A; });
+    notes.concat(placed).forEach(n => { c += 80 * over(rc, n) / A; });
+    if (rc.x < 6 || rc.y < 6 || rc.x + rc.w > W - 6 || rc.y + rc.h > board.clientHeight - 6) c += 500;
+    return c;
+  };
+  for (const m of maps) {
+    const cb = box(cards[m._i]), w = m.offsetWidth, h = m.offsetHeight;
+    let best = null;
+    if (phone.matches) {
+      m.style.marginLeft = '0px';
+      const y = m.offsetTop;
+      for (const x of [12, (W - w) / 2, W - w - 12]) {
+        const c = cost({ x, y, w, h }, m._i) + Math.abs(x - (W - w) / 2) * .002;
+        if (!best || c < best.c) best = { c, x, y };
+      }
+      m.style.marginLeft = best.x.toFixed(1) + 'px';
+    } else {
+      for (const side of [-1, 1]) for (const ov of [.1, .22, .34, .46]) for (const ovy of [0, .15, .3, .45, .6, .75]) {
+        const x = side > 0 ? cb.x + cb.w - ov * w : cb.x - w + ov * w, y = cb.y + cb.h - ovy * h;
+        const c = cost({ x, y, w, h }, m._i) + ov * 2 + ovy;
+        if (!best || c < best.c) best = { c, x, y };
+      }
+      m.style.left = best.x.toFixed(1) + 'px';
+      m.style.top = best.y.toFixed(1) + 'px';
+    }
+    placed.push({ x: best.x, y: best.y, w, h });
+  }
+}
+
 // ---------- The view: the Smoky Mountains at dusk, out of focus behind the board ----------
 // Built as layered SVG (sky, stars, six ridgelines hazing bluer and lighter with distance, mist, a tree line) and
 // rasterized once per size into half-resolution canvases with the blur baked in, so nothing blurs per frame.
@@ -2371,7 +2767,7 @@ function setYarnG(g) {
 const glassEl = $('glass');
 const viewBox = { w: 1, h: 1, m: { x: 0, y: 0 } };
 let viewKey = '', viewGen = 0;
-function viewStill() { viewEl.classList.toggle('still', document.hidden || active >= 0); }
+function viewStill() { viewEl.classList.toggle('still', document.hidden || active >= 0 || !!mapActive); }
 // A soft, rounded ridgeline: a few long sine swells plus gentle bumps, smoothed through quadratic midpoints.
 function ridge(rand, w, h, base, amp, wl) {
   const waves = [1, .55, .3, .14].map((a, k) => ({ a, l: wl / (1 + k * 1.1) * (.8 + rand() * .4), p: rand() * 7 }));
@@ -2514,7 +2910,7 @@ function tiltTick(now) {
 const tiltEls = { shade: board.getElementsByClassName('shade'), gl: board.getElementsByClassName('gl'), pin: board.getElementsByClassName('ppin') };
 const corkEl = $('cork');
 function tiltApply(force) {
-  const s = active >= 0 || running ? cam.s : 1, ox = tilt.fx * TILT_PX / s, oy = tilt.fy * TILT_PX / s;
+  const s = active >= 0 || mapActive || running ? cam.s : 1, ox = tilt.fx * TILT_PX / s, oy = tilt.fy * TILT_PX / s;
   if (!force && Math.abs(ox - tilt.ox) < .01 && Math.abs(oy - tilt.oy) < .01) return;
   tilt.ox = ox; tilt.oy = oy;
   const at = k => ox || oy ? `${(ox * k).toFixed(2)}px ${(oy * k).toFixed(2)}px` : '';
@@ -2578,14 +2974,14 @@ if (!reducedMotion.matches) {
   });
 }
 
-stage.addEventListener('click', e => { if (active >= 0 && !e.target.closest('.polaroid, a')) zoomOut(); });
+stage.addEventListener('click', e => { if ((active >= 0 || mapActive) && !e.target.closest('.polaroid, a, .tmap')) zoomOut(); });
 $('out').addEventListener('click', zoomOut);
 $('prev').addEventListener('click', () => step(-1));
 $('next').addEventListener('click', () => step(1));
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') zoomOut();
-  else if (active >= 0 && e.key === 'ArrowRight') { e.preventDefault(); step(1); }
-  else if (active >= 0 && e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+  else if ((active >= 0 || mapActive) && e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+  else if ((active >= 0 || mapActive) && e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
   else if (active >= 0 && (e.key === 'm' || e.key === 'M') && cards[active]._entry && cards[active]._entry.video) toggleSound(cards[active]);
   else if (active >= 0 && (e.key === 'f' || e.key === 'F') && !e.metaKey && !e.ctrlKey && !e.altKey) toggleFlip(active);
 });
@@ -2599,7 +2995,7 @@ stage.addEventListener('touchend', e => {
   touch = null;
   if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
 }, { passive: true });
-window.addEventListener('scroll', () => { if (active >= 0 && Math.abs(window.scrollY - zoomScrollY) > 40) zoomOut(); }, { passive: true });
+window.addEventListener('scroll', () => { if ((active >= 0 || mapActive) && Math.abs(window.scrollY - zoomScrollY) > 40) zoomOut(); }, { passive: true });
 
 let queued = false;
 function relayout() { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; layout(); }); }
