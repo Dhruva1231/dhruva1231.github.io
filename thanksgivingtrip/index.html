@@ -1374,9 +1374,15 @@ function stopLive() {
 }
 document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(syncVideo); });
 
-// Replay: hover on desktop, press and hold for 300ms on phones.
+// Hover plays any front card on desktop, zoomed in or not; leaving stops it unless the camera is on it.
+// Phones: press and hold for 300ms on the focused card.
+function liveHoverable(el) {
+  const st = stacks[cards.indexOf(el)];
+  return !running && !(st && st.busy);
+}
 function hookLive(el) {
-  el.addEventListener('mouseenter', () => { if (hoverable.matches && liveFocused(el) && playing !== el) playLive(el); });
+  el.addEventListener('mouseenter', () => { if (hoverable.matches && liveHoverable(el) && playing !== el) playLive(el); });
+  el.addEventListener('mouseleave', () => { if (hoverable.matches && playing === el && el !== cards[active]) stopLive(); });
   el.addEventListener('touchstart', () => {
     clearTimeout(holdTimer);
     holdTimer = setTimeout(() => { if (liveFocused(el) && el._entry && el._entry.live) { held = true; playLive(el); } }, 300);
