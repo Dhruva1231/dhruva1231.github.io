@@ -13,6 +13,7 @@
     },
     {
       "src": "andrews-bald/IMG_3076.jpg",
+      "live": "andrews-bald/IMG_3076.mp4",
       "caption": null
     }
   ],
@@ -41,12 +42,14 @@
     },
     {
       "src": "black-rock/IMG_1130.jpg",
+      "live": "black-rock/IMG_1130.mp4",
       "caption": null
     }
   ],
   "drive-home": [
     {
       "src": "drive-home/IMG_4498.jpg",
+      "live": "drive-home/IMG_4498.mp4",
       "caption": null
     }
   ],
@@ -60,6 +63,7 @@
     },
     {
       "src": "elk/IMG_2944.jpg",
+      "live": "elk/IMG_2944.mp4",
       "caption": null
     },
     {
@@ -91,12 +95,14 @@
     },
     {
       "src": "kuwohi/IMG_3066.jpg",
+      "live": "kuwohi/IMG_3066.mp4",
       "caption": null
     }
   ],
   "newfound-gap": [
     {
       "src": "newfound-gap/IMG_3616.jpg",
+      "live": "newfound-gap/IMG_3616.mp4",
       "caption": null
     }
   ],
@@ -104,6 +110,7 @@
   "rabun-bald": [
     {
       "src": "rabun-bald/IMG_1127.jpg",
+      "live": "rabun-bald/IMG_1127.mp4",
       "caption": null
     }
   ],
@@ -116,6 +123,7 @@
   "steaks": [
     {
       "src": "steaks/IMG_2389.jpg",
+      "live": "steaks/IMG_2389.mp4",
       "caption": null
     }
   ],
