@@ -1375,7 +1375,7 @@ function stopLive() {
 document.addEventListener('visibilitychange', () => { stopLive(); cards.forEach(syncVideo); });
 
 // Hover plays any front card on desktop, zoomed in or not; leaving stops it unless the camera is on it.
-// Phones: press and hold for 300ms on the focused card.
+// Phones: press and hold for 300ms on any front card.
 function liveHoverable(el) {
   const st = stacks[cards.indexOf(el)];
   return !running && !(st && st.busy);
@@ -1385,9 +1385,13 @@ function hookLive(el) {
   el.addEventListener('mouseleave', () => { if (hoverable.matches && playing === el && el !== cards[active]) stopLive(); });
   el.addEventListener('touchstart', () => {
     clearTimeout(holdTimer);
-    holdTimer = setTimeout(() => { if (liveFocused(el) && el._entry && el._entry.live) { held = true; playLive(el); } }, 300);
+    holdTimer = setTimeout(() => { if (liveHoverable(el) && el._entry && el._entry.live) { held = true; playLive(el); } }, 300);
   }, { passive: true });
-  for (const t of ['touchend', 'touchmove', 'touchcancel']) el.addEventListener(t, () => clearTimeout(holdTimer), { passive: true });
+  // Letting go stops it, unless the camera is on that card (then it finishes, as it does on settle).
+  for (const t of ['touchend', 'touchmove', 'touchcancel']) el.addEventListener(t, () => {
+    clearTimeout(holdTimer);
+    if (t !== 'touchmove' && playing === el && el !== cards[active]) stopLive();
+  }, { passive: true });
 }
 // A press-and-hold ends in a click; don't let it shuffle or zoom. Any new touch clears a stale hold.
 document.addEventListener('touchstart', () => { held = false; }, { passive: true, capture: true });
