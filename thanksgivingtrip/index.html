@@ -6,6 +6,9 @@
   The page tries .jpg, then .jpeg, then .png, then .JPG, and falls back to the cartoon placeholder.
   Filenames are case-sensitive on GitHub Pages.
 
+  Frames: polaroid-frame-a/b/c.webp sit next to this file (see FRAMES in the script for each window).
+  film-overlay.webp is optional; when it exists it's laid over every photo.
+
     photos/roadtrip-up.jpg     photos/newfound-gap.jpg   photos/gorge-floor.jpg
     photos/atl.jpg             photos/andrews-bald.jpg   photos/rabun-bald.jpg
     photos/tallulah-rim.jpg    photos/kuwohi.jpg         photos/pickleball.jpg
@@ -143,63 +146,66 @@ body {
 }
 .zvig.show { opacity: 1; }
 
-/* ---------- Polaroids ---------- */
+/* ---------- Polaroids ----------
+   Each polaroid is a real frame image (transparent photo window) over the photo. Window geometry per frame
+   comes from FRAMES in the script and lands here as --wl/--wt/--ww/--wh/--tt percentages. */
 .polaroid {
   position: absolute;
   left: calc(var(--x) * 1%);
   top: calc(var(--y) * 1%);
   margin-left: calc(var(--pw) / -2);
   width: var(--pw);
-  padding: calc(var(--pw) * .055) calc(var(--pw) * .055) 0;
+  aspect-ratio: var(--ar);
+  padding: 0;
   border: 0;
-  border-radius: 2px;
-  background: var(--paper);
-  color: var(--ink);
+  background: none;
+  color: inherit;
   font: inherit;
   text-align: center;
   cursor: pointer;
   /* Pivot on the pushpin; --dx/--dy (set in layout) keep the resting pose identical to a center rotation. */
-  transform-origin: 50% 7px;
+  transform-origin: 50% 2.5%;
   transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r));
-  box-shadow:
-    0 1px 1px rgba(40, 20, 5, .25),
-    0 8px 14px -6px rgba(40, 20, 5, .5),
-    0 22px 34px -14px rgba(40, 20, 5, .45);
+  filter: drop-shadow(0 1px 1px rgba(40,25,10,.4)) drop-shadow(0 8px 12px rgba(40,25,10,.25));
   z-index: 2;
   -webkit-tap-highlight-color: transparent;
   transition: transform 650ms cubic-bezier(.3, 1.25, .5, 1);
 }
-.polaroid::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: 2px;
-  box-shadow: 0 34px 60px -12px rgba(15, 8, 0, .7), 0 16px 26px -8px rgba(15, 8, 0, .45);
-  opacity: 0; transition: opacity 500ms ease;
+.polaroid.active {
+  z-index: 12; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1.06); will-change: transform;
+  filter: drop-shadow(0 2px 2px rgba(30,18,6,.45)) drop-shadow(0 22px 26px rgba(20,10,2,.5));
 }
-.polaroid.active { z-index: 12; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1.06); will-change: transform; }
-.polaroid.active::before { opacity: 1; }
 .polaroid:focus { outline: none; }
 .polaroid:focus-visible { outline: 3px solid #fff7d6; outline-offset: 5px; }
-.photo { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; background: #2b2c3a; }
+/* Photo and film overlay share one box: the frame's window, 0.3% larger on every side so no seam shows. */
+.photo, .film {
+  position: absolute; display: block; overflow: hidden;
+  left: calc(var(--wl) - .3%); top: calc(var(--wt) - .3%);
+  width: calc(var(--ww) + .6%); height: calc(var(--wh) + .6%);
+}
+.photo { background: #2b2c3a; filter: sepia(.25) saturate(.85) contrast(.94) brightness(1.03); }
 .photo svg, .photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .photo img { object-fit: cover; object-position: center; }
-.photo::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,0) 40%);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
-}
 .polaroid.has-photo .photo svg { display: none; }
+.film { pointer-events: none; }
+.film img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: rotate(var(--fr)) scale(var(--fs, 1)); }
+.fimg { position: absolute; left: 0; top: 0; width: 100%; height: auto; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
 .tab {
+  position: absolute; left: 6%; right: 6%; top: var(--tt); bottom: 0;
   display: flex; align-items: center; justify-content: center;
-  height: calc(var(--pw) * .3);
-  padding: 0 4px;
+  padding: 0 2px 2%;
   font-family: var(--hand);
-  font-weight: 600;
+  font-weight: 500;
   font-size: max(15px, calc(var(--pw) * .09));
   line-height: 1.02;
+  color: #4a4a4a;
+  opacity: .8;
+  mix-blend-mode: multiply;
 }
-.tab span { display: block; transform: rotate(-1.2deg); }
+.tab span { display: block; transform: rotate(var(--cr)); }
 /* The focused polaroid's own pushpin, drawn above the dimmer */
 .ppin {
-  position: absolute; left: 50%; top: 7px; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%;
+  position: absolute; left: 50%; top: 2.5%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%;
   background: radial-gradient(circle at 38% 34%, var(--pl), var(--pc) 45%, var(--pk));
   box-shadow: 2px 3px 3px rgba(40,20,5,.45), inset -1px -1px 1px rgba(0,0,0,.15);
   opacity: 0; pointer-events: none;
@@ -303,7 +309,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .polaroid, .polaroid::before, .zoombar, .zvig, #dim { transition-duration: 150ms; transition-timing-function: ease; }
+  .polaroid, .zoombar, .zvig, #dim { transition-duration: 150ms; transition-timing-function: ease; }
   .polaroid.active .ppin { animation: none; }
 }
 </style>
@@ -339,21 +345,29 @@ body {
 // One entry per polaroid, in yarn (trip) order.
 // x = horizontal center and y = top edge on the desktop board, both in % of the board; r = tilt in degrees.
 const TRIP = [
-  { id: 'roadtrip-up',  caption: 'road trip up 11/20 @ I-75',                x: 38, y: 4.5,  r: -4 },
-  { id: 'atl',          caption: 'landed! 11/20 @ ATL',                      x: 61, y: 3,    r: 3 },
-  { id: 'tallulah-rim', caption: 'Tallulah Gorge 11/21 @ Tallulah Falls',   x: 83, y: 5.5,  r: -2 },
-  { id: 'black-rock',   caption: 'Black Rock sunset 11/21 @ Black Rock Mtn', x: 84, y: 29.5, r: 5 },
-  { id: 'steaks',       caption: 'steaks 11/21 @ cabin',                     x: 62, y: 28,   r: -3 },
-  { id: 'newfound-gap', caption: 'Newfound Gap 11/22 @ Smokies',             x: 39, y: 30,   r: 2 },
-  { id: 'andrews-bald', caption: 'Andrews Bald 11/22 @ Smokies',             x: 17, y: 28.5, r: -5 },
-  { id: 'kuwohi',       caption: 'Kuwohi tower 11/22 @ Smokies',             x: 16.5, y: 53,   r: 4 },
-  { id: 'elk',          caption: 'elk! 11/22 @ Oconaluftee',                 x: 38, y: 52,   r: -2 },
-  { id: 'gorge-floor',  caption: 'gorge floor 11/23 @ Tallulah',             x: 61, y: 54,   r: 3 },
-  { id: 'rabun-bald',   caption: 'Rabun Bald 11/23 @ Sky Valley',            x: 83, y: 52.5, r: -4 },
-  { id: 'pickleball',   caption: 'pickleball 11/23 @ Tiger, GA',             x: 82, y: 77,   r: 2 },
-  { id: 'drive-home',   caption: 'drive home 11/24 @ I-75',                  x: 60, y: 76,   r: -3 }
+  { id: 'roadtrip-up',  caption: 'road trip up 11/20 @ I-75',                x: 38, y: 4.5,  r: -4, frame: 'a' },
+  { id: 'atl',          caption: 'landed! 11/20 @ ATL',                      x: 61, y: 3,    r: 3, frame: 'b' },
+  { id: 'tallulah-rim', caption: 'Tallulah Gorge 11/21 @ Tallulah Falls',   x: 83, y: 5.5,  r: -2, frame: 'c' },
+  { id: 'black-rock',   caption: 'Black Rock sunset 11/21 @ Black Rock Mtn', x: 84, y: 29.5, r: 5, frame: 'a' },
+  { id: 'steaks',       caption: 'steaks 11/21 @ cabin',                     x: 62, y: 28,   r: -3, frame: 'b' },
+  { id: 'newfound-gap', caption: 'Newfound Gap 11/22 @ Smokies',             x: 39, y: 30,   r: 2, frame: 'c' },
+  { id: 'andrews-bald', caption: 'Andrews Bald 11/22 @ Smokies',             x: 17, y: 28.5, r: -5, frame: 'a' },
+  { id: 'kuwohi',       caption: 'Kuwohi tower 11/22 @ Smokies',             x: 16.5, y: 53,   r: 4, frame: 'b' },
+  { id: 'elk',          caption: 'elk! 11/22 @ Oconaluftee',                 x: 38, y: 52,   r: -2, frame: 'c' },
+  { id: 'gorge-floor',  caption: 'gorge floor 11/23 @ Tallulah',             x: 61, y: 54,   r: 3, frame: 'a' },
+  { id: 'rabun-bald',   caption: 'Rabun Bald 11/23 @ Sky Valley',            x: 83, y: 52.5, r: -4, frame: 'b' },
+  { id: 'pickleball',   caption: 'pickleball 11/23 @ Tiger, GA',             x: 82, y: 77,   r: 2, frame: 'c' },
+  { id: 'drive-home',   caption: 'drive home 11/24 @ I-75',                  x: 60, y: 76,   r: -3, frame: 'a' }
 ];
 const PHOTO_EXTS = ['jpg', 'jpeg', 'png', 'JPG'];
+// Polaroid frame images (1200px wide, transparent photo window). Percentages are of the frame image:
+// left/width of its width, top/height/tab of its height. tab = where the caption strip starts.
+const FRAMES = {
+  a: { src: 'polaroid-frame-a.webp', ar: '1200 / 1443', left: 6.429, top: 5.938, width: 86.857, height: 74.703, tab: 80.641 },
+  b: { src: 'polaroid-frame-b.webp', ar: '1200 / 1463', left: 6.15,  top: 5.921, width: 87.701, height: 74.123, tab: 80.044 },
+  c: { src: 'polaroid-frame-c.webp', ar: '1200 / 1472', left: 6.269, top: 5.736, width: 87.462, height: 73.691, tab: 79.426 }
+};
+const PIN_TOP = .025; // pushpin sits on the top border, this fraction of the polaroid's height down
 const PIN_COLORS = [['#d93b30', '#ff9a8c', '#7a1a14'], ['#2f6fd1', '#9cc0ff', '#183c78'], ['#2f9e5a', '#9be0b2', '#175a31'],
                     ['#f2c230', '#fff0a8', '#94700c'], ['#f08a24', '#ffcf94', '#8a4a0c']];
 
@@ -637,8 +651,14 @@ const cards = TRIP.map((d, i) => {
   b.style.setProperty('--x', d.x);
   b.style.setProperty('--y', d.y);
   b.style.setProperty('--r', d.r + 'deg');
+  const fr = FRAMES[d.frame], rand = rng(i * 7919 + 17);
+  for (const [k, v] of [['--ar', fr.ar], ['--wl', fr.left + '%'], ['--wt', fr.top + '%'], ['--ww', fr.width + '%'], ['--wh', fr.height + '%'], ['--tt', fr.tab + '%']]) b.style.setProperty(k, v);
+  rand();
+  b.style.setProperty('--cr', (rand() * 4 - 2).toFixed(2) + 'deg');
   b.setAttribute('aria-label', d.caption);
-  b.innerHTML = `<span class="photo">${art(d.id)}</span><span class="tab"><span>${d.caption}</span></span>` +
+  b.innerHTML = `<span class="photo">${art(d.id)}</span><span class="film"></span>` +
+    `<img class="fimg" src="${fr.src}" alt="" draggable="false">` +
+    `<span class="tab"><span>${d.caption}</span></span>` +
     `<span class="ppin" style="--pc:${pc};--pl:${pl};--pk:${pk}"></span>`;
   b.addEventListener('click', e => { e.stopPropagation(); active === i ? zoomOut() : zoomTo(i); });
   board.insertBefore(b, yarn);
@@ -659,6 +679,17 @@ async function findPhoto(d, el) {
   }
 }
 TRIP.forEach((d, i) => findPhoto(d, cards[i]));
+// Optional light-leak overlay, turned a different way on each polaroid. The window is near square, so the
+// slight scale covers the corners when it's turned 90° or 270°.
+(async () => {
+  try { if (!(await fetch('film-overlay.webp', { method: 'HEAD' })).ok) return; } catch (e) { return; }
+  cards.forEach((el, i) => {
+    const turn = (i * 3 % 4) * 90, f = el.querySelector('.film');
+    f.style.setProperty('--fr', turn + 'deg');
+    f.style.setProperty('--fs', turn % 180 ? 1.06 : 1);
+    f.innerHTML = '<img src="film-overlay.webp" alt="" draggable="false">';
+  });
+})();
 
 
 // ---------- Yarn + pushpins, computed from the laid-out polaroids ----------
@@ -672,11 +703,11 @@ function layout() {
   // Where each pushpin lands once the polaroid is tilted (as if rotated about its center). Polaroids pivot on
   // the pin itself, so the --dx/--dy shift keeps them in that pose and the pin stays put when they straighten.
   const pins = cards.map((el, i) => {
-    const a = TRIP[i].r * Math.PI / 180, v = sizes[i].h / 2 - 7;
+    const a = TRIP[i].r * Math.PI / 180, v = sizes[i].h * (.5 - PIN_TOP);
     const dx = v * Math.sin(a), dy = v * (1 - Math.cos(a));
     el.style.setProperty('--dx', dx.toFixed(2) + 'px');
     el.style.setProperty('--dy', dy.toFixed(2) + 'px');
-    return { x: el.offsetLeft + el.offsetWidth / 2 + dx, y: el.offsetTop + 7 + dy };
+    return { x: el.offsetLeft + el.offsetWidth / 2 + dx, y: el.offsetTop + sizes[i].h * PIN_TOP + dy };
   });
 
   const f = n => n.toFixed(1);
@@ -736,7 +767,7 @@ function layout() {
   geo = {
     pins: pins.map(p => ({ x: p.x + bo.x, y: p.y + bo.y })),
     // From a lifted (untilted, 1.06×) polaroid's pin to its center.
-    offs: sizes.map(s => ({ x: 0, y: (s.h / 2 - 7) * 1.06 })),
+    offs: sizes.map(s => ({ x: 0, y: s.h * (.5 - PIN_TOP) * 1.06 })),
     sizes, lens, samples, step,
     wo: { x: wall.offsetLeft, y: wall.offsetTop }
   };
