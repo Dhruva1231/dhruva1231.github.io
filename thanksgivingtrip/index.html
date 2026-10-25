@@ -214,17 +214,19 @@ body {
 .polaroid.active .ppin { opacity: 1; animation: pop 460ms cubic-bezier(.3, 1.4, .5, 1) 180ms both; }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-/* ---------- Paper note + sticky ---------- */
+/* ---------- Post-it notes ---------- */
 .note {
   position: absolute; left: 2.5%; top: 2.5%;
-  width: clamp(170px, 18vw, 270px);
+  width: clamp(170px, 18vw, 250px); aspect-ratio: 1 / 1;
+  display: flex; flex-direction: column; justify-content: center;
   padding: 26px 18px 16px;
+  /* Pink post-it: darker adhesive strip along the top, faint fold light toward the lifted bottom corner */
   background:
-    linear-gradient(to bottom, transparent 21px, rgba(214,92,92,.55) 21px, rgba(214,92,92,.55) 22px, transparent 22px) 0 0 / 100% 100% no-repeat,
-    repeating-linear-gradient(to bottom, #fffdf7 0 25px, rgba(120,150,200,.35) 25px 26px);
-  background-color: #fffdf7;
+    linear-gradient(to bottom, rgba(170,60,90,.10), rgba(170,60,90,0) 18%),
+    linear-gradient(160deg, #ffd3df, #ffc0d2 60%, #ffb6cb);
+  border-bottom-right-radius: 14px 6px;
   transform: rotate(-2.5deg);
-  box-shadow: 0 1px 1px rgba(40,20,5,.2), 0 10px 18px -8px rgba(40,20,5,.5);
+  box-shadow: 0 1px 1px rgba(40,20,5,.2), 4px 12px 14px -8px rgba(40,20,5,.55);
   font-family: var(--hand);
   z-index: 3;
 }
@@ -287,6 +289,7 @@ body {
     width: calc(100% - var(--sw) - 34px);
     margin: 20px 0 0 12px;
     padding: 24px 12px 12px;
+    aspect-ratio: auto; min-height: var(--sw);
   }
   .note h1 { font-size: 1.6rem; }
   .note p { font-size: 1.25rem; }
@@ -613,11 +616,10 @@ const ART = {
     <rect x="8" y="94" width="184" height="7" fill="#23262e"/>
     <path d="M14 94V101M22 94V101M30 94V101M38 94V101M46 94V101M54 94V101M62 94V101M70 94V101M78 94V101M86 94V101M94 94V101M102 94V101M110 94V101M118 94V101M126 94V101M134 94V101M142 94V101M150 94V101M158 94V101M166 94V101M174 94V101M182 94V101" stroke="#4a4f5c" stroke-width=".6"/>
     <rect x="8" y="93" width="184" height="2.4" fill="#f4f1e8"/><circle cx="8" cy="97" r="3.4" fill="#1a1c22"/><circle cx="192" cy="97" r="3.4" fill="#1a1c22"/>
-    <g opacity=".28" fill="#000" transform="translate(9 6)"><g transform="translate(84 146) rotate(-25)"><rect x="-17" y="-24" width="34" height="40" rx="15"/><rect x="-4" y="14" width="8" height="21" rx="3"/></g><g transform="translate(116 146) rotate(25)"><rect x="-17" y="-24" width="34" height="40" rx="15"/><rect x="-4" y="14" width="8" height="21" rx="3"/></g><circle cx="146" cy="178" r="8"/></g>
-    <g transform="translate(84 146) rotate(-25)"><rect x="-17" y="-24" width="34" height="40" rx="15" fill="#f08a24"/><rect x="-13.5" y="-20.5" width="27" height="33" rx="12" fill="none" stroke="#fff" stroke-width="1.2" opacity=".35"/><rect x="-4" y="14" width="8" height="21" rx="3" fill="#2b2b33"/></g>
-    <g transform="translate(116 146) rotate(25)"><rect x="-17" y="-24" width="34" height="40" rx="15" fill="#7b5cd6"/><rect x="-13.5" y="-20.5" width="27" height="33" rx="12" fill="none" stroke="#fff" stroke-width="1.2" opacity=".35"/><rect x="-4" y="14" width="8" height="21" rx="3" fill="#2b2b33"/></g>
-    <circle cx="140" cy="174" r="8.5" fill="#f6dc3a"/><g fill="#c9a91c"><circle cx="137" cy="171" r="1.5"/><circle cx="143" cy="171.5" r="1.5"/><circle cx="140" cy="176.5" r="1.5"/><circle cx="135.5" cy="176" r="1.1"/><circle cx="144.5" cy="177" r="1.1"/></g>
-    <circle cx="137.5" cy="170.5" r="2.4" fill="#fff6b8" opacity=".55"/>
+    <g opacity=".28" fill="#000" transform="translate(9 6)"><path transform="translate(80 145) rotate(-25) scale(1.2)" d="${INVIKTA_OUTLINE}" fill-rule="evenodd"/><path transform="translate(120 145) rotate(25) scale(1.2)" d="${INVIKTA_OUTLINE}" fill-rule="evenodd"/><circle cx="158" cy="182" r="8"/></g>
+    ${invikta('pb-r', 80, 145, -25, '#e0413a', '#a8211d')}${invikta('pb-g', 120, 145, 25, '#9a9e9a', '#6b706d')}
+    <circle cx="152" cy="178" r="8.5" fill="#f6dc3a"/><g fill="#c9a91c"><circle cx="149" cy="175" r="1.5"/><circle cx="155" cy="175.5" r="1.5"/><circle cx="152" cy="180.5" r="1.5"/><circle cx="147.5" cy="180" r="1.1"/><circle cx="156.5" cy="181" r="1.1"/></g>
+    <circle cx="149.5" cy="174.5" r="2.4" fill="#fff6b8" opacity=".55"/>
     <rect width="200" height="200" fill="url(#pb-w)"/>`,
 
   'drive-home': () => `<defs>${lg('dh-s', [[0, '#34487e'], [.45, '#c07a86'], [.72, '#f3a468'], [.9, '#ffe0a0']])}${rg('dh-g', '#ffd98f', .9)}${lg('dh-r', [[0, '#9fb7da'], [1, '#f2c7a8']])}<clipPath id="dh-m"><rect x="69" y="23" width="62" height="18" rx="7"/></clipPath></defs>
@@ -635,6 +637,35 @@ const ART = {
     <path d="M0 168C50 156 150 156 200 168V200H0Z" fill="#1d1b24"/><path d="M0 168C50 156 150 156 200 168" stroke="#3a3646" stroke-width="2" fill="none"/>
     <path d="M12 200A42 30 0 0 1 96 200" stroke="#0f0e14" stroke-width="7" fill="none"/>`
 };
+// Selkirk AMPED Pro Air Invikta (Midweight): elongated face, open "Air" throat cutout, white grip,
+// the big Selkirk S swoosh and the AMPED / INVIKTA wordmark. Drawn ~70 units long, centered on 0,0.
+const INVIKTA_FACE = 'M-15.7 -30C-15.7 -33 -13.5 -35.4 -10.4 -35.4H10.4C13.5 -35.4 15.7 -33 15.7 -30V3.6C15.7 7.5 7.5 10.5 4.6 13.4H-4.6C-7.5 10.5 -15.7 7.5 -15.7 3.6Z';
+const INVIKTA_SLOT = 'M-8.8 .3H8.6C9.9 .3 9.9 1.4 9.1 2.1C6.5 4.3 3.4 5 0 5S-6.5 4.3 -9.1 2.1C-9.9 1.4 -9.9 .3 -8.8 .3Z';
+const INVIKTA_OUTLINE = INVIKTA_FACE + INVIKTA_SLOT + 'M-3.9 12.8H3.9V34.2Q3.9 35.4 2.7 35.4H-2.7Q-3.9 35.4 -3.9 34.2Z';
+function invikta(id, x, y, rot, face, dark) {
+  const band = '#ece8e0';
+  return `<defs>${lg(id, [[0, face], [.55, face], [1, dark]])}<clipPath id="${id}-c"><path d="${INVIKTA_FACE}"/></clipPath></defs>
+    <g transform="translate(${x} ${y}) rotate(${rot}) scale(1.2)">
+      <path d="M-3.9 12.8H3.9V34.2Q3.9 35.4 2.7 35.4H-2.7Q-3.9 35.4 -3.9 34.2Z" fill="#ebe9e4"/>
+      <path d="M-3.9 16L3.9 13.6M-3.9 20L3.9 17.6M-3.9 24L3.9 21.6M-3.9 28L3.9 25.6M-3.9 32L3.9 29.6" stroke="#c4c1ba" stroke-width=".7"/>
+      <rect x="-4.1" y="12.6" width="8.2" height="1.6" fill="${dark}"/>
+      <path d="${INVIKTA_FACE}${INVIKTA_SLOT}" fill="url(#${id})" fill-rule="evenodd"/>
+      <g clip-path="url(#${id}-c)">
+        <path d="M-17 -23.6C-8 -29.6 5 -31.4 17 -28.6V-21.8C6 -23 -6 -20.6 -17 -15Z" fill="${band}"/>
+        <path d="M-11.5 -19.4C-3 -25 7 -26.6 17 -25.2" fill="none" stroke="${face}" stroke-width="1.6"/>
+        <path d="M-17 -13.8C-7 -17.6 5 -18.6 17 -15.4V-7.4C5 -11 -7 -11.4 -17 -9.8Z" fill="${band}"/>
+      </g>
+      <path d="${INVIKTA_FACE}${INVIKTA_SLOT}" fill="none" stroke="${dark}" stroke-width=".8" fill-rule="evenodd"/>
+      <g fill="#fff" font-family="Arial, Helvetica, sans-serif" font-style="italic" font-weight="800">
+        <path d="M-7.2 -32.2c1.6-1 3.4-1 5 0M-7.2 -30.9c1.6-1 3.4-1 5 0" stroke="#fff" stroke-width=".55" fill="none"/>
+        <text x="-1.2" y="-30" font-size="3.3" font-style="normal" letter-spacing=".25">SELKIRK</text>
+        <text x="-8.6" y="-3.2" font-size="5.2" letter-spacing=".1">AMPED</text>
+        <text x="-10.6" y="-.6" font-size="2.7" letter-spacing=".15">INVIKTA</text>
+        <text x="1.6" y="-.6" font-size="2.4" font-weight="700">PRO AIR</text>
+      </g>
+      <path d="M-13.2 -6.4l2 -1.6 -1 1.4h1.6l-2.3 2 1-1.5z" fill="#fff"/>
+    </g>`;
+}
 const art = id => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${ART[id]()}</svg>`;
 
 // ---------- Build the board ----------
