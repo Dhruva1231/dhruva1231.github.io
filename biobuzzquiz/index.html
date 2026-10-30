@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BIOBUZZ Rules Quiz</title>
+<meta name="description" content="Two quizzes on the FTC 2026-27 BIOBUZZ Competition Manual, by FTC Team 14725 Java The Hutts.">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: single narrow column; one question per card; progress drawn as a row of hive cells */
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --ink: #17252a;
+  --muted: #5c6b6e;
+  --line: #dbe0dc;
+  --honey: #d98a00;
+  --honey-soft: #fdf1d8;
+  --teal: #0f6b6b;
+  --good: #1d7a3e;
+  --good-soft: #e3f3e8;
+  --bad: #b3261e;
+  --bad-soft: #fbe6e4;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111a1c; --surface: #18252a; --ink: #e8eeec; --muted: #9aa9aa; --line: #2b3b3f;
+    --honey: #f2a922; --honey-soft: #3a2c0d; --teal: #5cc4c0;
+    --good: #5fd08a; --good-soft: #163524; --bad: #ff8a80; --bad-soft: #3d1b19;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111a1c; --surface: #18252a; --ink: #e8eeec; --muted: #9aa9aa; --line: #2b3b3f;
+  --honey: #f2a922; --honey-soft: #3a2c0d; --teal: #5cc4c0;
+  --good: #5fd08a; --good-soft: #163524; --bad: #ff8a80; --bad-soft: #3d1b19;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.55;
+}
+.wrap {
+  max-width: 680px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 7vw, 44px); line-height: 1.05; margin: 0; text-wrap: balance; }
+h1 span { color: var(--honey); }
+.sub { color: var(--muted); margin: 4px 0 0; max-width: 60ch; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 22px; margin: 0; text-wrap: balance; }
+
+.picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.pick {
+  text-align: left; cursor: pointer; font: inherit; color: inherit;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 18px; display: flex; flex-direction: column; gap: 8px;
+  transition: border-color .15s, transform .15s;
+}
+.pick:hover { border-color: var(--honey); transform: translateY(-2px); }
+.pick:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--honey); outline-offset: 2px; }
+.pick .sec { font-family: var(--f-mono); font-size: 12px; color: var(--teal); letter-spacing: .06em; }
+.pick .meta { font-size: 14px; color: var(--muted); }
+.pick .best { font-size: 13px; color: var(--honey); font-weight: 600; }
+
+.quiz { display: flex; flex-direction: column; gap: 16px; }
+.qtop { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.back { background: none; border: 0; color: var(--teal); font: inherit; font-weight: 500; cursor: pointer; padding: 4px 0; }
+.count { font-family: var(--f-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cells { display: flex; flex-wrap: wrap; gap: 4px; }
+.cell { width: 18px; height: 20px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: var(--line); }
+.cell.now { background: var(--honey); }
+.cell.ok { background: var(--good); }
+.cell.no { background: var(--bad); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+.prompt { font-size: 19px; font-weight: 600; line-height: 1.4; margin: 0; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  background: var(--bg); border: 1.5px solid var(--line); border-radius: 8px;
+  padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start;
+}
+.opt:hover:not(:disabled) { border-color: var(--teal); }
+.opt:disabled { cursor: default; }
+.opt .k { font-family: var(--f-mono); font-size: 13px; color: var(--muted); padding-top: 2px; min-width: 1ch; }
+.opt.right { border-color: var(--good); background: var(--good-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.right .k, .opt.wrong .k { color: inherit; }
+.explain { border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--bad); }
+.rule { font-family: var(--f-mono); font-size: 12.5px; background: var(--honey-soft); color: var(--ink); padding: 2px 7px; border-radius: 4px; align-self: flex-start; }
+.explain p { margin: 0; color: var(--ink); }
+.next {
+  align-self: flex-end; font: inherit; font-weight: 600; cursor: pointer;
+  background: var(--ink); color: var(--bg); border: 0; border-radius: 8px; padding: 11px 20px;
+}
+.result { text-align: left; }
+.score { font-family: var(--f-display); font-weight: 800; font-size: 56px; line-height: 1; color: var(--honey); font-variant-numeric: tabular-nums; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.ghost { font: inherit; font-weight: 500; cursor: pointer; background: transparent; color: var(--ink); border: 1.5px solid var(--line); border-radius: 8px; padding: 10px 16px; }
+.ghost:hover { border-color: var(--teal); }
+.share { display: flex; flex-direction: column; gap: 8px; }
+.share textarea { font-family: var(--f-mono); font-size: 13px; width: 100%; min-height: 76px; resize: vertical; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+.misses { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+footer a, .explain a { color: var(--teal); }
+@media (prefers-reduced-motion: reduce) { .pick { transition: none; } .pick:hover { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FTC 2026–27 · BIOBUZZ presented by RTX</div>
+    <h1>Know the <span>Manual</span></h1>
+    <p class="sub">Two tough quizzes on the Competition Manual. Pick one, answer, and see the rule behind every answer.</p>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>
+    <div>Made for outreach by FTC Team 14725, Java The Hutts. Based on Competition Manual TU07 (Oct 29, 2026).</div>
+    <div>Not official. The <a href="https://ftc-resources.firstinspires.org/ftc/game" target="_blank" rel="noopener">Competition Manual</a> and Head Referee always have the final word.</div>
+  </footer>
+</div>
+
+<script>
+const QUIZZES = {
+  game: {
+    title: "Game Play Rules",
+    section: "SECTION 11 · G RULES",
+    short: "Section 11",
+    blurb: "Delays, forced fouls, pins, cards, coach limits, and HIVE edge cases.",
+    link: "https://ftc-resources.firstinspires.org/ftc/game/manual-11",
+    qs: [
+      { q: "In a Qualification MATCH, what counts as the expected start time for G301 (delays)?", o: ["The scheduled time, no matter what", "The scheduled time or ~3 min after the previous MATCH on that FIELD, whichever is later", "The scheduled time or ~3 min after the previous MATCH, whichever is earlier", "8 minutes after either ALLIANCE's previous MATCH"], a: 1, r: "G301", e: "Quals use the scheduled time or ~3 minutes after the last MATCH on that FIELD, whichever is later. Playoffs use the scheduled time or 8 minutes from either ALLIANCE's previous MATCH, whichever is later." },
+      { q: "After a G301 delay warning, how long does a team have to become MATCH ready before its ROBOT is DISABLED (if it's making no good-faith effort)?", o: ["30 seconds", "1 minute", "2 minutes", "5 minutes"], a: 2, r: "G301", e: "The Head Referee starts a 2-minute timer. A second delay in the same tournament phase is a MAJOR FOUL for the upcoming MATCH." },
+      { q: "With 65 seconds left, a red ROBOT deliberately rams a blue ROBOT lined up at a FLOWER, knocking its NECTAR in early. Who is penalized?", o: ["Blue: MAJOR FOUL for early NECTAR", "Both ALLIANCES", "Red: MAJOR FOUL. Blue is not penalized", "No one. It was ROBOT-to-ROBOT contact"], a: 2, r: "G204", e: "Forcing an opponent to break a rule is a MAJOR FOUL per instance (plus YELLOW CARD per MATCH if repeated). The forced violation isn't penalized. This exact scenario is in the manual." },
+      { q: "A ROBOT has a 'keep 4, spit out the rest' sorter and REPEATEDLY grabs 5+ SCORING ELEMENTS. Likely ruling?", o: ["Legal. The sorter fixes it", "VERBAL WARNING only", "MAJOR FOUL and YELLOW CARD per MATCH", "MINOR FOUL per extra element"], a: 2, r: "G407", e: "Repeated control of 5+ is likely STRATEGIC even with a sorter. Momentarily grabbing 5 and quickly reversing one is likely not." },
+      { q: "What's the penalty for STRATEGICALLY controlling the opponent's NECTAR?", o: ["MAJOR FOUL per NECTAR", "MINOR FOUL per NECTAR", "YELLOW CARD per MATCH, no foul points", "RED CARD"], a: 2, r: "G408", e: "G408 carries no foul points: VERBAL WARNING, or a YELLOW CARD per MATCH if STRATEGIC. Repeated control counts as STRATEGIC even with an auto-discard sorter." },
+      { q: "One hit both damages an opponent ROBOT (G419) and tips it over (G420). How is it penalized?", o: ["Both penalties stack", "Only the most punitive penalty applies", "Only G419, since damage happened first", "The opponent picks which rule applies"], a: 1, r: "11.4.5", e: "G419 and G420 are mutually exclusive. A single interaction that breaks both gets only the harsher penalty." },
+      { q: "While your ROBOT is PINNING an opponent, a third ROBOT PINS you. What happens to your PIN count?", o: ["It pauses", "It keeps running", "It ends", "It transfers to the third ROBOT"], a: 2, r: "G421.C", e: "A PIN ends if the PINNING ROBOT gets PINNED. Separating by 2 ft only pauses the count, and it ends once that lasts more than 3 seconds." },
+      { q: "You're red. During AUTO your ROBOT drifts into column D and bumps a blue ROBOT, not on purpose. Penalty?", o: ["None. AUTO contact is incidental", "VERBAL WARNING", "MAJOR FOUL per MATCH", "MAJOR FOUL and YELLOW CARD"], a: 2, r: "G402", e: "In AUTO, columns A–C are red and D–F are blue. Contacting an opponent on their side disrupts AUTO: MAJOR FOUL per MATCH, plus a YELLOW CARD if STRATEGIC." },
+      { q: "A ROBOT that doesn't meet MATCH eligibility (inspection) requirements plays a MATCH anyway. Result?", o: ["MAJOR FOUL", "YELLOW CARD", "RED CARD", "Score voided, no card"], a: 2, r: "G303.B", e: "A ROBOT that isn't compliant with G303.B and participates in the MATCH gets a RED CARD." },
+      { q: "Your ROBOT knocks over a DRIVER STATION stand for the second time at the event. Per Team Update 07, what's the call?", o: ["VERBAL WARNING", "DISABLED and VERBAL WARNING", "DISABLED and YELLOW CARD per MATCH", "MAJOR FOUL only"], a: 2, r: "G412 (TU07)", e: "First violation: DISABLED and VERBAL WARNING. Later violations: DISABLED and YELLOW CARD per MATCH. TU07 added the DISABLED part. Just touching a DS stand isn't a violation." },
+      { q: "A referee tells your team to DISABLE, and you keep driving on purpose to finish a score. Penalty?", o: ["MAJOR FOUL", "YELLOW CARD", "RED CARD", "MINOR FOUL per second"], a: 2, r: "G413", e: "Not stopping when instructed is a VERBAL WARNING, or a RED CARD if STRATEGIC." },
+      { q: "Which of these may a DRIVE COACH NOT do during a MATCH?", o: ["Select an OpMode", "Press INIT and start", "Hold the DRIVER STATION", "Briefly take a gamepad to fix a stuck button"], a: 3, r: "G423", e: "Coaches may hold or troubleshoot the DS and press OpMode, INIT, start, and stop. Gamepads are off-limits; STRATEGIC violations are MAJOR FOUL and YELLOW CARD." },
+      { q: "Your blue NECTAR and a red NECTAR bounce out of the FIELD near your ALLIANCE AREA. What do you do?", o: ["Re-enter both through your LOADING ZONE", "Re-enter yours via the LOADING ZONE; hand the red one to FIELD STAFF", "Hand both to FIELD STAFF", "Leave both alone"], a: 1, r: "G422 / G427", e: "You may grab your own NECTAR you can reach from the ALLIANCE AREA and re-enter it any time. Opponent NECTAR and any POLLEN go to the nearest FIELD STAFF." },
+      { q: "Which HIVE interaction is likely STRATEGIC?", o: ["Bumping the HIVE frame while picking up POLLEN", "Missing a shot so POLLEN hits the bottom of a CELL", "LAUNCHING NECTAR at the opponent's HIVE to keep it from TIPPING", "LAUNCHING POLLEN into an upward-facing CELL"], a: 2, r: "G417", e: "The only allowed way to affect a HIVE is LAUNCHING into an upward-facing CELL. Impeding an opponent's TIP is STRATEGIC: MAJOR FOUL and YELLOW CARD per MATCH." },
+      { q: "A team breaks a rule that normally only earns a YELLOW CARD in its last Qualification MATCH, figuring the card won't matter. Likely outcome?", o: ["YELLOW CARD, as written", "Nothing, since cards clear after Quals", "RED CARD", "MAJOR FOUL only"], a: 2, r: "G205", e: "Taking a penalty because the benefit outweighs it is egregious. Yellow-card violations in a team's potential last MATCH before cards clear get extra scrutiny and will likely become a RED CARD." },
+    ]
+  },
+  robot: {
+    title: "Robot Construction Rules",
+    section: "SECTION 12 · R RULES",
+    short: "Section 12",
+    blurb: "COTS vs. fabricated, DoF, servo power math, wiring, and electronics.",
+    link: "https://ftc-resources.firstinspires.org/ftc/game/manual-12",
+    qs: [
+      { q: "Which change turns a COTS part into a FABRICATED ITEM?", o: ["Adding a non-functional label", "Installing new software on it", "Adding device-specific mounting holes", "Nothing. Once bought, it stays COTS"], a: 2, r: "12 intro", e: "Labels and software changes keep a part COTS. Mounting holes, lightening holes, or other modifications make it FABRICATED." },
+      { q: "You cut a 20 ft aluminum extrusion into 5 ft lengths just so it fits in the car. What is it now?", o: ["COTS", "A FABRICATED ITEM", "Neither COTS nor FABRICATED", "A MAJOR MECHANISM"], a: 2, r: "12 intro", e: "It's not COTS (no longer as delivered) and not FABRICATED (the cuts weren't made toward its final form on the ROBOT)." },
+      { q: "Which COTS MAJOR MECHANISM may you use?", o: ["A vendor's intake purpose-built for this game", "A COTS drive CHASSIS", "A 'build to print' copy of a top team's claw", "A COTS lift sold as a game solution"], a: 1, r: "R301", e: "COTS MAJOR MECHANISMS designed for a game task are banned, except COTS drive chassis and official FTC StarterBot mechanisms." },
+      { q: "Which COTS item breaks the single degree-of-freedom rule?", o: ["A mecanum drivetrain", "A dead-wheel odometry pod", "A gripper with a built-in rotating wrist", "A turntable"], a: 2, r: "R303", e: "A wrist adds degrees of freedom, which COTS mechanisms can't have. Mecanum wheels and dead-wheel odometry kits are listed exceptions; a turntable is single DoF." },
+      { q: "Two separate, unlinked slides extend out opposite sides. Each fits alone, but both together exceed 24 in. Legal?", o: ["Yes, each is legal alone", "Yes, if code stops both extending at once", "No", "Only if they retract before the end of the MATCH"], a: 2, r: "R105", e: "Unlinked mechanisms that can extend at the same time are judged together at max mechanical extension. A single mechanism extending both ways is fine if the total fits." },
+      { q: "A servo at 6V has 3.5 N·m stall torque and 10 rad/s no-load speed. Is its output power legal?", o: ["Yes, 8.75 W", "No, 8.75 W is over the 8 W limit", "Yes, 35 W is allowed", "No, 35 W is over the limit"], a: 1, r: "R502", e: "Power ≈ 0.25 × stall torque × no-load speed = 0.25 × 3.5 × 10 = 8.75 W, above the 8 W cap. It must also meet the stall-current limit." },
+      { q: "Per the power regulator table, how many motors may share one Control Hub motor port?", o: ["1", "2", "4", "Unlimited with a Y-cable"], a: 1, r: "R505", e: "Table 12-3 allows 2 motors per hub motor port, 2 servos per servo port, and 2 motors per SPARKmini." },
+      { q: "You swap between two intakes at an event: one uses 2 motors, the other 3 servos. The base ROBOT has 6 motors and 6 servos. Legal?", o: ["Yes, only one intake is on at a time", "No, servos total 9", "No, motors total 8", "Yes, if both intakes pass inspection"], a: 1, r: "R503", e: "The 8-motor / 8-servo limit counts every actuator across all configurations used at the event. 6 + 3 = 9 servos." },
+      { q: "Which is legal on a ROBOT?", o: ["An electromagnet to grab POLLEN", "A relay to switch a motor", "Permanent magnets", "A 12V solenoid latch"], a: 2, r: "R506 / R302", e: "Relays, electromagnets, and electrical solenoids are prohibited. Magnets are listed as allowed raw material." },
+      { q: "A CUSTOM CIRCUIT outputs a regulated 9V. When is that legal?", o: ["Never", "Only if it powers LEDs and nothing else", "If it's fused at 10A or less", "If it runs off a USB battery pack"], a: 1, r: "R607", e: "CUSTOM CIRCUITS can't provide regulated output above 5V, except solely for LEDs. They may pass unregulated battery voltage through." },
+      { q: "Which color may NOT be used for the positive wire of the 12V main bus?", o: ["Yellow", "White", "Brown", "Blue"], a: 3, r: "R610", e: "Positive: red, yellow, white, brown, or black-with-stripe. Negative: black or blue." },
+      { q: "Which is prohibited in a ROBOT's power path?", o: ["A high-impedance voltage monitor", "A buck converter feeding a power regulating device", "A REV Servo Power Module", "An approved resistive grounding strap"], a: 1, r: "R612", e: "Boost or buck converters that alter power pathways are prohibited, as are signal modifiers like the goBILDA Servo Travel Tuner. Light monitoring circuits are fine." },
+      { q: "Which vision device may your team reprogram?", o: ["OctoQuad FTC Edition", "Limelight 3G", "Limelight 3A", "OpenMV Cam"], a: 2, r: "R702", e: "The Limelight 3A is the only listed programmable vision coprocessor. Limelight 3G and OpenMV are prohibited. OctoQuad is allowed, but its software can't be modified." },
+      { q: "A USB battery pack on your ROBOT may power which of these?", o: ["A servo", "A powered USB hub", "A sensor plugged into the Control Hub", "A motor through a SPARKmini"], a: 1, r: "R602", e: "USB packs (100 Wh max) can't power actuators or anything receiving control signals, except powered USB hubs and a smartphone ROBOT CONTROLLER." },
+      { q: "Which setup is required on a REV Control Hub?", o: ["Bluetooth on for gamepads", "Default Wi-Fi password, so FIELD STAFF can connect", "A non-default Wi-Fi password, with Bluetooth off", "Airplane Mode on"], a: 2, r: "R711", e: "Control Hubs must use a non-default Wi-Fi password. All RC and DS devices need Wi-Fi on and Bluetooth off. Airplane Mode is required for smartphones." },
+    ]
+  }
+};
+
+const app = document.getElementById("app");
+const LETTERS = "ABCD";
+let state = null;
+
+function best(id) { try { return localStorage.getItem("best-" + id); } catch (e) { return null; } }
+function saveBest(id, n) { try { const b = Number(best(id) || 0); if (n > b) localStorage.setItem("best-" + id, n); } catch (e) {} }
+
+function home() {
+  state = null;
+  app.innerHTML = `<div class="picker">${Object.entries(QUIZZES).map(([id, z]) => {
+    const b = best(id);
+    return `<button class="pick" id="pick-${id}" data-id="${id}">
+      <span class="sec">${z.section}</span>
+      <h2>${z.title}</h2>
+      <span class="meta">${z.qs.length} questions · ${z.blurb}</span>
+      ${b ? `<span class="best">Your best: ${b}/${z.qs.length}</span>` : ""}
+    </button>`;
+  }).join("")}</div>`;
+  app.querySelectorAll(".pick").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.id; }));
+}
+
+function shuffled(item) {
+  const idx = item.o.map((_, k) => k);
+  for (let k = idx.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [idx[k], idx[j]] = [idx[j], idx[k]]; }
+  return { ...item, o: idx.map(k => item.o[k]), a: idx.indexOf(item.a) };
+}
+
+function start(id) {
+  state = { id, i: 0, picks: [], qs: QUIZZES[id].qs.map(shuffled) };
+  render();
+}
+
+function cells() {
+  const z = QUIZZES[state.id];
+  return `<div class="cells" aria-hidden="true">${state.qs.map((_, k) => {
+    const p = state.picks[k];
+    const cls = p === undefined ? (k === state.i ? "now" : "") : (p === state.qs[k].a ? "ok" : "no");
+    return `<span class="cell ${cls}"></span>`;
+  }).join("")}</div>`;
+}
+
+function render() {
+  const z = QUIZZES[state.id];
+  if (state.i >= z.qs.length) return results();
+  const item = state.qs[state.i];
+  const picked = state.picks[state.i];
+  const answered = picked !== undefined;
+  app.innerHTML = `<section class="quiz">
+    <div class="qtop">
+      <button class="back" id="back">← All quizzes</button>
+      <span class="count">${z.title} · ${state.i + 1} of ${z.qs.length}</span>
+    </div>
+    ${cells()}
+    <div class="card">
+      <p class="prompt">${item.q}</p>
+      <div class="opts">${item.o.map((t, k) => {
+        let cls = "";
+        if (answered && k === item.a) cls = "right";
+        else if (answered && k === picked) cls = "wrong";
+        return `<button class="opt ${cls}" id="opt-${k}" data-k="${k}" ${answered ? "disabled" : ""}><span class="k">${LETTERS[k]}</span><span>${t}</span></button>`;
+      }).join("")}</div>
+      ${answered ? `<div class="explain">
+        <span class="verdict ${picked === item.a ? "ok" : "no"}">${picked === item.a ? "Correct." : "Not quite. Answer: " + LETTERS[item.a] + "."}</span>
+        <span class="rule">${item.r}</span>
+        <p>${item.e}</p>
+      </div>
+      <button class="next" id="next">${state.i + 1 < z.qs.length ? "Next question" : "See score"}</button>` : ""}
+    </div>
+  </section>`;
+  document.getElementById("back").onclick = () => { location.hash = ""; };
+  app.querySelectorAll(".opt:not(:disabled)").forEach(b => b.onclick = () => { state.picks[state.i] = Number(b.dataset.k); render(); document.getElementById("next")?.focus(); });
+  const nx = document.getElementById("next");
+  if (nx) nx.onclick = () => { state.i++; render(); window.scrollTo({ top: 0 }); };
+}
+
+function results() {
+  const z = QUIZZES[state.id];
+  const right = state.qs.filter((x, k) => state.picks[k] === x.a).length;
+  saveBest(state.id, right);
+  const missed = state.qs.filter((x, k) => state.picks[k] !== x.a);
+  const msg = `I scored ${right}/${z.qs.length} on the BIOBUZZ ${z.title} quiz. Can you beat it?`;
+  app.innerHTML = `<section class="quiz">
+    <div class="qtop"><button class="back" id="back">← All quizzes</button><span class="count">${z.title}</span></div>
+    ${cells()}
+    <div class="card result">
+      <div class="score">${right}/${z.qs.length}</div>
+      <h2>${right === z.qs.length ? "Perfect. Inspection-ready." : right >= z.qs.length * 0.7 ? "Solid. A few rules to brush up on." : "Worth another read of " + z.short + "."}</h2>
+      ${missed.length ? `<div><p style="margin:0 0 6px;font-weight:600">Rules to review</p><ul class="misses">${missed.map(x => `<li><span class="rule">${x.r}</span> ${x.q}</li>`).join("")}</ul></div>` : ""}
+      <div class="share">
+        <label for="share-text" style="font-weight:600">Share your score</label>
+        <textarea id="share-text" readonly>${msg}</textarea>
+        <div class="row">
+          <button class="next" id="copy" style="align-self:auto">Copy score</button>
+          <button class="ghost" id="retry">Retake quiz</button>
+          <a class="ghost" href="${z.link}" target="_blank" rel="noopener" style="text-decoration:none">Read ${z.short}</a>
+        </div>
+      </div>
+    </div>
+  </section>`;
+  document.getElementById("back").onclick = () => { location.hash = ""; };
+  document.getElementById("retry").onclick = () => start(state.id);
+  const ta = document.getElementById("share-text");
+  ta.value = msg + "\n" + location.href.split("#")[0] + "#" + state.id;
+  document.getElementById("copy").onclick = async (ev) => {
+    const btn = ev.currentTarget;
+    try { await navigator.clipboard.writeText(ta.value); btn.textContent = "Copied"; }
+    catch (e) { ta.focus(); ta.select(); btn.textContent = "Press Ctrl+C to copy"; }
+  };
+}
+
+function route() {
+  const h = location.hash.replace("#", "");
+  if (QUIZZES[h]) { if (!state || state.id !== h) start(h); }
+  else home();
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
