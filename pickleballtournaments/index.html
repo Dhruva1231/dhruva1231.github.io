@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pickleball Tournaments</title>
+<meta name="description" content="Pickleball tournaments within about two hours of Fort Myers, Nov 23–29, 2026: map, drive distances, prices and deadlines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --surface-2: #f2f1ec;
+  --text: #1c1b18;
+  --muted: #5d5a52;
+  --border: #e2e0d8;
+  --accent: #b4451f;
+  --accent-soft: #fbeae3;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  --c1: #2a6fdb;
+  --c2: #1f8a5b;
+  --c3: #b4451f;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141412;
+    --surface: #1d1c1a;
+    --surface-2: #262522;
+    --text: #f1efe9;
+    --muted: #a9a59b;
+    --border: #35332f;
+    --accent: #f08a5d;
+    --accent-soft: #3a2219;
+    --warn: #f0c060;
+    --warn-soft: #352a12;
+    --c1: #6ea2f5;
+    --c2: #4fc28c;
+    --c3: #f08a5d;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 820px; margin: 0 auto; padding: 20px 16px 48px; }
+h1, h2, h3 { line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.25rem; font-weight: 700; margin: 40px 0 12px; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0 0 12px; }
+a { color: var(--accent); }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.num { font-variant-numeric: tabular-nums; }
+header .sub { font-size: 1.05rem; margin-top: 6px; }
+.checked {
+  display: inline-block; margin-top: 10px; padding: 3px 10px;
+  border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 0.8rem;
+}
+
+#map {
+  height: 440px; margin-top: 20px; border-radius: 14px;
+  border: 1px solid var(--border); background: var(--surface-2); z-index: 0;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 0.875rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+.dot.home { background: var(--text); }
+
+.cards { display: grid; gap: 14px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px 18px; border-left: 5px solid var(--c);
+}
+.card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.card h3 a { color: var(--text); text-decoration: none; }
+.card h3 a:hover { text-decoration: underline; }
+.where { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+.drive { font-weight: 600; white-space: nowrap; }
+.drive.over { color: var(--warn); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0 12px; }
+.stat { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
+.stat .k { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+.card ul { margin: 0; padding-left: 18px; }
+.card li { margin: 2px 0; }
+.flag {
+  display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 8px;
+  background: var(--warn-soft); color: var(--warn); font-size: 0.85rem;
+}
+.actions { margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.9rem; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.r, th.r { text-align: right; }
+
+.leaflet-container { font: inherit; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 0.875rem; line-height: 1.4; }
+.pin {
+  width: 18px; height: 18px; border-radius: 50%; border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+.homepin {
+  width: 16px; height: 16px; border-radius: 4px; background: #1c1b18; border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+.tiles-dark { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9); }
+#cmp td.num { white-space: nowrap; }
+
+@media (max-width: 600px) {
+  #map { height: 340px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Pickleball tournaments</h1>
+  <p class="sub muted">Thanksgiving week, Nov 23–29, 2026 · within about 2 hours of home in Fort Myers</p>
+  <span class="checked">Checked Nov 2, 2026 · all three fall on <b>Sat, Nov 28</b></span>
+</header>
+
+<div id="map" role="img" aria-label="Map of driving routes from Fort Myers to each tournament"></div>
+<div class="legend">
+  <span><i class="dot home"></i>Home (approximate)</span>
+  <span><i class="dot" style="background:var(--c1)"></i>Turkey Classic · Lakewood Ranch</span>
+  <span><i class="dot" style="background:var(--c2)"></i>Pickle BaL · Bradenton</span>
+  <span><i class="dot" style="background:var(--c3)"></i>Thanks-Dinking · St. Pete</span>
+  <span>Dashed ring = 100 miles in a straight line</span>
+</div>
+
+<h2>Compare</h2>
+<div class="tablewrap">
+<table>
+  <thead><tr>
+    <th>Tournament</th><th class="r">Drive</th><th class="r">Entry / player</th><th class="r">Gas (round trip)</th><th>Register by</th><th class="r">Signed up</th>
+  </tr></thead>
+  <tbody id="cmp"></tbody>
+</table>
+</div>
+<p class="small muted" style="margin-top:8px">Drive times come from OpenStreetMap routing without traffic and usually run a little longer than Google Maps. Gas assumes 28 mpg at $3.10/gal. Entry fees are per player per event, so a doubles team pays twice. pickleballtournaments.com may add a small processing fee.</p>
+
+<h2>Details</h2>
+<div class="cards" id="cards"></div>
+
+<h2>Just outside the window or range</h2>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Tournament</th><th>When / where</th><th class="r">Entry</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://pickleballtournaments.com/tournaments/cashgiving-a-thanksgiving-moneyball-tournament">CASHGIVING Moneyball</a></td><td>Sat Nov 21 · UMR Sports Complex, Bradenton (same venue as Pickle BaL)</td><td class="r num">$65</td><td>Two days before the window. Men's, women's and mixed, intermediate and advanced. Up to $3,000 prize money. Register by Nov 18.</td></tr>
+    <tr><td>Rudolph Moneyball &amp; DUPR</td><td>Sat Nov 28 · The Palms, Boca Raton</td><td class="r num">$40</td><td>About 2 h 20 m away, over the limit. The listing URL also mentions a different date.</td></tr>
+    <tr><td>Women's Pro-Am Pickleball Cup</td><td>Sat Nov 28 · Sunrise</td><td class="r num">$95</td><td>Women only. About 2 hours away. Venue not confirmed.</td></tr>
+    <tr><td>Pickle With Dr. Dakar</td><td>Sat Nov 28 · Pembroke Pines</td><td class="r num">$20</td><td>Listed in one directory, but I couldn't confirm it anywhere else.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small muted" style="margin-top:28px">Sources: <a href="https://pickleballtournaments.com/">pickleballtournaments.com</a> · <a href="https://www.pickleballtournamentsmap.com/pickleball/united-states/florida/tournaments">pickleballtournamentsmap.com</a> · <a href="https://picklemapper.com/tournaments/state/florida">PickleMapper</a> · <a href="https://www.bridgealife.com/events/picklebal">Bridge a Life</a>. Routing: <a href="https://project-osrm.org/">OSRM</a> on OpenStreetMap data. Directory listings go stale, so check each registration page before paying.</p>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const ROUTES = {"lifetime":{"mi":91,"min":104,"line":[[26.5465,-81.8405],[26.5468,-81.8392],[26.5491,-81.839],[26.5501,-81.8388],[26.5514,-81.8383],[26.5521,-81.8379],[26.5532,-81.8371],[26.554,-81.8363],[26.5563,-81.8339],[26.5574,-81.8332],[26.558,-81.8328],[26.5705,-81.8278],[26.5731,-81.8267],[26.5751,-81.8259],[26.5789,-81.8243],[26.5806,-81.8234],[26.5819,-81.8225],[26.5857,-81.8195],[26.5913,-81.8149],[26.5929,-81.8137],[26.5937,-81.813],[26.5951,-81.812],[26.5959,-81.8116],[26.5971,-81.8112],[26.598,-81.811],[26.5986,-81.811],[26.5999,-81.811],[26.6015,-81.811],[26.6054,-81.8111],[26.6067,-81.8111],[26.6089,-81.8111],[26.6092,-81.8111],[26.6105,-81.8112],[26.6111,-81.8112],[26.6122,-81.8112],[26.6127,-81.8111],[26.6128,-81.8093],[26.6128,-81.8086],[26.6127,-81.808],[26.6126,-81.8071],[26.6126,-81.8068],[26.6126,-81.8062],[26.6127,-81.8057],[26.6127,-81.8052],[26.6129,-81.8046],[26.613,-81.8042],[26.613,-81.803],[26.6131,-81.8026],[26.6132,-81.8024],[26.6134,-81.8023],[26.6136,-81.8022],[26.6139,-81.8023],[26.615,-81.8031],[26.6157,-81.8035],[26.6163,-81.8038],[26.617,-81.8041],[26.6178,-81.8044],[26.6205,-81.8052],[26.6225,-81.8055],[26.6242,-81.8055],[26.6262,-81.8053],[26.629,-81.8045],[26.6346,-81.8028],[26.6451,-81.7996],[26.6472,-81.7992],[26.649,-81.7991],[26.6561,-81.7993],[26.6699,-81.7996],[26.6717,-81.7994],[26.6777,-81.7985],[26.6839,-81.7985],[26.6943,-81.7987],[26.6965,-81.799],[26.6985,-81.7995],[26.7002,-81.8002],[26.702,-81.8013],[26.7051,-81.8037],[26.7109,-81.8083],[26.7148,-81.8113],[26.7191,-81.8149],[26.7201,-81.8162],[26.7211,-81.8178],[26.7217,-81.8193],[26.7232,-81.8256],[26.724,-81.8283],[26.7247,-81.8301],[26.7259,-81.8329],[26.7273,-81.8354],[26.7292,-81.8382],[26.7561,-81.8691],[26.758,-81.8712],[26.7596,-81.8725],[26.7612,-81.8735],[26.7681,-81.8771],[26.7699,-81.8786],[26.7714,-81.8804],[26.7752,-81.8867],[26.7793,-81.8932],[26.7811,-81.8954],[26.7839,-81.8982],[26.7887,-81.9023],[26.7923,-81.9057],[26.7955,-81.9093],[26.7981,-81.9125],[26.8002,-81.9157],[26.8059,-81.9253],[26.8088,-81.9292],[26.8398,-81.9646],[26.8448,-81.968],[26.8578,-81.9708],[26.8643,-81.9722],[26.8662,-81.9728],[26.8679,-81.9737],[26.8691,-81.9744],[26.8702,-81.9753],[26.8744,-81.9798],[26.8797,-81.9855],[26.8837,-81.9897],[26.8916,-81.9983],[26.8949,-82.0018],[26.8972,-82.0044],[26.8987,-82.0057],[26.8999,-82.0065],[26.9013,-82.0073],[26.9031,-82.0081],[26.9403,-82.0188],[26.943,-82.0196],[26.9473,-82.0207],[26.9488,-82.0208],[26.9684,-82.0194],[26.9706,-82.0196],[26.9722,-82.0199],[26.9737,-82.0203],[26.9752,-82.0209],[26.9803,-82.0238],[26.9948,-82.0323],[27.016,-82.0456],[27.0339,-82.0566],[27.036,-82.0582],[27.0372,-82.0593],[27.0598,-82.0846],[27.0803,-82.1075],[27.0952,-82.1243],[27.0963,-82.126],[27.0973,-82.128],[27.0979,-82.1299],[27.0984,-82.1316],[27.0987,-82.1336],[27.0989,-82.1551],[27.0995,-82.203],[27.0996,-82.2087],[27.1002,-82.2716],[27.1004,-82.2788],[27.1008,-82.2816],[27.1015,-82.2851],[27.1028,-82.2894],[27.1116,-82.3141],[27.1125,-82.3188],[27.1128,-82.3245],[27.1126,-82.3278],[27.111,-82.3424],[27.1103,-82.3486],[27.1097,-82.3546],[27.1095,-82.3575],[27.1094,-82.3617],[27.1095,-82.3756],[27.1096,-82.3776],[27.1097,-82.3792],[27.1102,-82.3812],[27.1109,-82.3834],[27.1115,-82.3846],[27.1127,-82.3867],[27.1138,-82.3882],[27.1147,-82.3891],[27.1166,-82.3908],[27.1338,-82.4043],[27.142,-82.4108],[27.1482,-82.4159],[27.1564,-82.4236],[27.1588,-82.4257],[27.1616,-82.4279],[27.164,-82.4294],[27.1665,-82.4309],[27.1701,-82.4326],[27.1745,-82.4343],[27.1782,-82.4353],[27.1827,-82.4362],[27.1958,-82.4388],[27.2014,-82.4399],[27.2038,-82.4407],[27.2073,-82.4422],[27.2186,-82.4473],[27.2256,-82.4504],[27.2275,-82.451],[27.2291,-82.4515],[27.2317,-82.4519],[27.2342,-82.452],[27.2362,-82.4519],[27.2383,-82.4516],[27.2434,-82.4506],[27.2488,-82.4495],[27.2512,-82.4492],[27.254,-82.449],[27.2726,-82.4487],[27.2931,-82.4481],[27.2991,-82.4478],[27.3085,-82.4478],[27.3148,-82.4478],[27.3221,-82.4476],[27.3259,-82.4475],[27.3365,-82.4467],[27.3411,-82.4465],[27.3666,-82.4459],[27.3757,-82.4457],[27.3792,-82.4461],[27.3815,-82.4465],[27.389,-82.4486],[27.3924,-82.4496],[27.3937,-82.45],[27.395,-82.4504],[27.4001,-82.4518],[27.4134,-82.4555],[27.427,-82.459],[27.4297,-82.4592],[27.4339,-82.4592],[27.4381,-82.4589],[27.4391,-82.4587],[27.4403,-82.4585],[27.4404,-82.4584],[27.4405,-82.4583],[27.4406,-82.4581],[27.4396,-82.4549],[27.4386,-82.4514],[27.4379,-82.4493],[27.4369,-82.446],[27.4349,-82.4397],[27.4337,-82.4354],[27.4336,-82.4351],[27.4325,-82.4317],[27.4321,-82.4301],[27.4321,-82.4284],[27.434,-82.4281],[27.4347,-82.4282],[27.4353,-82.4283]]},"umr":{"mi":96,"min":110,"line":[[26.5465,-81.8405],[26.5468,-81.8392],[26.5491,-81.839],[26.5501,-81.8388],[26.5514,-81.8383],[26.5521,-81.8379],[26.5532,-81.8371],[26.554,-81.8363],[26.5563,-81.8339],[26.5574,-81.8332],[26.558,-81.8328],[26.5705,-81.8278],[26.5731,-81.8267],[26.5751,-81.8259],[26.5789,-81.8243],[26.5806,-81.8234],[26.5819,-81.8225],[26.5857,-81.8195],[26.5913,-81.8149],[26.5929,-81.8137],[26.5937,-81.813],[26.5951,-81.812],[26.5959,-81.8116],[26.5971,-81.8112],[26.598,-81.811],[26.5986,-81.811],[26.5999,-81.811],[26.6015,-81.811],[26.6054,-81.8111],[26.6067,-81.8111],[26.6089,-81.8111],[26.6092,-81.8111],[26.6105,-81.8112],[26.6111,-81.8112],[26.6122,-81.8112],[26.6127,-81.8111],[26.6128,-81.8093],[26.6128,-81.8086],[26.6127,-81.808],[26.6126,-81.8071],[26.6126,-81.8068],[26.6126,-81.8062],[26.6127,-81.8057],[26.6127,-81.8052],[26.6129,-81.8046],[26.613,-81.8042],[26.613,-81.803],[26.6131,-81.8026],[26.6132,-81.8024],[26.6134,-81.8023],[26.6136,-81.8022],[26.6139,-81.8023],[26.615,-81.8031],[26.6157,-81.8035],[26.6163,-81.8038],[26.617,-81.8041],[26.6178,-81.8044],[26.6205,-81.8052],[26.6225,-81.8055],[26.6242,-81.8055],[26.6262,-81.8053],[26.629,-81.8045],[26.6346,-81.8028],[26.6451,-81.7996],[26.6472,-81.7992],[26.649,-81.7991],[26.6561,-81.7993],[26.6699,-81.7996],[26.6717,-81.7994],[26.6777,-81.7985],[26.6839,-81.7985],[26.6943,-81.7987],[26.6965,-81.799],[26.6985,-81.7995],[26.7002,-81.8002],[26.702,-81.8013],[26.7051,-81.8037],[26.7109,-81.8083],[26.7148,-81.8113],[26.7191,-81.8149],[26.7201,-81.8162],[26.7211,-81.8178],[26.7217,-81.8193],[26.7232,-81.8256],[26.724,-81.8283],[26.7247,-81.8301],[26.7259,-81.8329],[26.7273,-81.8354],[26.7292,-81.8382],[26.7561,-81.8691],[26.758,-81.8712],[26.7596,-81.8725],[26.7612,-81.8735],[26.7681,-81.8771],[26.7699,-81.8786],[26.7714,-81.8804],[26.7752,-81.8867],[26.7793,-81.8932],[26.7811,-81.8954],[26.7839,-81.8982],[26.7887,-81.9023],[26.7923,-81.9057],[26.7955,-81.9093],[26.7981,-81.9125],[26.8002,-81.9157],[26.8059,-81.9253],[26.8088,-81.9292],[26.8398,-81.9646],[26.8448,-81.968],[26.8578,-81.9708],[26.8643,-81.9722],[26.8662,-81.9728],[26.8679,-81.9737],[26.8691,-81.9744],[26.8702,-81.9753],[26.8744,-81.9798],[26.8797,-81.9855],[26.8837,-81.9897],[26.8916,-81.9983],[26.8949,-82.0018],[26.8972,-82.0044],[26.8987,-82.0057],[26.8999,-82.0065],[26.9013,-82.0073],[26.9031,-82.0081],[26.9403,-82.0188],[26.943,-82.0196],[26.9473,-82.0207],[26.9488,-82.0208],[26.9684,-82.0194],[26.9706,-82.0196],[26.9722,-82.0199],[26.9737,-82.0203],[26.9752,-82.0209],[26.9803,-82.0238],[26.9948,-82.0323],[27.016,-82.0456],[27.0339,-82.0566],[27.036,-82.0582],[27.0372,-82.0593],[27.0598,-82.0846],[27.0803,-82.1075],[27.0952,-82.1243],[27.0963,-82.126],[27.0973,-82.128],[27.0979,-82.1299],[27.0984,-82.1316],[27.0987,-82.1336],[27.0989,-82.1551],[27.0995,-82.203],[27.0996,-82.2087],[27.1002,-82.2716],[27.1004,-82.2788],[27.1008,-82.2816],[27.1015,-82.2851],[27.1028,-82.2894],[27.1116,-82.3141],[27.1125,-82.3188],[27.1128,-82.3245],[27.1126,-82.3278],[27.111,-82.3424],[27.1103,-82.3486],[27.1097,-82.3546],[27.1095,-82.3575],[27.1094,-82.3617],[27.1095,-82.3756],[27.1096,-82.3776],[27.1097,-82.3792],[27.1102,-82.3812],[27.1109,-82.3834],[27.1115,-82.3846],[27.1127,-82.3867],[27.1138,-82.3882],[27.1147,-82.3891],[27.1166,-82.3908],[27.1338,-82.4043],[27.142,-82.4108],[27.1482,-82.4159],[27.1564,-82.4236],[27.1588,-82.4257],[27.1616,-82.4279],[27.164,-82.4294],[27.1665,-82.4309],[27.1701,-82.4326],[27.1745,-82.4343],[27.1782,-82.4353],[27.1827,-82.4362],[27.1958,-82.4388],[27.2014,-82.4399],[27.2038,-82.4407],[27.2073,-82.4422],[27.2186,-82.4473],[27.2256,-82.4504],[27.2275,-82.451],[27.2291,-82.4515],[27.2317,-82.4519],[27.2342,-82.452],[27.2362,-82.4519],[27.2383,-82.4516],[27.2434,-82.4506],[27.2488,-82.4495],[27.2512,-82.4492],[27.254,-82.449],[27.2726,-82.4487],[27.2931,-82.4481],[27.2991,-82.4478],[27.3085,-82.4478],[27.3148,-82.4478],[27.3221,-82.4476],[27.3259,-82.4475],[27.3365,-82.4467],[27.3411,-82.4465],[27.3666,-82.4459],[27.3757,-82.4457],[27.3792,-82.4461],[27.3815,-82.4465],[27.389,-82.4486],[27.3924,-82.4496],[27.3937,-82.45],[27.395,-82.4504],[27.4001,-82.4518],[27.4134,-82.4555],[27.427,-82.459],[27.4297,-82.4592],[27.4339,-82.4592],[27.4414,-82.4591],[27.4478,-82.459],[27.4505,-82.459],[27.4514,-82.459],[27.4523,-82.459],[27.4532,-82.459],[27.454,-82.459],[27.4613,-82.4589],[27.4638,-82.459],[27.4666,-82.46],[27.4875,-82.4699],[27.4889,-82.4704],[27.4894,-82.4705],[27.4906,-82.4708],[27.4907,-82.4708],[27.4908,-82.4707],[27.4909,-82.4704],[27.4908,-82.4696],[27.4906,-82.4687],[27.4901,-82.4672],[27.4895,-82.466],[27.4887,-82.4646],[27.4872,-82.4621],[27.4866,-82.4608],[27.4862,-82.4594],[27.486,-82.4568],[27.4858,-82.4521],[27.4856,-82.448],[27.4855,-82.4461],[27.4854,-82.4432],[27.4853,-82.4404],[27.4853,-82.4381],[27.4852,-82.4355],[27.4852,-82.4337],[27.4883,-82.4337],[27.4912,-82.4337],[27.4958,-82.4337],[27.499,-82.4336],[27.499,-82.4336]]},"dill":{"mi":122,"min":142,"line":[[26.5465,-81.8405],[26.5488,-81.8391],[26.5508,-81.8386],[26.5523,-81.8378],[26.554,-81.8363],[26.5572,-81.8333],[26.5618,-81.8313],[26.5731,-81.8267],[26.5789,-81.8243],[26.5815,-81.8228],[26.587,-81.8184],[26.5932,-81.8134],[26.5951,-81.812],[26.5967,-81.8113],[26.5981,-81.811],[26.6,-81.811],[26.6054,-81.8111],[26.6079,-81.8111],[26.6097,-81.8111],[26.6112,-81.8112],[26.6127,-81.8111],[26.6128,-81.8088],[26.6126,-81.8074],[26.6126,-81.8066],[26.6127,-81.8057],[26.6128,-81.8049],[26.613,-81.804],[26.6131,-81.8026],[26.6134,-81.8023],[26.6138,-81.8022],[26.6153,-81.8033],[26.6164,-81.8039],[26.6178,-81.8044],[26.622,-81.8055],[26.6252,-81.8054],[26.6295,-81.8044],[26.6451,-81.7996],[26.6484,-81.7991],[26.661,-81.7994],[26.6724,-81.7993],[26.6839,-81.7985],[26.6961,-81.7989],[26.6994,-81.7999],[26.7024,-81.8016],[26.7109,-81.8083],[26.7188,-81.8146],[26.7207,-81.817],[26.7218,-81.8198],[26.724,-81.8283],[26.7256,-81.8323],[26.7282,-81.8369],[26.7571,-81.8702],[26.7596,-81.8725],[26.7679,-81.877],[26.7706,-81.8793],[26.7777,-81.8909],[26.7811,-81.8954],[26.7879,-81.9015],[26.7939,-81.9074],[26.7987,-81.9134],[26.8059,-81.9253],[26.8383,-81.9629],[26.8467,-81.9686],[26.8648,-81.9723],[26.8679,-81.9737],[26.87,-81.9751],[26.8766,-81.9821],[26.885,-81.9912],[26.8949,-82.0018],[26.8981,-82.0052],[26.9006,-82.0069],[26.9034,-82.0082],[26.943,-82.0196],[26.9485,-82.0208],[26.9695,-82.0195],[26.9726,-82.02],[26.9752,-82.0209],[26.992,-82.0307],[27.0208,-82.0486],[27.0363,-82.0584],[27.0598,-82.0846],[27.0949,-82.1239],[27.0968,-82.127],[27.098,-82.1301],[27.0987,-82.1336],[27.0994,-82.1976],[27.1002,-82.265],[27.1005,-82.2797],[27.1015,-82.2851],[27.1114,-82.3133],[27.1127,-82.3212],[27.1113,-82.3391],[27.1103,-82.3486],[27.1095,-82.3567],[27.1094,-82.3683],[27.1096,-82.3778],[27.1102,-82.3812],[27.1113,-82.3843],[27.1131,-82.3872],[27.1148,-82.3893],[27.1338,-82.4043],[27.1472,-82.4151],[27.1574,-82.4245],[27.1626,-82.4285],[27.1665,-82.4309],[27.1734,-82.4339],[27.1798,-82.4357],[27.199,-82.4394],[27.2038,-82.4407],[27.2177,-82.4469],[27.2266,-82.4508],[27.2298,-82.4516],[27.2342,-82.452],[27.2377,-82.4517],[27.2468,-82.4499],[27.252,-82.4492],[27.2726,-82.4487],[27.2986,-82.4478],[27.3136,-82.4478],[27.3228,-82.4476],[27.3365,-82.4467],[27.3609,-82.446],[27.3778,-82.4459],[27.3823,-82.4467],[27.3924,-82.4496],[27.3947,-82.4503],[27.4064,-82.4535],[27.4277,-82.4591],[27.4339,-82.4592],[27.4474,-82.459],[27.451,-82.459],[27.4525,-82.459],[27.454,-82.459],[27.4633,-82.4589],[27.4857,-82.4693],[27.4977,-82.475],[27.5,-82.4766],[27.5016,-82.4786],[27.5089,-82.4964],[27.5107,-82.4993],[27.5132,-82.5013],[27.5301,-82.508],[27.5355,-82.5101],[27.5374,-82.5106],[27.5392,-82.5108],[27.5513,-82.5107],[27.5535,-82.5108],[27.5563,-82.5113],[27.5683,-82.5137],[27.571,-82.5143],[27.5737,-82.5144],[27.5776,-82.5142],[27.5801,-82.5139],[27.581,-82.5138],[27.5822,-82.5141],[27.583,-82.5144],[27.5837,-82.5148],[27.5844,-82.5154],[27.5853,-82.5166],[27.5859,-82.5182],[27.5861,-82.5197],[27.5858,-82.5302],[27.5855,-82.5399],[27.5852,-82.5506],[27.5849,-82.5556],[27.5844,-82.5578],[27.5836,-82.56],[27.5817,-82.5641],[27.5811,-82.5658],[27.5804,-82.569],[27.5803,-82.5719],[27.5806,-82.5748],[27.581,-82.5764],[27.5831,-82.5831],[27.5837,-82.586],[27.5838,-82.5911],[27.5836,-82.5969],[27.5836,-82.6104],[27.5843,-82.6149],[27.5853,-82.6176],[27.5878,-82.622],[27.5951,-82.6336],[27.6005,-82.6398],[27.6065,-82.6453],[27.6128,-82.6499],[27.6282,-82.6611],[27.6353,-82.6663],[27.6424,-82.6712],[27.6498,-82.6752],[27.6518,-82.6761],[27.6534,-82.6766],[27.655,-82.6768],[27.6596,-82.6771],[27.6709,-82.6777],[27.6875,-82.6785],[27.6995,-82.6792],[27.7078,-82.6791],[27.7135,-82.6793],[27.7173,-82.6791],[27.7221,-82.6777],[27.7249,-82.6772],[27.7288,-82.6771],[27.7341,-82.6761],[27.7389,-82.6758],[27.7431,-82.6767],[27.7478,-82.6771],[27.7532,-82.6771],[27.7574,-82.6761],[27.7594,-82.6759],[27.7603,-82.6758],[27.7615,-82.6753],[27.7633,-82.6753],[27.7657,-82.6753],[27.7666,-82.6753],[27.7686,-82.6753],[27.7707,-82.6753],[27.772,-82.6753],[27.7735,-82.6753],[27.7751,-82.6753],[27.7766,-82.6754],[27.7774,-82.676],[27.7774,-82.6786],[27.778,-82.6794],[27.7791,-82.6794],[27.7808,-82.6794],[27.7816,-82.6794],[27.7837,-82.6794],[27.7862,-82.6794],[27.7881,-82.6794],[27.7904,-82.6796],[27.7904,-82.6796]]}};
+// Shown ~1 km off on purpose; distances were measured from the real address.
+const HOME = [26.55, -81.86];
+const MPG = 28, GAS = 3.10;
+
+const T = [
+  {
+    key: 'lifetime', color: '--c1',
+    name: 'Life Time Turkey Classic',
+    url: 'https://pickleballtournaments.com/tournaments/life-time-turkey-classic',
+    venue: 'Life Time Lakewood Ranch', addr: '5930 Lakewood Ranch Blvd, Sarasota, FL 34240',
+    pos: [27.43527, -82.42824],
+    when: 'Sat Nov 28 · 8 AM, 12 PM or 4 PM depending on division',
+    fee: 55, feeNote: '$45 for Life Time members',
+    deadline: 'Nov 24, 11 PM', signed: 0,
+    format: [
+      'Coed doubles, three divisions with combined DUPR caps:',
+      '3.5–4.0 (team cap 8.0), starts 8:00 AM',
+      '4.0–4.5 (team cap 9.0), starts 12:00 PM',
+      '3.0–3.5 (team cap 7.0), starts 4:00 PM',
+    ],
+    flag: 'The page lists two deadlines: Nov 24 in the description and Nov 26 in the schedule. Register by Nov 24 to be safe. Nobody has signed up yet, so it could be cancelled if too few teams enter.',
+  },
+  {
+    key: 'umr', color: '--c2',
+    name: '3rd Annual Pickle BaL (Bridge a Life)',
+    url: 'https://pickleballtournaments.com/tournaments/3rd-annual-pickle-bal-bridge-a-life-tournament',
+    venue: 'UMR Sports Complex', addr: '131 Upper Manatee River Rd NE, Bradenton, FL 34212',
+    pos: [27.49902, -82.43357],
+    when: 'Sat Nov 28 · starts 8:00 AM',
+    fee: 65, feeNote: 'goes up to $70 on Nov 10',
+    deadline: 'Nov 22, 11:55 PM', signed: 28,
+    format: [
+      'Mixed doubles: 3.0 (2.50–3.49), 3.5 (3.50–3.99), 4.0 (4.00–4.6)',
+      'Round robin, then medal matches · 4 games guaranteed',
+      'Charity fundraiser for Bridge a Life, with prize drawings and music',
+      'Outdoor courts',
+    ],
+    flag: 'Its deadline is the earliest of the three: Sunday, Nov 22.',
+  },
+  {
+    key: 'dill', color: '--c3',
+    name: 'Thanks-Dinking Mixed Doubles',
+    url: 'https://pickleballtournaments.com/tournaments/thanks-dinking-tournament-mixed-doubles',
+    venue: 'Dill Dinkers St. Petersburg', addr: '2000 34th St N, St. Petersburg, FL 33713',
+    pos: [27.79039, -82.67953],
+    when: 'Sat Nov 28',
+    fee: 30, feeNote: 'cheapest of the three',
+    deadline: 'Nov 24, 8 AM', signed: 2,
+    format: [
+      'Mixed doubles only. The page doesn\'t list skill divisions.',
+      'Round robin, then single-elimination bracket · 4 games guaranteed',
+      'USAP rules; paddle must be USAP-approved',
+    ],
+    flag: 'This is the longest drive, a bit over 2 hours without traffic. The page doesn’t list a start time.',
+  },
+];
+
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmtTime = m => `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} m`;
+const gas = mi => Math.round(mi * 2 / MPG * GAS);
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+document.getElementById('cmp').innerHTML = T.map(t => {
+  const r = ROUTES[t.key];
+  return `<tr>
+    <td><i class="dot" style="background:var(${t.color});margin-right:6px;vertical-align:-1px"></i><a href="#${t.key}">${esc(t.name)}</a></td>
+    <td class="r num">${r.mi} mi · ${fmtTime(r.min)}</td>
+    <td class="r num">$${t.fee}</td>
+    <td class="r num">~$${gas(r.mi)}</td>
+    <td class="num">${t.deadline}</td>
+    <td class="r num">${t.signed}</td>
+  </tr>`;
+}).join('');
+
+document.getElementById('cards').innerHTML = T.map(t => {
+  const r = ROUTES[t.key];
+  const maps = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(t.addr)}`;
+  return `<article class="card" id="${t.key}" style="--c:var(${t.color})">
+    <div class="top">
+      <h3><a href="${t.url}">${esc(t.name)}</a></h3>
+      <span class="drive num${r.min > 120 ? ' over' : ''}">${fmtTime(r.min)} · ${r.mi} mi</span>
+    </div>
+    <div class="where">${esc(t.venue)} · ${esc(t.addr)}</div>
+    <div class="where">${esc(t.when)}</div>
+    <div class="stats">
+      <div class="stat"><div class="k">Entry</div><div class="v">$${t.fee}<span class="small muted"> /player</span></div></div>
+      <div class="stat"><div class="k">Team of 2</div><div class="v">$${t.fee * 2}</div></div>
+      <div class="stat"><div class="k">Gas</div><div class="v">~$${gas(r.mi)}</div></div>
+      <div class="stat"><div class="k">Deadline</div><div class="v">${t.deadline.split(',')[0]}</div></div>
+    </div>
+    <ul>${t.format.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+    <div class="small muted" style="margin-top:6px">${esc(t.feeNote)} · ${t.signed} signed up as of Nov 2</div>
+    ${t.flag ? `<div class="flag">${esc(t.flag)}</div>` : ''}
+    <div class="actions"><a href="${t.url}">Register →</a><a href="${maps}">Directions in Google Maps</a></div>
+  </article>`;
+}).join('');
+
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+const map = L.map('map', { scrollWheelZoom: false, zoomSnap: 0.25 });
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  className: dark ? 'tiles-dark' : '',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+}).addTo(map);
+
+L.circle(HOME, { radius: 160934, color: css('--muted'), weight: 1.5, dashArray: '6 6', fill: false, interactive: false }).addTo(map);
+L.marker(HOME, { icon: L.divIcon({ className: '', html: '<div class="homepin"></div>', iconSize: [16, 16], iconAnchor: [8, 8] }) })
+  .bindPopup('<b>Home</b><br>Fort Myers (pin is approximate)').addTo(map);
+
+const bounds = L.latLngBounds([HOME]);
+// Routes share I-75, so draw them as nested stripes: widest first.
+T.slice().reverse().forEach((t, i) => {
+  const r = ROUTES[t.key], c = css(t.color);
+  const line = L.polyline([HOME, ...r.line], { color: c, weight: 9 - i * 3, opacity: 0.95 }).addTo(map);
+  const pop = `<b>${esc(t.name)}</b><br>${esc(t.venue)}<br>${r.mi} mi · ${fmtTime(r.min)} · $${t.fee}/player<br><a href="#${t.key}">Details ↓</a>`;
+  line.bindPopup(pop);
+  L.marker(t.pos, { icon: L.divIcon({ className: '', html: `<div class="pin" style="background:${c}"></div>`, iconSize: [18, 18], iconAnchor: [9, 9] }) })
+    .bindTooltip(`${t.name.replace(/^(3rd Annual |Life Time )/, '')} · ${fmtTime(r.min)}`, { direction: 'top', offset: [0, -8] })
+    .bindPopup(pop).addTo(map);
+  bounds.extend(t.pos);
+});
+map.fitBounds(bounds, { padding: [30, 30] });
+</script>
+</body>
+</html>
