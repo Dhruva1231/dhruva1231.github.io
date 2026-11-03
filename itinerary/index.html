@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>North Georgia Itinerary</title>
+<meta name="description" content="Thanksgiving-week hiking trip in North Georgia, Sat Nov 21 – Tue Nov 24, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --surface-2: #f2f1ec;
+  --text: #1c1b18;
+  --muted: #5d5a52;
+  --border: #e2e0d8;
+  --accent: #2f6b3f;
+  --accent-soft: #e3efe5;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  --d1: #2a6fdb;
+  --d2: #1f8a5b;
+  --d3: #b4451f;
+  --base: #5d5a52;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141412;
+    --surface: #1d1c1a;
+    --surface-2: #262522;
+    --text: #f1efe9;
+    --muted: #a9a59b;
+    --border: #35332f;
+    --accent: #7cc48f;
+    --accent-soft: #1c2e21;
+    --warn: #f0c060;
+    --warn-soft: #352a12;
+    --d1: #6ea2f5;
+    --d2: #4fc28c;
+    --d3: #f08a5d;
+    --base: #a9a59b;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 780px; margin: 0 auto; padding: 20px 16px 48px; }
+h1, h2, h3 { line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.25rem; font-weight: 700; margin: 40px 0 12px; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0 0 12px; }
+a { color: var(--accent); }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.num { font-variant-numeric: tabular-nums; }
+header .sub { font-size: 1.05rem; margin-top: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chip { padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 0.8rem; }
+
+#map {
+  height: 420px; margin-top: 20px; border-radius: 14px;
+  border: 1px solid var(--border); background: var(--surface-2); z-index: 0;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 0.875rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+.maptoggle {
+  font: 600 0.85rem Inter, system-ui, sans-serif; padding: 7px 12px; border-radius: 8px; cursor: pointer;
+  background: #fff; color: #1c1b18; border: 2px solid rgba(0,0,0,.2);
+}
+.tiles-dark { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9); }
+.leaflet-container { font: inherit; }
+.leaflet-popup-content { margin: 10px 12px; font-size: 0.875rem; line-height: 1.4; }
+.pin { width: 16px; height: 16px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.base { width: 14px; height: 14px; border-radius: 4px; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+
+.day {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px 18px; margin-bottom: 14px; border-left: 5px solid var(--c, var(--border));
+}
+.day .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.day .tag { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.tl { list-style: none; margin: 12px 0 0; padding: 0; }
+.tl li { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border); }
+.tl li:first-child { border-top: 0; }
+.tl .t { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 0.9rem; padding-top: 1px; }
+.hike {
+  margin-top: 10px; background: var(--surface-2); border-radius: 10px; padding: 10px 12px;
+}
+.hike .stats { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+.hike .stats b { color: var(--text); font-weight: 600; }
+.note {
+  margin-top: 10px; padding: 8px 12px; border-radius: 10px;
+  background: var(--warn-soft); color: var(--warn); font-size: 0.9rem;
+}
+.alt { margin-top: 8px; font-size: 0.9rem; color: var(--muted); }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.r, th.r { text-align: right; white-space: nowrap; }
+.pick td:first-child::after {
+  content: "Top pick"; margin-left: 8px; padding: 1px 7px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent); font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+}
+
+.todo { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.todo li { border-top: 1px solid var(--border); }
+.todo li:first-child { border-top: 0; }
+.todo label { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; cursor: pointer; }
+.todo input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.todo input:checked + span { color: var(--muted); text-decoration: line-through; }
+
+.pack { columns: 2; column-gap: 24px; margin: 0; padding-left: 18px; }
+.pack li { margin: 2px 0; break-inside: avoid; }
+
+@media (max-width: 600px) {
+  #map { height: 330px; }
+  .tl li { grid-template-columns: 74px 1fr; }
+  .pack { columns: 1; }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>North Georgia hiking trip</h1>
+  <p class="sub muted">Sat Nov 21 – Tue Nov 24, 2026 · Dad, Dhira and Dhruva</p>
+  <div class="chips">
+    <span class="chip">Base: Helen, GA · 3 nights</span>
+    <span class="chip">Car: the Giulia</span>
+    <span class="chip">Sunset ≈ 5:30 PM</span>
+    <span class="chip">Highs ~55°F · lows 30s</span>
+  </div>
+</header>
+
+<div id="map" role="img" aria-label="Map of Duluth, Helen and the hikes for each day"></div>
+<div class="legend">
+  <span><i class="dot" style="background:var(--d1)"></i>Sat · half day</span>
+  <span><i class="dot" style="background:var(--d2)"></i>Sun · full day</span>
+  <span><i class="dot" style="background:var(--d3)"></i>Mon · full day</span>
+  <span><i class="dot" style="background:var(--base);border-radius:3px"></i>Airport · Duluth · Helen</span>
+</div>
+
+<h2>Day by day</h2>
+
+<article class="day" style="--c:var(--border)">
+  <div class="top"><h3>Fri, Nov 20</h3><span class="tag">Travel</span></div>
+  <ul class="tl">
+    <li><span class="t">Day</span><span>Dad and Dhira drive the Giulia up from Fort Myers and stay with family friends in Duluth.</span></li>
+    <li><span class="t">Night</span><span>Dhruva takes the red-eye from SFO.</span></li>
+  </ul>
+</article>
+
+<article class="day" style="--c:var(--d1)">
+  <div class="top"><h3>Sat, Nov 21</h3><span class="tag">Half day</span></div>
+  <ul class="tl">
+    <li><span class="t">6:30 AM</span><span>Dhruva lands at ATL. A family friend who's heading to Duluth that morning picks him up (to confirm).</span></li>
+    <li><span class="t">~8:30 AM</span><span>Back at the house in Duluth (ATL → Duluth is about an hour). Freshen up.</span></li>
+    <li><span class="t">9–10 AM</span><span>Eat at the house.</span></li>
+    <li><span class="t">11–11:30</span><span>Leave for Helen, about 1 h 20 m.</span></li>
+    <li><span class="t">~1:15 PM</span><span>Start the hike. Check in at the hotel afterward.</span></li>
+    <li><span class="t">Evening</span><span>Dinner in Helen, early night.</span></li>
+  </ul>
+  <div class="hike">
+    <b>Raven Cliff Falls</b>
+    <div class="stats"><span><b>5 mi</b> out and back</span><span>Moderate</span><span><b>~2.5–3 h</b></span><span>15 min from Helen</span></div>
+    <div class="small" style="margin-top:6px">Follows Dodd Creek past several cascades to a waterfall that pours through a split in a cliff. Start by about 1:15 to finish well before dark.</div>
+  </div>
+  <p class="alt"><b>Too tired from the red-eye?</b> Duke Creek Falls is on the same road: 2 miles round trip to a viewing platform over a tall double waterfall.</p>
+</article>
+
+<article class="day" style="--c:var(--d2)">
+  <div class="top"><h3>Sun, Nov 22</h3><span class="tag">Full day · waterfall + gorge</span></div>
+  <ul class="tl">
+    <li><span class="t">8:30 AM</span><span>Leave Helen, about 35–40 min.</span></li>
+    <li><span class="t">9:15 AM</span><span>Hike Panther Creek Falls. Pack lunch and eat it at the falls.</span></li>
+    <li><span class="t">~1:30 PM</span><span>Drive about 10 min to Tallulah Gorge State Park.</span></li>
+    <li><span class="t">2–4:30 PM</span><span>Rim trails, overlooks and the Hurricane Falls stairs.</span></li>
+    <li><span class="t">Evening</span><span>Back to Helen (~45 min), dinner, pool.</span></li>
+  </ul>
+  <div class="hike">
+    <b>Panther Creek Falls</b>
+    <div class="stats"><span><b>~7 mi</b> out and back</span><span>~650 ft gain</span><span><b>~4 h</b></span></div>
+    <div class="small" style="margin-top:6px">The long waterfall hike of the trip. The trail runs along the creek through a gorge, with smaller cascades, to a wide waterfall with a big pool at the bottom. Some narrow, rocky sections with cables.</div>
+  </div>
+  <div class="hike">
+    <b>Tallulah Gorge</b>
+    <div class="stats"><span><b>2–3 mi</b> of rim trails</span><span>~1,000 stairs to the suspension bridge</span><span>State park parking fee</span></div>
+    <div class="small" style="margin-top:6px">A 1,000-ft-deep gorge with waterfalls and overlooks along both rims. Hiking the gorge floor needs a free permit (limited each day, first come first served).</div>
+  </div>
+  <div class="note">Georgia Power has historically scheduled dam water releases on November weekends. On release days the park doesn't issue gorge-floor permits, though the falls are bigger from the rim. Check the schedule, and if Sunday is a release day, swap Tallulah to Monday.</div>
+</article>
+
+<article class="day" style="--c:var(--d3)">
+  <div class="top"><h3>Mon, Nov 23</h3><span class="tag">Full day · summit view</span></div>
+  <ul class="tl">
+    <li><span class="t">8:30 AM</span><span>Leave Helen, about 40 min to the Byron Reece trailhead at Neel Gap.</span></li>
+    <li><span class="t">9:15 AM</span><span>Hike the Blood Mountain loop. Eat lunch on the summit rocks.</span></li>
+    <li><span class="t">~1:30 PM</span><span>Stop at Mountain Crossings, the outfitter where the Appalachian Trail passes through a building.</span></li>
+    <li><span class="t">Afternoon</span><span>Optional: Anna Ruby Falls on the way back, a paved 1-mile walk to twin waterfalls (small entry fee).</span></li>
+    <li><span class="t">Evening</span><span>Last dinner in Helen. Pack up.</span></li>
+  </ul>
+  <div class="hike">
+    <b>Blood Mountain loop (Appalachian Trail + Freeman Trail)</b>
+    <div class="stats"><span><b>~6 mi</b> loop</span><span>~1,500 ft gain</span><span><b>~4 h</b></span><span>Strenuous</span></div>
+    <div class="small" style="margin-top:6px">The highest point on Georgia's Appalachian Trail, with wide views from the summit rocks and a stone shelter on top. Going up the AT and coming back on the Freeman Trail makes a loop around the mountain. Add an out-and-back on the AT to make the day longer.</div>
+  </div>
+  <div class="note">The trailhead lot holds only about 38 cars and fills on weekends, which is why this hike is on Monday. Don't park outside the marked spaces; cars there get ticketed.</div>
+</article>
+
+<article class="day" style="--c:var(--border)">
+  <div class="top"><h3>Tue, Nov 24</h3><span class="tag">Travel home</span></div>
+  <ul class="tl">
+    <li><span class="t">Morning</span><span>Check out. Drive to Duluth, about 1 h 20 m.</span></li>
+    <li><span class="t">Midday</span><span>Eat at the friends' house.</span></li>
+    <li><span class="t">~1 PM</span><span>Drive home to Fort Myers, about 9 hours. Home around 10–11 PM.</span></li>
+  </ul>
+</article>
+
+<h2>Where to stay</h2>
+<p>Three nights, check in Sat Nov 21 and check out Tue Nov 24. Staying in Helen itself means dinners and takeout are walkable, nobody drives mountain roads in the dark, and every trailhead is 15–45 minutes away. Ask for 2 queen beds.</p>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Hotel</th><th>Pool / hot tub</th><th class="r">Listed from</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr class="pick"><td><a href="https://www.ihg.com/holidayinnexpress/hotels/us/en/helen/ahnhe/hoteldetail">Holiday Inn Express &amp; Suites Helen</a></td><td>Indoor heated pool</td><td class="r">check</td><td>Best reviewed (4.6/5 on Tripadvisor). Free breakfast.</td></tr>
+    <tr><td>Country Inn &amp; Suites Helen</td><td>Indoor pool + hot tub</td><td class="r num">~$111/night</td><td>Has the hot tub.</td></tr>
+    <tr><td>SureStay by Best Western Helen Downtown</td><td>Indoor heated pool</td><td class="r num">~$94/night</td><td>Cheapest with a pool, right downtown.</td></tr>
+    <tr><td>Econo Lodge Helen</td><td>Indoor pool + hot tub</td><td class="r">check</td><td>Basic budget option.</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="small muted" style="margin-top:8px">Prices are "from" rates on aggregator sites, not quotes for these dates. Check live rates for Nov 21–24. A cabin with a hot tub costs about the same but usually means cooking or long, dark drives back after dinner.</p>
+
+<h2>To do</h2>
+<ul class="todo" id="todo">
+  <li><label><input type="checkbox" data-k="hotel"><span>Book the hotel: 3 nights, Nov 21–24, 2 queens.</span></label></li>
+  <li><label><input type="checkbox" data-k="flight"><span>Double-check Dhruva's flight times. A 9 PM nonstop from SFO would land around 4:45 AM, not 6:30.</span></label></li>
+  <li><label><input type="checkbox" data-k="pickup"><span>Confirm the airport pickup on Saturday morning.</span></label></li>
+  <li><label><input type="checkbox" data-k="tallulah"><span>Check the Tallulah Gorge water-release schedule for Nov 22–23.</span></label></li>
+  <li><label><input type="checkbox" data-k="hikes"><span>Ask the friends in Duluth for hike or food recommendations.</span></label></li>
+  <li><label><input type="checkbox" data-k="alerts"><span>The week before, check Chattahoochee National Forest alerts for trail or road closures.</span></label></li>
+</ul>
+<p class="small muted" style="margin-top:8px">Checkmarks are saved only in this browser.</p>
+
+<h2>Pack</h2>
+<ul class="pack">
+  <li>Hiking shoes with grip (wet rock at the falls)</li>
+  <li>Warm layers: fleece and a light puffy</li>
+  <li>Rain shell</li>
+  <li>Hat and gloves for mornings</li>
+  <li>Headlamps (dark by 5:30)</li>
+  <li>2 L of water each per hike</li>
+  <li>Daypack, lunch and snacks</li>
+  <li>Swimsuit for the pool</li>
+  <li>Phone with offline maps (spotty signal)</li>
+  <li>Cash or card for park fees</li>
+</ul>
+
+<p class="small muted" style="margin-top:28px">Sources: <a href="https://www.alltrails.com/trail/us/georgia/raven-cliff-falls-trail">AllTrails: Raven Cliff Falls</a> · <a href="https://atlantatrails.com/hiking-trails/panther-creek-falls">Atlanta Trails: Panther Creek Falls</a> · <a href="https://www.atlantatrails.com/hiking-trails/blood-mountain-loop-hiking-appalachian-trail-freeman-trail/">Atlanta Trails: Blood Mountain loop</a> · <a href="https://gadnrle.org/TallulahGorge/Trails">Georgia State Parks: Tallulah Gorge trails</a>. Drive times come from OpenStreetMap routing and are approximate. Map pins mark the waterfalls and summits, not the trailhead parking.</p>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const BASES = [
+  { name: 'ATL airport', pos: [33.6407, -84.4277], note: 'Sat 6:30 AM arrival' },
+  { name: 'Duluth', pos: [34.0029, -84.1446], note: 'Family friends · Fri night, Sat morning, Tue lunch' },
+  { name: 'Helen', pos: [34.7015, -83.7310], note: 'Hotel · Sat–Mon nights' },
+];
+const STOPS = [
+  { name: 'Raven Cliff Falls', day: 'Sat', c: '--d1', pos: [34.7231, -83.8240], note: '5 mi · 15 min from Helen' },
+  { name: 'Duke Creek Falls', day: 'Sat (backup)', c: '--d1', pos: [34.7027, -83.7922], note: '2 mi · backup if tired' },
+  { name: 'Panther Creek Falls', day: 'Sun', c: '--d2', pos: [34.6768, -83.3880], note: '~7 mi · ~35–40 min from Helen' },
+  { name: 'Tallulah Gorge', day: 'Sun', c: '--d2', pos: [34.7335, -83.3723], note: 'Rim trails + Hurricane Falls' },
+  { name: 'Blood Mountain', day: 'Mon', c: '--d3', pos: [34.7400, -83.9372], note: '~6 mi loop · ~40 min from Helen' },
+  { name: 'Anna Ruby Falls', day: 'Mon (optional)', c: '--d3', pos: [34.7590, -83.7109], note: 'Paved 1 mi' },
+];
+
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+const map = L.map('map', { scrollWheelZoom: false, zoomSnap: 0.25 });
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  className: dark ? 'tiles-dark' : '',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+}).addTo(map);
+
+const icon = (cls, color, size) => L.divIcon({
+  className: '', html: `<div class="${cls}" style="background:${color}"></div>`,
+  iconSize: [size, size], iconAnchor: [size / 2, size / 2],
+});
+L.polyline(BASES.map(b => b.pos), { color: css('--base'), weight: 3, dashArray: '6 8', opacity: 0.8, interactive: false }).addTo(map);
+BASES.forEach(b => L.marker(b.pos, { icon: icon('base', css('--base'), 14) })
+  .bindTooltip(b.name, { direction: 'top', offset: [0, -8] })
+  .bindPopup(`<b>${b.name}</b><br>${b.note}`).addTo(map));
+STOPS.forEach(s => {
+  L.polyline([BASES[2].pos, s.pos], { color: css(s.c), weight: 2.5, opacity: 0.7, interactive: false }).addTo(map);
+  L.marker(s.pos, { icon: icon('pin', css(s.c), 16) })
+    .bindTooltip(`${s.day}: ${s.name}`, { direction: 'top', offset: [0, -8] })
+    .bindPopup(`<b>${s.name}</b><br>${s.day} · ${s.note}`).addTo(map);
+});
+const near = L.latLngBounds([BASES[2], ...STOPS].map(p => p.pos));
+const all = L.latLngBounds([...BASES, ...STOPS].map(p => p.pos));
+map.fitBounds(near, { padding: [30, 30] });
+const Toggle = L.Control.extend({
+  onAdd() {
+    const btn = L.DomUtil.create('button', 'maptoggle');
+    let wide = false;
+    btn.type = 'button';
+    btn.textContent = 'Whole trip';
+    L.DomEvent.disableClickPropagation(btn);
+    btn.onclick = () => {
+      wide = !wide;
+      map.flyToBounds(wide ? all : near, { padding: [30, 30], duration: 0.8 });
+      btn.textContent = wide ? 'Hikes only' : 'Whole trip';
+    };
+    return btn;
+  },
+});
+new Toggle({ position: 'topright' }).addTo(map);
+
+document.querySelectorAll('#todo input').forEach(cb => {
+  const key = 'itinerary-todo-' + cb.dataset.k;
+  try { cb.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+  cb.addEventListener('change', () => { try { localStorage.setItem(key, cb.checked ? '1' : '0'); } catch (e) {} });
+});
+</script>
+</body>
+</html>
