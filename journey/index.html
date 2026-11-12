@@ -67,7 +67,7 @@ font:600 22px/1 -apple-system,sans-serif;letter-spacing:.4em;text-align:center;p
 <div id="tip"></div><div id="lb"><img alt=""><p></p></div>
 <script>
 
-const SALT=new Uint8Array('d34a3627480c4bc3d221b7a0238b3633'.match(/../g).map(h=>parseInt(h,16)));let KEY,PH={};
+const SALT=new Uint8Array('37871c77d52f0cf26af076cde37fee65'.match(/../g).map(h=>parseInt(h,16)));let KEY,PH={};
 async function dec(buf){return crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(0,12)},KEY,buf.slice(12));}
 function photo(src){return PH[src]||(PH[src]=fetch(src).then(r=>r.arrayBuffer()).then(dec).then(b=>URL.createObjectURL(new Blob([b],{type:'image/jpeg'}))));}
 document.querySelector('#lock form').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,err=document.getElementById('err');
@@ -120,9 +120,12 @@ function draw(now){
  g.globalAlpha=1;
  // past arcs
  const upto=showAll?T.length:cur;for(let i=0;i<upto;i++)if(i!==cur)strokeArc(arcPts(T[i],1),col(T[i].type),1.2,showAll?.55:.22);
+ // All view: a plane loops each route (out, then back home), staggered
+ if(showAll)T.forEach((t,i)=>{if(km(t)<400)return;const per=7000+(i%5)*900,ph=((now+i*1370)%per)/per,u=ph<.5?ph*2:2-ph*2;
+  flyPlane(t,ease(u),ph>=.5,col(t.type),.62,.35);});
  // current arc + route
- if(cur>=0&&!showAll){const t=T[cur];arcT=Math.min(1,arcT+.012);const pts=arcPts(t,ease(arcT));strokeArc(pts,col(t.type),2.4,.95);
-  const head=pts[pts.length-1];if(head&&arcT<1){g.fillStyle='#fff';g.beginPath();g.arc(head.x,head.y,3.2,0,7);g.fill();}
+ if(cur>=0&&!showAll){const t=T[cur];arcT=Math.min(1,arcT+.0075);const pts=arcPts(t,ease(arcT));strokeArc(pts,col(t.type),2.4,.95);
+  if(arcT<1)flyPlane(t,ease(arcT),false,col(t.type),1,1);
   if(arcT>=1){routeT=Math.min(1,routeT+.01);const n=Math.max(2,Math.ceil(t.route.length*routeT));g.strokeStyle='#fff';g.lineWidth=1.4;g.globalAlpha=.85;g.beginPath();
    t.route.slice(0,n).forEach(([la,lo],i)=>{const p=proj(la,lo);i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)});g.stroke();g.globalAlpha=1;}}
  // homes
@@ -135,6 +138,25 @@ function draw(now){
  drawRouteInset();
  requestAnimationFrame(draw);}
 let pinHits=[];const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+// ---------- planes ----------
+function arcAt(t,u){const a=vec(t.home.lat,t.home.lon),b=vec(t.lat,t.lon);const d=Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2])));
+ const h=Math.min(.35,.05+d*.22);u=Math.max(0,Math.min(1,u));const[la,lo]=slerp(a,b,u);return{p:proj(la,lo,Math.sin(Math.PI*u)*h),g:proj(la,lo,0),alt:Math.sin(Math.PI*u)*h};}
+function flyPlane(t,u,back,color,scale,trail){
+ const s=arcAt(t,u),q=arcAt(t,back?u-.01:u+.01),p=s.p;if(p.v<=-.15*p.alt*4)return;
+ let ang=Math.atan2(q.p.y-p.y,q.p.x-p.x);if(!isFinite(ang))return;
+ // contrail: fading dots behind the plane
+ if(trail>0){for(let k=1;k<=14;k++){const c=arcAt(t,back?u+k*.012:u-k*.012).p;if(c.v<=0)continue;
+   g.globalAlpha=trail*(1-k/15)*.7;g.fillStyle='#fff';g.beginPath();g.arc(c.x,c.y,Math.max(.4,(1.6-k*.09)*scale),0,7);g.fill();}}
+ // shadow on the globe surface
+ if(s.g.v>0){g.globalAlpha=.28*scale;g.fillStyle='#000';g.save();g.translate(s.g.x,s.g.y);g.rotate(ang);g.scale(scale*.8,scale*.8);planePath();g.fill();g.restore();}
+ // the plane, a bit bigger when higher
+ const k=scale*(1+s.alt*1.6);g.globalAlpha=1;g.save();g.translate(p.x,p.y);g.rotate(ang);g.scale(k,k);
+ g.shadowColor=color;g.shadowBlur=10;g.fillStyle='#fff';planePath();g.fill();g.shadowBlur=0;g.fillStyle=color;
+ g.beginPath();g.rect(-5,-.9,3,1.8);g.fill();g.restore();g.globalAlpha=1;}
+function planePath(){ // nose points +x, ~20px long
+ g.beginPath();g.moveTo(10,0);g.quadraticCurveTo(9,-1.6,6,-1.6);g.lineTo(1.5,-1.6);g.lineTo(-3,-9);g.lineTo(-5.2,-9);g.lineTo(-2.2,-1.6);
+ g.lineTo(-7.2,-1.4);g.lineTo(-9,-4.5);g.lineTo(-10.4,-4.5);g.lineTo(-9.4,0);g.lineTo(-10.4,4.5);g.lineTo(-9,4.5);g.lineTo(-7.2,1.4);
+ g.lineTo(-2.2,1.6);g.lineTo(-5.2,9);g.lineTo(-3,9);g.lineTo(1.5,1.6);g.lineTo(6,1.6);g.quadraticCurveTo(9,1.6,10,0);g.closePath();}
 
 // ---------- card + polaroids ----------
 const card=document.getElementById('card'),board=document.getElementById('board');
@@ -175,7 +197,7 @@ function dealPhotos(t){board.querySelectorAll('.pol').forEach(el=>{el.style.opac
   el.style.transform='scale(.1) rotate(0deg)';el.style.opacity=0;el.style.zIndex=i;
   el.innerHTML=`<img alt="">${ph.video?'<span class="v">▶</span>':''}<div class="d">${ph.t.slice(5,10).replace('-','/')}</div>`;
   el.onclick=()=>openLB(ph);board.appendChild(el);photo(ph.src).then(u=>el.querySelector('img').src=u);
-  setTimeout(()=>{el.style.opacity=1;el.style.left=slots[i][0]+'px';el.style.top=slots[i][1]+'px';el.style.transform=`scale(1) rotate(${(Math.random()*16-8).toFixed(1)}deg)`;},900+i*110);});}
+  setTimeout(()=>{el.style.opacity=1;el.style.left=slots[i][0]+'px';el.style.top=slots[i][1]+'px';el.style.transform=`scale(1) rotate(${(Math.random()*16-8).toFixed(1)}deg)`;},2300+i*110);});}
 const lb=document.getElementById('lb');function openLB(ph){lb.querySelector('img').src='';photo(ph.src).then(u=>lb.querySelector('img').src=u);lb.querySelector('p').textContent=ph.t+(ph.cap?' — '+ph.cap:'');lb.style.display='flex';pause();}
 lb.onclick=()=>lb.style.display='none';
 
