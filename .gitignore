@@ -3,3 +3,6 @@ tools/schedule/schedule.txt
 .claude/
 # Home coordinate for the trail-map privacy cut (tools/process_routes.py); never commit it
 .home
+# Exam problems are local-only (course marks them protected)
+61C-midterm-2/bank.js
+61C-midterm-2/img/
