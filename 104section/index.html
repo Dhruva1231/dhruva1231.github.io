@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Data C104 Week 11 Review</title>
+<meta name="description" content="Study guide for DATA C104 Week 11 (Applied Ethics): Lectures 27–29 and the assigned readings, with how they connect.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+:root{
+  --bg:#f3f4ef; --surface:#fffefa; --ink:#1c2420; --muted:#5e6a63; --line:#d9ddd3;
+  --accent:#2d5c4c; --accent-soft:#e1ebe4; --warn:#a4492b; --warn-soft:#f4e3da;
+  --display:"Newsreader",Georgia,serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1d2420; --ink:#e7ebe5; --muted:#9aa69f; --line:#323b36;
+  --accent:#86c2a9; --accent-soft:#233a31; --warn:#e59a7c; --warn-soft:#3d2820; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1d2420; --ink:#e7ebe5; --muted:#9aa69f; --line:#323b36;
+  --accent:#86c2a9; --accent-soft:#233a31; --warn:#e59a7c; --warn-soft:#3d2820; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:17px/1.65 var(--body)}
+.wrap{max-width:740px;margin:0 auto;padding-block:32px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:600 clamp(30px,6vw,44px)/1.1 var(--display);margin:8px 0 8px;text-wrap:balance}
+h2{font:600 clamp(24px,4.5vw,30px)/1.2 var(--display);margin:56px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+h3{font:600 20px/1.3 var(--display);margin:32px 0 6px}
+h4{font:600 15px/1.3 var(--body);margin:20px 0 4px;color:var(--accent)}
+p,li{text-wrap:pretty}
+.sub{color:var(--muted);margin:0 0 20px;max-width:62ch}
+a{color:var(--accent)}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 20px;margin:24px 0}
+nav.toc ol{margin:6px 0 0;padding-left:20px}
+nav.toc li{margin:2px 0}
+.meta{font:13px/1.5 var(--mono);color:var(--muted);margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 20px;margin:16px 0}
+.card.key{border-left:4px solid var(--accent)}
+.card.note{background:var(--warn-soft);border-color:var(--warn)}
+.card p:first-child,.card ul:first-child{margin-top:0}
+.card p:last-child,.card ul:last-child{margin-bottom:0}
+.label{font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:8px}
+.card.note .label{color:var(--warn)}
+dl{margin:8px 0}
+dt{font-weight:600;margin-top:12px}
+dd{margin:2px 0 0 0;color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600}
+.tablewrap{overflow-x:auto}
+ul,ol{padding-left:22px}
+li{margin:4px 0}
+.q li{margin:10px 0}
+footer{margin-top:64px;font:13px/1.6 var(--mono);color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="eyebrow">DATA C104 · Human Contexts &amp; Ethics of Data · Fall 2026</div>
+<h1>Week 11 review: Applied Ethics</h1>
+<p class="sub">Everything from the week of Nov 2–6: the three lectures (environment, moral philosophy 1 and 2) and the assigned readings, explained in full, plus how they connect and what to be ready to talk about.</p>
+
+<nav class="toc" aria-label="Contents">
+<span class="label">Contents</span>
+<ol>
+<li><a href="#map">The week at a glance</a></li>
+<li><a href="#l27">Lecture 27 (Mon 11/2): Environmental contexts and consequences of data</a></li>
+<li><a href="#sun">Reading: Jasmine Sun, “No Data Centers in My Backyard”</a></li>
+<li><a href="#l28">Lecture 28 (Wed 11/4): Moral philosophy</a></li>
+<li><a href="#mm">Activity: the MIT Moral Machine</a></li>
+<li><a href="#srini">Reading: Amia Srinivasan, “Stop the Robot Apocalypse”</a></li>
+<li><a href="#l29">Lecture 29 (Fri 11/6): Moral philosophy 2, utilitarianism and its critics</a></li>
+<li><a href="#optional">Optional readings</a></li>
+<li><a href="#connect">How it all connects</a></li>
+<li><a href="#terms">Key terms cheat sheet</a></li>
+<li><a href="#discuss">Discussion questions and talking points</a></li>
+</ol>
+</nav>
+
+<!-- ===================================================== -->
+<h2 id="map">1. The week at a glance</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Day</th><th>Lecture</th><th>Required</th><th>Optional</th></tr></thead>
+<tbody>
+<tr><td>Mon 11/2</td><td>27 · Environment (Ari Edmundson)</td><td>Jasmine Sun, “no data centers in my backyard” (Substack, Aug 3 2026)</td><td>Crawford &amp; Joler, “Anatomy of an AI System”</td></tr>
+<tr><td>Wed 11/4</td><td>28 · Moral Philosophy (Ari Edmundson)</td><td>Amia Srinivasan, “Stop the Robot Apocalypse” (LRB, 2015); ~15 min on the MIT Moral Machine</td><td>Fleddermann, <i>Engineering Ethics</i>, ch. 3, pp. 37–46</td></tr>
+<tr><td>Fri 11/6</td><td>29 · Moral Philosophy 2 (Ari Edmundson)</td><td>No new readings (AI ethics readings moved to Week 12)</td><td>—</td></tr>
+</tbody></table></div>
+
+<div class="card key">
+<span class="label">The one-sentence version</span>
+<p>Data technologies look weightless and “clean,” but they rest on land, water, minerals, energy and labor whose costs get pushed onto other people (Lecture 27, Sun). When we try to decide what's <em>right</em> about that, the dominant tool in tech culture is utilitarian calculation (Lectures 28–29), which has real strengths but also blind spots: it flattens everything into one number, takes the “point of view of the universe,” and ignores power, integrity and the fact that people want a say (Srinivasan, Sun).</p>
+</div>
+
+<!-- ===================================================== -->
+<h2 id="l27">2. Lecture 27: Environmental contexts and consequences of data</h2>
+<p class="meta">Mon 11/2 · 26 slides</p>
+
+<h3>What the lecture was for</h3>
+<p>Two moves. First, tell an <strong>environment-centered history of Silicon Valley</strong>: the microelectronics industry, which marketed itself as clean, turned out to be heavily toxic. Second, widen that lens to <strong>datafication today</strong>: follow the physical materials behind a data product (the Amazon Echo), then look at data centers and the resources they use (land, water, energy, carbon). The running question: how do we bring environmental costs into view instead of externalizing and hiding them, and how do we think about industry, consumption and ethics together?</p>
+
+<h3>Part 1: Silicon Valley's “clean” image</h3>
+<p>In the 1970s–80s the Valley sold itself as the opposite of the smokestack economy. The lecture shows a 1982 <i>New York Times</i> piece in which San Jose residents take pride in a skyline without smokestacks. Stanford Research Park is the emblem: low, green, campus-style buildings.</p>
+<p><strong>Land and water as resources.</strong> Tech growth depended on cheap land and water, and on local governments that wanted it. The lecture says to look for the <em>narratives</em> behind development, “growth” and local boosterism, attracting industry, and to notice how those narratives get <em>built into</em> concrete things:</p>
+<ul>
+<li>infrastructure (sewers, roads)</li>
+<li>land-use control (zoning; San Jose aggressively annexed land)</li>
+<li>finances (property taxes, incentives for industry)</li>
+<li>exercises of state or private power (displacement, eminent domain)</li>
+</ul>
+<p>Keep this list in mind. It is exactly the toolkit that shows up again in Sun's reporting on today's data centers (tax districts, eminent domain at the Foxconn site, rezoning in Saline Township).</p>
+
+<h3>Part 2: Why “clean” chipmaking was toxic</h3>
+<p>“Clean” in a <strong>clean room</strong> means clean <em>for the chip</em>: free of dust and impurities. It does not mean clean for the environment. The lecture's numbers: into the 1990s, making a single 8-inch silicon wafer took about 27 lb of chemicals, ~4,267 cubic feet of bulk gases, 29 cubic feet of hazardous gases, ~3,023 gallons of ultrapure water, and produced ~3,787 gallons of wastewater and 9 lb of hazardous waste.</p>
+<h4>Production reasons for the waste</h4>
+<ul>
+<li>Semiconductors are made by adding (doping) materials to control conductivity, and some of those materials are toxic.</li>
+<li>Chips are extremely sensitive to impurities, so manufacturing involves constant cleaning, much of it with solvents.</li>
+<li>Processes were built around organic chemicals because of breakthroughs in the petrochemical industry.</li>
+<li>The industry grew and scaled so fast that it wasn't ready to deal with its waste.</li>
+<li>Early military specs drove some product designs.</li>
+</ul>
+<h4>Social reasons for the waste</h4>
+<ul>
+<li>Disposal was lightly regulated, so practices were haphazard. Production was expensive, so firms kept disposal costs low.</li>
+<li>Pollution followed old agricultural infrastructure (for example, well pipes left from the Valley's orchard era carried contaminants into groundwater).</li>
+<li>Plants were sited on land and in communities with less social power.</li>
+<li>Worker health effects weren't seriously researched.</li>
+<li>Regulation came decades later, and sometimes the responsible firms were already gone.</li>
+</ul>
+<p><strong>Case study: Fairchild.</strong> The 1982 <i>NYT</i> story includes the protest slogan “Fairchild or my child?” after a leaking Fairchild Semiconductor storage tank contaminated drinking water in South San Jose. Silicon Valley ended up with a dense cluster of EPA <strong>Superfund sites</strong> (federally designated hazardous-waste cleanup sites): the slide cites 29 in 2002 (Pellow and Park) and 23 today.</p>
+
+<h3>Two key concepts</h3>
+<dl>
+<dt>(Negative) externality</dt>
+<dd>A cost or harm that isn't paid by the people who benefit from a product or service, but is passed to someone else. Silicon Valley pollution and cleanup were externalized: they weren't counted as costs of doing business, so someone else (neighbors, taxpayers, future residents) paid.</dd>
+<dt>Invisibility (invisibilization)</dt>
+<dd>Keeping people, issues or effects from being seen or heard. The lecture stresses that this takes <em>active work</em>, it doesn't just happen. Example: low-wage workers disappear behind sleek tech products; your attention is directed away from the material base.</dd>
+</dl>
+
+<h3>Part 3: Datafication's material footprint</h3>
+<p>The lecture turns to Crawford and Joler's <strong>“Anatomy of an AI System,”</strong> a giant diagram tracing an Amazon Echo from mineral extraction, through manufacturing, use (your voice becomes training data) and disposal. Their point, paraphrased: every small convenience (a question answered, a light switched on) depends on a planet-scale network of extracted materials, labor and data. Examples on the slides: lithium in Bolivia's Salar de Uyuni, cobalt mining in the Democratic Republic of the Congo.</p>
+<p>Then the “cloud.” The cloud is physical: warehouses of servers. The slides cover the current data-center building boom (WSJ, Sept 2026; OpenAI's “Stargate” sites), land and real estate, Northern Virginia's “Data Center Alley,” and power, emissions and water (for example, gas turbines powering xAI's “Colossus” cluster near Memphis).</p>
+
+<h3>Lecture 27 takeaways</h3>
+<ol>
+<li><strong>All data and data technologies are material.</strong> Land, minerals, water and energy are critical inputs, which cuts against stories like “clean tech” and “the cloud.”</li>
+<li><strong>Actors near and far are involved, even if invisible.</strong> Geography matters: distance, physical features, where people live. Materials and labor flow across planetary networks.</li>
+<li><strong>Many of these features are made invisible,</strong> and their costs are pushed out as externalities.</li>
+<li><strong>Environmental justice</strong> starts by undoing invisibilization and externalization, then goes further: recognizing structures of power, and asking what you can do and where to start.</li>
+</ol>
+<p><strong>Tools:</strong> power; sociotechnical systems. <strong>Terms:</strong> Stanford Research Park, clean room, Superfund site, externality, invisibility, environmental justice, resource extraction. <strong>Cases:</strong> Fairchild contamination in Silicon Valley; the Amazon Echo.</p>
+
+<!-- ===================================================== -->
+<h2 id="sun">3. Reading: Jasmine Sun, “No Data Centers in My Backyard”</h2>
+<p class="meta">Substack (jasmi.news), Aug 3 2026 · subtitle: money, power, and populism in the AI buildout · <a href="https://jasmi.news/p/no-data-centers-in-my-backyard">read it</a></p>
+
+<h3>The setup</h3>
+<p>Sun is a San Francisco-based writer who covers AI culture. While researching the AI backlash she found that, outside SF, two issues united people across parties: kids' safety and data centers. Polls showed roughly 30% for and 70% against data centers, with Democrats and Republicans about equal. She was skeptical of one-sided national coverage (modern closed-loop cooling uses relatively little water; factories are uglier and dirtier), so she spent ten days in July 2026 reporting from four places in Wisconsin and Michigan. Her questions: Do most people actually care, or just a passionate few? Is the anger about AI, energy costs, or plain NIMBYism? How did local fights become national? How is AI shaping elections?</p>
+
+<h3>The four stops</h3>
+<h4>Janesville, WI: data center or concrete slab</h4>
+<p>A 250-acre former GM plant site, empty since 2008 and contaminated with industrial chemicals. A local broker spent years failing to sell it. A data center developer offered to pay the ~$30M cleanup plus about $4.8M a year in taxes. Local activists fought it anyway, angry that talks had happened for a year under an NDA, about tax incentives, and about being charged over $1,000 for a public records request. Their fear: tying the town to one big employer again, in a risky industry, and ending up with “another GM plant.” They got a referendum on the ballot that would require voter approval for future developments over $450M, and the city's letter of interest with the developer expired. When Sun asked what they'd build instead, she didn't get a real answer; she suspects the honest choice was data center or slab, and they chose the slab.</p>
+<h4>Mount Pleasant, WI: a government that “did it right,” and it didn't matter</h4>
+<p>This is the site of the Foxconn deal: over $4B in incentives in 2017 for a promised 13,000 jobs; about a thousand materialized, and the village was left with large debt. When Microsoft bought part of the site in 2023, the village had learned: a tax guarantee, no new borrowing or subsidies, no NDA, dozens of public meetings. It still faced intense opposition, because residents had learned from Foxconn never to believe a tech company's (or their own government's) promises. Sun meets traveling “accidental activists”: a retired conservative bank executive who builds spreadsheets on why tax-increment districts are bad bets, and an environmental advocate who measures noise and EMF outside the sites. The pairing shows the movement's strange left-right coalitions.</p>
+<h4>The unions: data centers as a windfall</h4>
+<p>A leader of the Operating Engineers union explains that construction workers are doing better than ever: thousands of workers per project, cash incentives to stay, apprenticeship classes doubled. He remembers when industrial noise meant paychecks, and calls data centers clean by comparison. He negotiates contracts so his members supervise any autonomous equipment. Sun notes how rare that kind of representation is for most workers facing AI disruption.</p>
+<h4>Port Washington, WI and Saline Township, MI: process failures</h4>
+<p>In Port Washington the mayor pushed hard for a data center; residents launched a (failed) recall and passed a referendum requiring voter approval for future tax-increment districts, which passed with about two-thirds of the vote. The fight turned ugly: threats, a protester dragged from a council meeting. Residents kept saying they felt “blindsided.” The mayor blamed outside agitators and social media, and said he'd change nothing about how he communicated. In Saline Township, the board voted 4–1 against rezoning farmland for a data center (later revealed to be for Oracle and OpenAI). The developer sued under state zoning law; the tiny township couldn't afford to fight and settled. The utility redacted its power estimates and got expedited review. Activists there worry AI is a bubble that will leave stranded buildings and grid costs behind.</p>
+
+<h3>Sun's diagnosis: four drivers of the backlash</h3>
+<ol>
+<li><strong>Material impacts.</strong> Data centers are big, ugly, noisy and power-hungry, and construction is disruptive. Water use and air pollution are generally small, with exceptions. But these costs aren't so different from factories or solar farms, which don't provoke the same hatred.</li>
+<li><strong>Process failure.</strong> Residents didn't feel they had a choice. Industry's desperation for compute shows up as fast-tracking, NDAs, big checks and little public input, which looks like cronyism.</li>
+<li><strong>Weak benefits.</strong> There's no real pro-data-center constituency. Permanent jobs are few, tax benefits are delayed or uncertain, and most people don't feel AI is essential. An “email-writing widget” doesn't seem worth it, and nobody wants to be collateral damage in billionaires' race.</li>
+<li><strong>Low trust.</strong> Historically low trust in corporations and government, plus a sense the economy is “rigged,” lets national media and Facebook groups link local complaints to bigger stories about corruption and electric bills. In her phrase, “AI populism” is more about populism than about AI.</li>
+</ol>
+
+<h3>The ending: thymos</h3>
+<p>Her sharpest point: bigger numbers sometimes made people <em>more</em> suspicious (“I'm being bribed; there must be a catch”). Politics isn't just optimization; people's interests can't be reduced to dollar amounts. She borrows Francis Fukuyama's use of <strong>thymos</strong>, the desire to be recognized as a person with worth and dignity. Town halls and elections matter not because they efficiently add up preferences but because they're where people get to be heard. A backroom deal negates thymos: it says the community's buy-in never mattered, even if the deal would have made them better off on paper. She ends noting New York's first statewide data-center moratorium and Microsoft dropping NDAs, but says the cultural problem will resurface unless addressed.</p>
+
+<div class="card key">
+<span class="label">Why it was assigned with Lecture 27</span>
+<p>It's a live case of everything in the lecture: data's materiality (land, power, water), externalities (grid costs, noise, risk of stranded assets landing on small towns), invisibility vs. visibility (NDAs hide deals; activists measure noise and file records requests to make things visible), and the old Silicon Valley development toolkit (zoning, tax incentives, eminent domain, local boosterism). It also sets up the moral-philosophy lectures: the thymos argument is a critique of reducing the question to a cost-benefit calculation.</p>
+</div>
+
+<!-- ===================================================== -->
+<h2 id="l28">4. Lecture 28: Moral philosophy</h2>
+<p class="meta">Wed 11/4 · 26 slides</p>
+
+<h3>What the lecture was for</h3>
+<ul>
+<li>Distinguish <strong>ethics</strong> from <strong>moral philosophy</strong> and see how they relate.</li>
+<li>Learn the three major traditional Western frameworks: their basics, origins and limits.</li>
+<li>Look closely at how one of them (utilitarianism) has been <strong>co-produced</strong> with the datafied world.</li>
+</ul>
+<p>It opened with the <strong>trolley problem</strong> and the <strong>MIT Moral Machine</strong> (see next section) as a hook: automated vehicles force us to write ethical choices into code.</p>
+
+<h3>Ethics vs. moral philosophy</h3>
+<p><strong>Ethics</strong> asks: How should one live? What should one do? What is the good life, and how does human action relate to it?</p>
+<p>The lecture gives two fundamental dimensions:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Agency</th><th>Good</th></tr></thead>
+<tbody><tr>
+<td>Who has agency (or is treated as having it)? What does it mean to be an agent? Who is responsible, what do you owe others, what are you obligated to do? How do sociotechnical contexts shape agency?</td>
+<td>What is a good life, what does it mean to live well? What does it take to make a good world? How do sociotechnical contexts shape the good?</td>
+</tr></tbody></table></div>
+<p><strong>Moral philosophy</strong> is narrower: an abstract, systematic, institutionalized form of reasoning that defines and justifies ethical life. Ethics is the broader human question; moral philosophy is one academic way of answering it. This distinction matters on Friday, when the lecture asks about the <em>limits</em> of moral philosophy.</p>
+
+<h3>The three frameworks</h3>
+<p>Each gives a competing answer to “what makes an action ethical?”</p>
+
+<h4>Virtue ethics: what kind of person should I be?</h4>
+<ul>
+<li>Focus on character, not rules or outcomes. Acting well means acting as a virtuous person would.</li>
+<li>Aristotle: <em>phronesis</em> (practical wisdom, knowing the right thing in a specific situation) and <em>eudaimonia</em> (human flourishing, the goal of a good life). Confucius is shown as a parallel non-Western tradition.</li>
+<li>Has a <strong>“thick” conception of human nature</strong>: a rich picture of what humans are and what they're for.</li>
+<li><strong>Critiques:</strong> Which virtues, and who decides? Virtues are culturally specific. It can push toward conformism.</li>
+</ul>
+
+<h4>Deontology: what is my duty?</h4>
+<ul>
+<li>Ethics as duty: an action is right if it follows a rule or principle, regardless of outcome. Emphasis on obligation and <em>intention</em>.</li>
+<li>Old roots: the Code of Hammurabi; the Golden Rule.</li>
+<li><strong>Immanuel Kant:</strong> morality rests on reason and freedom, where freedom means <em>autonomy</em> (auto + nomos, giving yourself the law).</li>
+<li><strong>Categorical imperative:</strong> act only on a principle you could will to become a universal law. Test: what if everyone did this?</li>
+<li><strong>Respect:</strong> treat people as ends in themselves, never merely as means.</li>
+</ul>
+
+<h4>Consequentialism: what produces the best outcome?</h4>
+<ul>
+<li>Judge an action only by the state of affairs it produces. “The ends justify the means.”</li>
+<li><strong>Agent-neutral:</strong> it doesn't matter <em>who</em> does the good or who receives it; everyone counts equally.</li>
+<li><strong>Utilitarianism</strong> is the main version: maximize utility (pleasure, happiness, well-being). Jeremy Bentham: the greatest happiness of the greatest number is the right goal of government. (The slide notes Bentham's preserved body sits in a cabinet at University College London.)</li>
+</ul>
+
+<h3>Utilitarianism in the datafied world</h3>
+<p>The lecture's main argument is that utilitarianism isn't just one theory among three: it has an especially close fit with data culture. Places we've already seen it in this course:</p>
+<ul>
+<li>quantification and the ideal of objectivity</li>
+<li>rational choice theory, behavioral economics, choice architecture (nudges)</li>
+<li>risk scoring and panopticism (surveillance that sorts people by predicted outcomes)</li>
+<li>Effective Altruism and longtermism</li>
+</ul>
+<p><strong>“The point of view of the universe.”</strong> Henry Sidgwick (1838–1900) described the utilitarian stance as judging from the point of view of the universe: perfectly impartial, no person's good counting more than another's. The lecture links this to <strong>mechanical objectivity</strong> from earlier in the course (the ideal of removing the human judge from measurement). Both promise a view from nowhere.</p>
+<p><strong>Calculating the good life.</strong> The last slide sets up the Srinivasan reading: Effective Altruism as data-driven philanthropy, making very different lives comparable through a single measure, <strong>QALYs</strong> (quality-adjusted life-years). It closes on <i>The Good Place</i>, a sitcom that jokes about moral-points accounting.</p>
+
+<h3>Lecture 28 takeaways</h3>
+<ol>
+<li>Ethics is about the good life and the kinds of human action (agency) that aim at it.</li>
+<li>Moral philosophy is a particular institutionalized, reflective practice that tries to give firm foundations for defining the good and judging actions.</li>
+<li>Today's data ethics is partly a product of these Western traditions (consequentialism, deontology, virtue ethics).</li>
+<li>The frameworks are useful for revealing our own commitments, sensitizing us to issues, giving us a critical orientation, and understanding what powerful interests are committed to.</li>
+<li>Utilitarianism has resonated with the drives of the datafied world and has been especially influential.</li>
+<li>Its “point of view of the universe” mirrors the impartiality ideal of mechanical objectivity.</li>
+</ol>
+
+<!-- ===================================================== -->
+<h2 id="mm">5. Activity: the MIT Moral Machine</h2>
+<p class="meta"><a href="https://www.moralmachine.net/">moralmachine.net</a> · assigned: ~15 minutes, “Start Judging” and “Browse Scenarios”</p>
+<p>A website from MIT researchers that turns the trolley problem into a self-driving-car scenario. A car's brakes fail; you choose which group it hits (swerve or stay). The groups vary by number, age, sex, fitness, social status, species (people vs. pets), whether they're passengers or pedestrians, and whether pedestrians are crossing legally. At the end it shows your “preferences” compared with everyone else's. The researchers collected millions of decisions worldwide and published cross-cultural comparisons.</p>
+<p><strong>Why it's in this lecture:</strong> it makes you <em>do</em> moral philosophy, and it's a great object to critique with the course's tools.</p>
+<ul>
+<li>It's built on a <strong>consequentialist frame</strong>: every scenario is “which outcome is less bad,” counted in lives. A deontologist might refuse to <em>actively</em> swerve into someone.</li>
+<li>It treats ethics as <strong>crowdsourced preference data</strong>, aggregating what people prefer, which is a data-culture move (quantify, aggregate, optimize). Majority preference isn't the same as what's right; some revealed preferences (sparing high-status people over homeless people) are discriminatory.</li>
+<li>It's <strong>abstracted</strong>: real crashes involve uncertainty, not perfect knowledge of everyone's age and job. Real ethical questions about autonomous vehicles (who's liable, who's surveilled, who gets road space, who builds and profits) aren't on the menu. Compare Lecture 27's lesson about what gets made invisible.</li>
+</ul>
+
+<!-- ===================================================== -->
+<h2 id="srini">6. Reading: Amia Srinivasan, “Stop the Robot Apocalypse”</h2>
+<p class="meta">London Review of Books, Vol. 37 No. 18, Sept 24 2015 · review of William MacAskill, <i>Doing Good Better</i> (2015) · <a href="https://www.lrb.co.uk/the-paper/v37/n18/amia-srinivasan/stop-the-robot-apocalypse">read it</a></p>
+
+<p>Srinivasan, an Oxford philosopher, reviews the founding popular book of <strong>Effective Altruism (EA)</strong>. It's a book review, but really a critique of utilitarian reasoning applied to doing good. This is the reading Lectures 28–29 lean on most.</p>
+
+<h3>What EA is (her summary of MacAskill)</h3>
+<ul>
+<li>EA comes out of utilitarianism: don't just do good, do the <em>most</em> good you can, using evidence to compare charities, careers and consumer choices. Organizations: Giving What We Can (pledge 10% of income), 80,000 Hours (career advice), GiveWell, and others.</li>
+<li><strong>QALYs</strong> as the common currency. One QALY = one year at full health. Self-reported scales assign, e.g., a year of blindness about 0.4. That lets you compare curing blindness with treating AIDS. Srinivasan notes the self-reports are shaky, and observes that QALYs make lives interchangeable: they free us from the specificity of the people we help.</li>
+<li><strong>Think marginally:</strong> what does one <em>additional</em> doctor, or one more dollar, add? (A doctor in a poor country adds far more than one in the UK.)</li>
+<li><strong>Think counterfactually:</strong> what would happen if you didn't act? If someone else would take the doctor job anyway, maybe you should “earn to give” in finance and donate to bed-net charities. This frees us from the specificity of <em>ourselves</em>: it only matters that good gets done, not who does it.</li>
+<li>The results are often counterintuitive (deworming over textbooks; skip eggs before beef; Fairtrade can be inefficient).</li>
+</ul>
+
+<h3>Her criticisms</h3>
+<ol>
+<li><strong>It speaks the language of capitalism and leaves power alone.</strong> The book's cheerful style borrows global capitalism's habits: quantify everything, make all goods comparable, prize efficiency, assume self-interest and morality line up (philanthropy pitched as an amazing deal). It barely mentions oppression and doesn't diagnose why inequality exists. EA “doesn't try to understand how power works, except to better align itself with it.” In Wittgenstein's phrase she turns against it, it “leaves everything as it is.”</li>
+<li><strong>Its math breaks down exactly where problems get political.</strong> It can price a bed net, but how do you calculate the expected value of radically reorganizing society? The more uncertain the numbers, the less the model tells you, and the more you fall back on common sense anyway.</li>
+<li><strong>The math can tell powerful people what they want to hear.</strong> This is the title. At a 2015 EA conference at Google, discussion was dominated by <strong>existential risk</strong>, especially AI wiping out humanity. With Bostrom's estimate of trillions upon trillions of possible future people, even a microscopic chance of reducing x-risk out-“values” saving a billion living people. So the logic of helping the poor ends up recommending more money for AI research. No wonder it's popular in Silicon Valley: everyone wants to believe their work is world-historically important.</li>
+<li><strong>It dodges utilitarianism's demandingness without resolving it.</strong> Peter Singer's drowning-child argument implies that almost any luxury is wrong while others die. EA softens this to “give 10%, then more,” while still claiming to aim at the most good. Either it really demands the maximum (radical, life-overhauling) or just asks us to do better (which every decent moral view already says, so it's not new).</li>
+<li><strong>It demands the wrong things: it erases the self.</strong> Her deepest objection. Utilitarianism rules out spending on causes close to your heart, and in principle says to earn money for charity rather than comfort a grieving friend. Her reply: you stay with your friend <em>because it's your friend</em>, not because you've met a quota. Likewise, you shouldn't exploit people even if the math says the good outweighs the harm, because it matters morally what <em>you</em> do with your life, not just what happens because of it.</li>
+<li><strong>“Arbitrary” isn't the end of the story.</strong> MacAskill says giving to a fistula hospital he visited would be arbitrary and unfair to people he could help more. Srinivasan answers that our family, friends and neighbors are arbitrary too, yet those connections become ethically meaningful once they're woven into our lives. Taking Sidgwick's point of view of the universe means stepping outside the only place ethics actually happens: your own point of view. Maybe, she suggests, it's the universal gaze that fails our ethical scrutiny.</li>
+<li><strong>It's individualistic.</strong> It treats the world as fixed and the individual (not communities, classes or states) as the unit of moral action.</li>
+</ol>
+
+<div class="card key">
+<span class="label">How it maps to lecture</span>
+<ul>
+<li>QALYs = “making different lives commensurable through data” (L28 last slide, L29 slide 10).</li>
+<li>Sidgwick's point of view of the universe appears in the reading <em>and</em> both lectures.</li>
+<li>Longtermism and x-risk (L29 slide 12) are the “robot apocalypse.”</li>
+<li>Her friend example is the <strong>integrity</strong> objection (L29 slide 19).</li>
+<li>Her point about EA ignoring power echoes Lecture 27's tools: power, invisibilization, externalities.</li>
+</ul>
+</div>
+
+<!-- ===================================================== -->
+<h2 id="l29">7. Lecture 29: Moral philosophy 2, utilitarianism and its critics</h2>
+<p class="meta">Fri 11/6 · 24 slides · no new readings</p>
+<div class="card note">
+<span class="label">Note on sources</span>
+<p>Many of this deck's slides are image-only with just a title (e.g. “Experience machines,” “What about justice?”). The section titles, goals and takeaways below come from the slides. The explanations of each objection are the standard versions from moral philosophy, filled in so the slide titles make sense. If your GSI emphasizes a different reading of any of them, go with theirs.</p>
+</div>
+
+<h3>What the lecture was for</h3>
+<ul>
+<li>Look at utilitarianism in more detail.</li>
+<li>See how it was co-produced with “decision-making” in the datafied world.</li>
+<li>Understand its appeal in Silicon Valley, and where that led.</li>
+<li>Review the classic objections.</li>
+<li>Point to the limits of moral philosophy in general as an approach to ethics.</li>
+</ul>
+
+<h3>Where utilitarianism shows up (expanded list)</h3>
+<p>Self-tracking and self-optimization; quantification and objectivity; rational choice, behavioral economics and choice architecture; risk assessment and panopticism; Effective Altruism and longtermism; and now <strong>venture capital</strong> (bet on many things, maximize expected return, a few huge wins justify everything).</p>
+
+<h3>Co-production: decision theory and utilitarianism</h3>
+<p><strong>Co-production</strong> (a course tool) means technology/knowledge and social order shape each other. Here: 20th-century decision science and utilitarian ethics grew up together.</p>
+<ul>
+<li><strong>Prisoner's Dilemma:</strong> the Cold War-era game-theory model where two rational actors, each maximizing their own payoff, end up worse off than if they'd cooperated. It shows how thinking about choice became formal, mathematical modeling of agents maximizing utility.</li>
+<li><strong>John Harsanyi, “preference utilitarianism”:</strong> an economist and game theorist who argued that the good is satisfying people's preferences, and that a rational, impartial chooser would maximize average utility. This bridges economics' “utility functions” and moral philosophy: ethics becomes a decision problem.</li>
+</ul>
+
+<h3>Utilitarianism in Silicon Valley</h3>
+<ul>
+<li><strong>Effective Altruism</strong> again: data-driven philanthropy and QALYs.</li>
+<li><strong>Longtermism and existential risk:</strong> if future people count equally and there could be astronomically many, protecting the far future (from, e.g., rogue AI) outweighs present needs. This is the same move Srinivasan criticizes.</li>
+<li><strong>Case study: Sam Bankman-Fried.</strong> A prominent EA who embraced “earning to give,” built the crypto exchange FTX, which collapsed in 2022; he was convicted of fraud in 2023. The case is used to ask whether ends-justify-means reasoning, applied with high-stakes expected-value bets, licenses wrongdoing. (The slides also reference a Nov 2026 <i>NYT</i> piece on utilitarianism and Silicon Valley.)</li>
+</ul>
+
+<h3>The classic objections</h3>
+<dl>
+<dt>The Repugnant Conclusion (population ethics)</dt>
+<dd>Derek Parfit's puzzle. If you maximize <em>total</em> well-being, a huge population of people whose lives are barely worth living can count as better than a smaller, flourishing population. Most people find that unacceptable. It matters for longtermism, which leans on enormous future population counts.</dd>
+<dt>Do ends justify the means? The logic of sacrifice</dt>
+<dd>If only totals matter, sacrificing someone is justified whenever it produces more good (killing one patient to harvest organs for five). Utilitarianism can make the individual expendable for the aggregate.</dd>
+<dt>Experience machines, utility monsters, and eugenics</dt>
+<dd>Robert Nozick's <strong>experience machine</strong>: would you plug into a machine that gives you perfect simulated happiness forever? Most say no, which suggests we value more than pleasure (real achievement, real relationships). Nozick's <strong>utility monster</strong>: a being that gets vastly more utility from resources than anyone else; utilitarianism would say give it everything. <strong>Eugenics</strong>: historically, “improving aggregate welfare” was used to justify sterilizing and eliminating people judged to lower it, showing how optimization of populations can turn monstrous.</dd>
+<dt>Commensurability of goods (and evils)</dt>
+<dd>Utilitarianism needs one scale on which everything can be compared. But can friendship, justice, beauty and a year of sight really be converted into the same unit? QALYs and dollar figures assume yes. Sun's thymos point is this objection in real life: residents wouldn't accept money as a substitute for having a say.</dd>
+<dt>What about justice?</dt>
+<dd>Maximizing the total says nothing about <em>distribution</em>. A world where a few people have a lot and many suffer can score the same as an equal one. John Rawls put it as: utilitarianism doesn't take seriously the distinction between persons; it treats society like one big person whose pains and pleasures can be traded off.</dd>
+<dt>Causes, consequences, and moral luck</dt>
+<dd>If only outcomes matter, then how good or bad you are depends on luck: two equally reckless drivers, one hits a child, one doesn't. Should we judge them differently? Consequences are often out of our control and impossible to predict, which undermines judging agents purely by them.</dd>
+<dt>Integrity and moral agency</dt>
+<dd>Bernard Williams' objection. Utilitarianism treats you as a channel for producing good outcomes, which ignores that your projects and commitments make you who you are. His examples: George, a chemist opposed to chemical weapons, told to take the job because someone worse would otherwise; Jim, told to shoot one villager so that twenty others are spared. Utilitarianism says the answers are obvious; Williams says that misses what it means for <em>you</em> to do something. This is Srinivasan's friend example.</dd>
+<dt>Ethics, tragedy, and hard choices</dt>
+<dd>Some situations have no right answer, only different losses. Utilitarianism always outputs a “best” option, as if nothing is lost by choosing it, so it can't take tragedy seriously. The case study here is <strong>AI, drones, and the tragedy of war</strong>: targeting systems that calculate acceptable casualties turn a tragic choice into an optimization output.</dd>
+</dl>
+
+<h3>The limits of moral philosophy itself</h3>
+<ul>
+<li><strong>Moral philosophy as a decision technology?</strong> When ethics becomes a procedure that outputs answers (like the Moral Machine or an expected-value model), it starts to look like another algorithm, with the same problems as the data systems the course critiques.</li>
+<li><strong>Abstraction and the point of view of the universe,</strong> which the slide recasts as really the <em>view from above</em>: the stance of whoever has the power to decide for others. Compare Lecture 27: the people deciding where data centers go are rarely the people living next to them.</li>
+</ul>
+
+<h3>Alternatives</h3>
+<ul>
+<li><strong>Virtue ethics</strong> (back from Wednesday): focus on character and practical wisdom in context.</li>
+<li><strong>Existential ethics:</strong> (Sartre, de Beauvoir) we're responsible for creating our values through our choices; no formula removes that responsibility.</li>
+<li><strong>Care ethics:</strong> (Carol Gilligan, Nel Noddings, Joan Tronto) ethics starts from relationships, dependency and responsibility to particular others, not from impartial rules or sums. This is the natural answer to Srinivasan's friend case.</li>
+</ul>
+
+<h3>Lecture 29 takeaways</h3>
+<ol>
+<li>Utilitarianism resonates with the drives of the datafied world and has been especially influential.</li>
+<li>It aspires to the point of view of the universe, like the impartiality of mechanical objectivity.</li>
+<li>Its logic has been especially resonant in Silicon Valley.</li>
+<li>Classic objections: its logic of sacrifice, its thin conception of agency and the good, and its inability to take integrity and hard choices seriously.</li>
+<li>These point to the limits of moral philosophy as an approach to ethics.</li>
+</ol>
+<p><strong>Tools:</strong> agency, co-production, identity/positionality, narratives. <strong>Terms:</strong> point of view of the universe, preference utilitarianism, Effective Altruism, repugnant conclusion, moral luck, integrity, care ethics. <strong>Cases:</strong> Sam Bankman-Fried; AI, drones, and the tragedy of war.</p>
+
+<!-- ===================================================== -->
+<h2 id="optional">8. Optional readings (short)</h2>
+<h3>Crawford &amp; Joler, “Anatomy of an AI System” (2018)</h3>
+<p><a href="https://anatomyof.ai/">anatomyof.ai</a>. A huge map plus essay tracing one Amazon Echo through its whole lifecycle: mining of rare earths and metals, smelting, component manufacturing and assembly, shipping, the data and labor behind the voice assistant, and finally e-waste. Its argument is that an AI device is a node in a planetary system of extraction of three things: material resources, human labor and data. Lecture 27 uses it as the bridge from Silicon Valley's chip history to today's AI.</p>
+<h3>Fleddermann, <i>Engineering Ethics</i>, ch. 3 “Understanding Ethical Problems” (pp. 37–46)</h3>
+<p>A textbook treatment of the ethical theories engineers are taught (utilitarian/cost-benefit thinking, duty and rights ethics, virtue ethics) as tools for analyzing professional dilemmas. Useful as a plain-language companion to Lecture 28, and as an example of moral philosophy packaged as a “decision technology,” which Lecture 29 questions.</p>
+
+<!-- ===================================================== -->
+<h2 id="connect">9. How it all connects</h2>
+<p>Re-engagement is graded on whether you can connect the readings to the lectures, so this is the part to know cold.</p>
+<ol>
+<li><strong>Materiality → externalities → who pays.</strong> Lecture 27 shows the “clean” chip industry pushed toxic costs onto less powerful communities. Sun shows the same pattern with AI data centers in deindustrialized Midwestern towns (Janesville's polluted GM site, Mount Pleasant's Foxconn debt). Same development toolkit (zoning, tax incentives, eminent domain, boosterism), new industry.</li>
+<li><strong>Invisibility takes work, and so does visibility.</strong> NDAs and redacted power estimates hide deals (invisibilization). Activists fight back with records requests, noise meters, Facebook groups and referendums. Lecture 27's environmental justice starts with undoing invisibility; Sun's activists are doing exactly that.</li>
+<li><strong>The cost-benefit frame is utilitarian, and it failed.</strong> Pro-data-center officials argue in utilitarian terms: tax revenue, jobs, total benefit. Sun found that bigger numbers made people more suspicious. That is the <strong>commensurability</strong> objection from Lecture 29 and Srinivasan's critique of QALYs in practice: people won't accept money as a stand-in for dignity and voice (<strong>thymos</strong>).</li>
+<li><strong>Point of view of the universe = view from above.</strong> Sidgwick's impartial standpoint (L28/29) sounds neutral, but in practice it's the stance of whoever decides for others: EA donors choosing who is worth saving, developers choosing where data centers go, the Moral Machine choosing whom a car hits. Srinivasan's point that ethics happens from <em>your</em> point of view matches Sun's residents insisting their buy-in matters.</li>
+<li><strong>Silicon Valley's ethics fits its business model.</strong> EA and longtermism make AI safety the top moral priority, which flatters the AI industry (Srinivasan's title). VC logic, expected-value bets and SBF show where that leads (L29). Meanwhile the material costs of AI land in Wisconsin and Michigan (Sun, L27).</li>
+<li><strong>Power is the missing variable.</strong> Srinivasan says EA doesn't try to understand power except to align with it. Lecture 27's tools are power and sociotechnical systems. Lecture 29 asks whether moral philosophy itself, by abstracting away from power and positionality, has the same blind spot.</li>
+</ol>
+
+<!-- ===================================================== -->
+<h2 id="terms">10. Key terms cheat sheet</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Term</th><th>Meaning</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>Externality</td><td>A cost passed to people who don't benefit and didn't agree</td><td>L27, Sun</td></tr>
+<tr><td>Invisibility / invisibilization</td><td>Active work that keeps people, harms or issues from being seen</td><td>L27</td></tr>
+<tr><td>Environmental justice</td><td>Undoing externalization and invisibility, and confronting the power structures behind them</td><td>L27</td></tr>
+<tr><td>Superfund site</td><td>EPA-designated hazardous-waste cleanup site; Silicon Valley has many</td><td>L27</td></tr>
+<tr><td>Clean room</td><td>Dust-free chip fab; “clean” for the chip, not the environment</td><td>L27</td></tr>
+<tr><td>Resource extraction</td><td>Mining, water, land and energy taken to build and run data tech</td><td>L27, Crawford &amp; Joler</td></tr>
+<tr><td>Thymos</td><td>Desire to be recognized as having worth and dignity (Fukuyama)</td><td>Sun</td></tr>
+<tr><td>Ethics vs. moral philosophy</td><td>How to live / the good life vs. a systematic, institutionalized theory of it</td><td>L28</td></tr>
+<tr><td>Agency / the Good</td><td>The two dimensions of ethics: who acts and is responsible; what a good life and world are</td><td>L28</td></tr>
+<tr><td>Virtue ethics</td><td>Act as a virtuous person would; phronesis, eudaimonia (Aristotle, Confucius)</td><td>L28</td></tr>
+<tr><td>Deontology</td><td>Duty and rules; Kant's categorical imperative; treat people as ends</td><td>L28</td></tr>
+<tr><td>Consequentialism / utilitarianism</td><td>Judge by outcomes; maximize total well-being (Bentham); agent-neutral</td><td>L28</td></tr>
+<tr><td>Point of view of the universe</td><td>Sidgwick's perfectly impartial standpoint; recast as “the view from above”</td><td>L28, L29, Srinivasan</td></tr>
+<tr><td>QALY</td><td>Quality-adjusted life-year; makes different lives comparable</td><td>Srinivasan, L28–29</td></tr>
+<tr><td>Effective Altruism</td><td>Use evidence and reason to do the most good; earning to give</td><td>Srinivasan, L28–29</td></tr>
+<tr><td>Longtermism / x-risk</td><td>Prioritize the far future; existential risks like rogue AI</td><td>Srinivasan, L29</td></tr>
+<tr><td>Preference utilitarianism</td><td>The good = satisfying preferences (Harsanyi); ethics as decision theory</td><td>L29</td></tr>
+<tr><td>Repugnant conclusion</td><td>Total-utility math prefers a vast population of barely-worth-living lives</td><td>L29</td></tr>
+<tr><td>Moral luck</td><td>Judging people by outcomes they couldn't control</td><td>L29</td></tr>
+<tr><td>Integrity</td><td>Williams: your own projects and commitments matter morally, not just outcomes</td><td>L29, Srinivasan</td></tr>
+<tr><td>Care ethics</td><td>Ethics grounded in relationships and responsibility to particular others</td><td>L29</td></tr>
+<tr><td>Co-production</td><td>Technology/knowledge and social order shape each other</td><td>L29</td></tr>
+</tbody></table></div>
+
+<!-- ===================================================== -->
+<h2 id="discuss">11. Discussion questions and talking points</h2>
+<p>Have a take on two or three of these, each tied to a specific reading and lecture.</p>
+<ol class="q">
+<li><strong>Is the data-center backlash about AI?</strong> Sun says it's more about populism and trust than AI. Talking point: the material harms are real but comparable to other industry (L27); what's distinctive is the <em>process</em> (NDAs, fast-tracking) and the sense of being externalized, plus thymos.</li>
+<li><strong>Janesville: data center or concrete slab?</strong> A utilitarian would probably say build it (cleanup paid, taxes, jobs). Was the town wrong to pick the slab? Use the commensurability and integrity objections, or argue the utilitarian side and note the uncertainty (bubble risk, Foxconn history) that makes the calculation unreliable, which is Srinivasan's point about uncertain numbers.</li>
+<li><strong>Who carries the cost of the cloud?</strong> Connect Fairchild/Superfund (L27) to Sun's towns. What's the same, what's changed (e.g. Mount Pleasant negotiated better and it didn't help)?</li>
+<li><strong>Your Moral Machine results.</strong> What did you prioritize, and which framework does that reveal? What does the site leave out (uncertainty, liability, who designs the car)? Is crowdsourcing ethics a good idea?</li>
+<li><strong>Srinivasan's friend example.</strong> Is she right that you should comfort a grieving friend over earning to give, and right about <em>why</em>? Which L29 objection is this? (Integrity; also care ethics.)</li>
+<li><strong>Why is utilitarianism so popular in tech?</strong> It fits quantification, optimization and expected-value thinking (VC). Does that make it more useful in tech, or more dangerous? Bring in SBF and longtermism.</li>
+<li><strong>Who gets the point of view of the universe?</strong> Is impartiality neutral, or is it the view from above? Connect to mechanical objectivity from earlier in the course and to Sun's residents.</li>
+<li><strong>Is moral philosophy a decision technology?</strong> If ethics becomes a procedure that outputs answers, does it inherit the problems of algorithms the course has criticized (abstraction, hidden values, ignoring power)?</li>
+</ol>
+
+<footer>
+Compiled Nov 13 2026 from the DATA C104 Fall 2026 bCourses schedule, the Lecture 27–29 slides, and the assigned readings. Summaries are paraphrased study notes; read the originals for anything you plan to quote.
+</footer>
+</main>
+</body>
+</html>
