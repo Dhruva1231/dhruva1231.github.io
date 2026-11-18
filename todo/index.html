@@ -9,7 +9,7 @@
 --c61c:#7c5cff;--c186:#2f7ff0;--c66:#f08a24;--c104:#2f9e6a;--cother:#8a8f99;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0f13;--card:#17181e;--ink:#eceef3;--dim:#9aa0ad;--faint:#5d626e;--line:#262830;--shadow:none}}
 :root[data-theme="dark"]{--bg:#0e0f13;--card:#17181e;--ink:#eceef3;--dim:#9aa0ad;--faint:#5d626e;--line:#262830;--shadow:none}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",sans-serif;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",sans-serif;-webkit-font-smoothing:antialiased}
 main{max-width:860px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 16px 80px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 button:focus-visible,input:focus-visible{outline:2px solid var(--c186);outline-offset:2px;border-radius:8px}
@@ -63,6 +63,41 @@ details summary{cursor:pointer;list-style:none}details summary::-webkit-details-
 .mini{font-size:12px;border-left:3px solid var(--cother);padding:3px 6px;margin-bottom:5px;border-radius:3px;background:var(--bg);cursor:pointer;overflow-wrap:anywhere}
 .mini.done{opacity:.45;text-decoration:line-through}.mini small{display:block;color:var(--dim)}
 @media (max-width:700px){.week{grid-template-columns:1fr}.day{min-height:0}#pomo{grid-template-columns:1fr;justify-items:center;text-align:center}#pomo .ring{grid-row:auto}.ctrls{justify-content:center}h1{font-size:26px}}
+/* plan */
+.calh{display:flex;align-items:center;justify-content:space-between;margin:4px 0 6px}.calh b{font-size:15px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:var(--shadow)}
+.dow{font-size:11px;color:var(--faint);text-align:center;padding:2px 0 4px}
+.cd{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 7px;border-radius:9px;font-size:14px;font-variant-numeric:tabular-nums}
+.cd:hover{background:var(--bg)}.cd.out{color:var(--faint)}.cd.now span{color:var(--accent);font-weight:700}
+.cd.sel{background:var(--ink);color:var(--bg)}.cd.sel.now span{color:var(--bg)}
+.cd i{display:flex;gap:2px;height:5px}.cd em{width:5px;height:5px;border-radius:50%}
+.cd u{position:absolute;bottom:3px;width:14px;height:2px;border-radius:2px;background:var(--faint)}
+.dayh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0 8px}.dayh h2{margin:0;font-size:20px;letter-spacing:-.01em}
+.dues{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.due{font-size:12.5px;padding:4px 9px;border-radius:8px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--c)}.due.done{opacity:.5;text-decoration:line-through}
+.tl{position:relative;margin:6px 0 10px;border-radius:16px;background:#0d0d0f;padding:8px 0;overflow:hidden}
+.hr{position:absolute;left:0;right:0;border-top:1px solid #1d1d22}.hr span{position:absolute;left:8px;top:2px;font-size:10.5px;color:#55565c;letter-spacing:.02em}
+.nowl{position:absolute;left:44px;right:0;border-top:2px solid #E5484D;z-index:3}.nowl::before{content:"";position:absolute;left:-5px;top:-5px;width:8px;height:8px;border-radius:50%;background:#E5484D}
+.track{position:absolute;left:50px;right:6px;top:8px;bottom:8px}
+.blk{position:absolute;background:#141418;border:1px solid #23232a;border-radius:13px;padding:7px 10px 7px 30px;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;transition:box-shadow .15s,transform .15s}
+.blk.mv{cursor:grab}.blk.urg{background:#1f1008;border-color:#3a1c0e}
+.blk.fx{background:repeating-linear-gradient(135deg,#141418 0 10px,#17171c 10px 20px);border-style:dashed;border-color:#34343c;cursor:pointer}
+.blk .dot{position:absolute;left:11px;top:12px;width:10px;height:10px;border-radius:50%}
+.blk .bt{display:flex;flex-direction:column;min-width:0}.blk .tm{font-size:11.5px;color:#7a7a82;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.blk.fx{padding-right:24px}
+.blk b{font-size:14.5px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.blk small{font-size:12px;color:#62626a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.blk.urg small{color:#cc4400}
+.blk.tight{padding-top:3px;padding-bottom:3px}.blk.tight .bt{flex-direction:row;gap:8px;align-items:baseline}.blk.tight b{order:1;-webkit-line-clamp:1;flex:0 1 auto;min-width:55%}.blk.tight .tm{order:2;flex:0 1 auto;min-width:0}.blk.tight small,.blk.tight .grip::after{display:none}.blk.tight .dot{top:50%;margin-top:-5px}
+.blk .lock{position:absolute;right:8px;top:6px;font-size:11px;opacity:.55}
+.blk .grip{position:absolute;left:0;right:0;bottom:0;height:12px;cursor:ns-resize}.blk .grip::after{content:"";position:absolute;left:50%;bottom:4px;width:26px;margin-left:-13px;height:3px;border-radius:2px;background:#3a3a42}
+.blk.lift{z-index:5;box-shadow:0 10px 28px rgba(0,0,0,.55);transform:scale(1.02);cursor:grabbing;transition:none}
+.skipped{font-size:13px;color:var(--dim);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#ed{border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);width:min(420px,calc(100vw - 32px));padding:18px}
+#ed::backdrop{background:rgba(0,0,0,.5)}#ed h3{margin:0 0 10px}#ed form{display:flex;flex-direction:column;gap:10px}
+#ed label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--dim)}
+#ed input,#ed select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%}
+#ed .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}#ed .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,140%);background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:14px;display:flex;gap:14px;align-items:center;transition:transform .25s;z-index:8;max-width:calc(100vw - 32px)}
+#toast.on{transform:translate(-50%,0)}#toast button{font-weight:700;color:#FDB515}
 /* lock */
 #lock{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9}
 #lock form{display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -77,7 +112,7 @@ details summary{cursor:pointer;list-style:none}details summary::-webkit-details-
 <button class="btn primary" type="submit">Open</button><div id="err"></div></form></div>
 <main hidden>
 <header><div><h1>To-do</h1><div class="sub" id="sync"></div></div>
-<div class="seg" role="group" aria-label="View"><button data-view="list" aria-pressed="true">List</button><button data-view="week" aria-pressed="false">Week</button></div></header>
+<div class="seg" role="group" aria-label="View"><button data-view="list" aria-pressed="true">List</button><button data-view="week" aria-pressed="false">Week</button><button data-view="plan" aria-pressed="false">Plan</button></div></header>
 
 <div id="pomo">
  <div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="var(--line)" stroke-width="6"/>
@@ -92,8 +127,9 @@ details summary{cursor:pointer;list-style:none}details summary::-webkit-details-
 <div class="seg" id="tabs" role="group" aria-label="Status"></div>
 <div class="filters" id="filters"></div>
 <div id="view"></div>
-<div class="foot">Coursework comes from bCourses, Ed, Gradescope and course sites and checks itself off when you submit. Missed = Gradescope or bCourses no longer accepts it. Checks you make here stay on this device.</div>
+<div class="foot">Coursework comes from bCourses, Ed, Gradescope and course sites and checks itself off when you submit. Missed = Gradescope or bCourses no longer accepts it. Checks sync across your devices. The Plan view is your lockscreen wallpaper: today and tomorrow re-render within a minute of a change.</div>
 </main>
+<dialog id="ed"></dialog>
 <script>
 const ITER=600000;let DATA=null;
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -103,7 +139,7 @@ async function unlock(code){const buf=new Uint8Array(await (await fetch('d.bin',
  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(code),'PBKDF2',false,['deriveKey']);
  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:buf.slice(0,16),iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(16,28)},key,buf.slice(28))));}
-async function tryOpen(code,remember){DATA=await unlock(code);if(remember)store.set('todo-code',code);$('#lock').remove();$('main').hidden=false;render();}
+async function tryOpen(code,remember){DATA=await unlock(code);if(remember)store.set('todo-code',code);$('#lock').remove();$('main').hidden=false;render();startSync(code);}
 $('#lock form').addEventListener('submit',async e=>{e.preventDefault();$('#err').textContent='Unlocking…';
  try{await tryOpen($('#pw').value,$('#remember').checked)}catch(x){$('#err').textContent='Wrong code';const f=e.target;f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake')}});
 const saved=store.get('todo-code',null);if(saved)tryOpen(saved,true).catch(()=>store.set('todo-code',null));
@@ -111,7 +147,7 @@ const saved=store.get('todo-code',null);if(saved)tryOpen(saved,true).catch(()=>s
 const COL=c=>/61C/i.test(c)?'var(--c61c)':/186/.test(c)?'var(--c186)':/EE ?66/i.test(c)?'var(--c66)':/104/.test(c)?'var(--c104)':'var(--cother)';
 const over=()=>store.get('todo-done',{});
 function isDone(t){const o=over();return t.id in o?o[t.id]:t.status==='done';}
-function toggle(id){const t=DATA.tasks.find(x=>x.id===id),o=over();const cur=isDone(t);o[id]=!cur;if(o[id]===(t.status==='done'))delete o[id];store.set('todo-done',o);render();}
+function toggle(id){const t=DATA.tasks.find(x=>x.id===id),o=over();const cur=isDone(t);o[id]=!cur;if(o[id]===(t.status==='done'))delete o[id];store.set('todo-done',o);checksChanged(id,o[id]??null);render();}
 const dt=s=>new Date(s+':00');
 const dayKey=d=>d.toLocaleDateString('en-CA');
 function when(t){const d=dt(t.due),now=new Date(),days=Math.round((new Date(dayKey(d))-new Date(dayKey(now)))/864e5);
@@ -132,9 +168,9 @@ function render(){if(!DATA)return;
  $('#filters').innerHTML=['all',...courses].map(c=>`<button class="chip" data-f="${esc(c)}" aria-pressed="${c===filter}">${c==='all'?'All':`<i style="background:${COL(c)}"></i>${esc(c)}`}</button>`).join('');
  const tasks=DATA.tasks.filter(t=>filter==='all'||(t.course||'Personal')===filter);
  const n={todo:0,done:0,missed:0};tasks.forEach(t=>n[tabOf(t)]++);
- $('#tabs').hidden=view==='week';
+ $('#tabs').hidden=view!=='list';$('#filters').hidden=view==='plan';
  $('#tabs').innerHTML=[['todo','To do'],['done','Done'],['missed','Missed']].map(([k,l])=>`<button data-tab="${k}" aria-pressed="${k===tab}">${l}<small>${n[k]}</small></button>`).join('');
- $('#view').innerHTML=view==='week'?week(tasks):tab==='done'?flat(tasks.filter(t=>tabOf(t)==='done'),'Nothing done yet.')
+ $('#view').innerHTML=view==='plan'?planView():view==='week'?week(tasks):tab==='done'?flat(tasks.filter(t=>tabOf(t)==='done'),'Nothing done yet.')
   :tab==='missed'?'<p class="note">Past the last day Gradescope or bCourses accepts submissions. Did it some other way? Check it off.</p>'+flat(tasks.filter(t=>tabOf(t)==='missed'),'Nothing missed. 🎉')
   :list(tasks.filter(t=>tabOf(t)==='todo'));}
 function flat(ts,empty){ts.sort((a,b)=>b.due.localeCompare(a.due));return `<section>${ts.map(row).join('')||`<div class="empty">${empty}</div>`}</section>`;}
@@ -166,6 +202,134 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t)
  const v=e.target.closest('[data-view]');if(v){view=v.dataset.view;store.set('todo-view',view);render();return}
  const c=e.target.closest('[data-f]');if(c){filter=c.dataset.f;store.set('todo-filter',filter);render();return}
  const l=e.target.closest('[data-len]');if(l){P.len=l.dataset.len;if(!P.end){P.left=null}savePomo();drawPomo();}});
+// ---------- sync (northstar-sync.vercel.app; contents encrypted here with a key derived from the code) ----------
+const API='https://northstar-sync.vercel.app/api/state';
+let SYNC=null;const DOCS={schedule:{etag:null,data:null,loaded:false},checks:{etag:null,data:null,loaded:false}};
+async function syncKeys(code){const te=s=>new TextEncoder().encode(s);
+ const base=await crypto.subtle.importKey('raw',te(code),'PBKDF2',false,['deriveKey','deriveBits']);
+ const[enc,bits]=await Promise.all([crypto.subtle.deriveKey({name:'PBKDF2',salt:te('northstar-sync-enc-v1'),iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']),
+  crypto.subtle.deriveBits({name:'PBKDF2',salt:te('northstar-sync-auth-v1'),iterations:ITER,hash:'SHA-256'},base,256)]);
+ return{enc,tok:[...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('')};}
+async function pull(doc){const d=DOCS[doc];
+ const r=await fetch(`${API}?doc=${doc}`,{cache:'no-store',headers:{Authorization:'Bearer '+SYNC.tok,...(d.etag?{'If-None-Match':d.etag}:{})}});
+ d.loaded=true;if(r.status===304)return false;if(r.status===404){d.etag=null;d.data=null;return true}
+ if(!r.ok)throw new Error('sync '+r.status);const b=new Uint8Array(await r.arrayBuffer());
+ d.data=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},SYNC.enc,b.slice(12))));d.etag=r.headers.get('etag');return true;}
+async function push(doc){const d=DOCS[doc],iv=crypto.getRandomValues(new Uint8Array(12));
+ const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},SYNC.enc,new TextEncoder().encode(JSON.stringify(d.data))));
+ const body=new Uint8Array(12+ct.length);body.set(iv);body.set(ct,12);
+ const r=await fetch(`${API}?doc=${doc}`,{method:'PUT',body,headers:{Authorization:'Bearer '+SYNC.tok,'Content-Type':'application/octet-stream',...(d.etag?{'If-Match':d.etag}:{})}});
+ if(r.status===409)return'conflict';if(!r.ok)throw new Error('save '+r.status);d.etag=(await r.json()).etag;return'ok';}
+async function startSync(code){try{SYNC=await syncKeys(code);await Promise.all([pull('schedule'),loadChecks()]);}catch(e){PSTATUS='Sync unavailable: '+e.message}render();}
+// checkmarks: shared across devices; PEND holds local changes not yet saved (id -> value, null = back to default)
+let PEND={},checkT=null;
+async function loadChecks(){await pull('checks');const o=DOCS.checks.data?.o;
+ if(o)store.set('todo-done',o);else if(Object.keys(over()).length){Object.assign(PEND,over());saveChecks()}}
+function checksChanged(id,v){PEND[id]=v;clearTimeout(checkT);checkT=setTimeout(saveChecks,400)}
+async function saveChecks(){if(!SYNC)return;const d=DOCS.checks;
+ for(let i=0;i<3;i++){const o={...(d.data?.o||{})};for(const[k,v]of Object.entries(PEND)){if(v==null)delete o[k];else o[k]=v}
+  d.data={o,updated:new Date().toISOString()};let r;try{r=await push('checks')}catch(e){checkT=setTimeout(saveChecks,5000);return}
+  if(r==='ok'){PEND={};store.set('todo-done',o);return}d.etag=null;await pull('checks');}}
+setInterval(async()=>{if(!SYNC||document.visibilityState!=='visible'||DRAG||$('#ed')?.open)return;
+ try{let ch=false;if(!Object.keys(PEND).length&&await pull('checks')){store.set('todo-done',DOCS.checks.data?.o||{});ch=true}
+  if(!dirty.size&&await pull('schedule'))ch=true;if(ch)render()}catch(e){}},60000);
+// ---------- plan (day schedule; drives the lockscreen wallpaper) ----------
+const CATC={inperson:'#FDB515',flex:'#5FD08A',routine:'#5A7A9E',deadline:'#E5484D'};
+const CATN={flex:'Flexible',routine:'Routine',inperson:'In person',deadline:'Urgent'};
+const PX=1.15;
+let PD=dayKey(new Date()),PMON=PD.slice(0,7),PSTATUS='',UNDO=null,dirty=new Set(),saveT=null,saving=false,DRAG=null,suppress=false;
+const tt=m=>{const h=Math.floor(m/60)%24,mm=m%60;return[`${h%12||12}:${String(mm).padStart(2,'0')}`,h<12?'AM':'PM']};
+const ttext=(s,e)=>{const[a,ap]=tt(s);if(e==null)return a+' '+ap;const[b,bp]=tt(e);return ap===bp?`${a}–${b} ${bp}`:`${a} ${ap}–${b} ${bp}`};
+const toInput=m=>m==null?'':`${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+const fromInput=v=>{if(!v)return null;const[h,m]=v.split(':').map(Number),x=h*60+m;return x<240?x+1440:x};
+function entry(k,make){const d=DOCS.schedule.data||(make?(DOCS.schedule.data={v:1,days:{}}):null);if(!d)return{blocks:[],skip:[]};
+ if(!d.days[k]){if(!make)return{blocks:[],skip:[]};d.days[k]={blocks:[],skip:[]}}return d.days[k];}
+function dayBlocks(k){const e=entry(k),skip=new Set(e.skip||[]);const fx=(DATA.fixed||[]).filter(f=>f.date===k).map(f=>({...f,fixed:true}));
+ return{blocks:[...fx.filter(f=>!skip.has(f.id)),...(e.blocks||[])],skipped:fx.filter(f=>skip.has(f.id))};}
+const vEnd=b=>Math.max(b.end??b.start,b.start+Math.ceil(40/PX));
+function layout(bs){const s=[...bs].sort((a,b)=>a.start-b.start||vEnd(b)-vEnd(a));let g=[],gEnd=-1;
+ const flush=()=>{const cols=[];for(const b of g){let c=cols.findIndex(x=>x<=b.start);if(c<0){c=cols.length;cols.push(0)}cols[c]=vEnd(b);b._c=c}g.forEach(b=>b._n=cols.length);g=[]};
+ for(const b of s){if(g.length&&b.start>=gEnd){flush();gEnd=-1}g.push(b);gEnd=Math.max(gEnd,vEnd(b))}if(g.length)flush();return s;}
+function cal(){const[y,m]=PMON.split('-').map(Number),first=new Date(y,m-1,1),today=dayKey(new Date());
+ let h=`<div class="calh"><button class="icon" data-mon="-1" aria-label="Previous month">‹</button><b>${first.toLocaleDateString([],{month:'long',year:'numeric'})}</b><button class="icon" data-mon="1" aria-label="Next month">›</button></div><div class="cal">`;
+ h+=['S','M','T','W','T','F','S'].map(d=>`<span class="dow">${d}</span>`).join('');
+ for(let i=0;i<42;i++){const d=new Date(y,m-1,1-first.getDay()+i);if(i===35&&d.getMonth()!==m-1)break;const k=dayKey(d);
+  const due=DATA.tasks.filter(t=>t.due.slice(0,10)===k&&!isDone(t)&&t.kind!=='event'),n=(entry(k).blocks||[]).length;
+  h+=`<button class="cd ${d.getMonth()!==m-1?'out':''} ${k===today?'now':''} ${k===PD?'sel':''}" data-day="${k}" aria-label="${d.toDateString()}${due.length?`, ${due.length} due`:''}"><span>${d.getDate()}</span><i>${due.slice(0,3).map(t=>`<em style="background:${t.kind==='exam'?'var(--accent)':COL(t.course)}"></em>`).join('')}</i>${n?'<u></u>':''}</button>`;}
+ return h+'</div>';}
+function planView(){if(!SYNC&&!PSTATUS)return cal()+'<div class="empty">Loading your plan…</div>';
+ const k=PD,{blocks,skipped}=dayBlocks(k),d=new Date(k+'T12:00');
+ const lo=Math.min(7*60,...blocks.map(b=>Math.floor(b.start/60)*60)),hi=Math.max(24*60,...blocks.map(b=>Math.ceil(vEnd(b)/60)*60));
+ const dues=DATA.tasks.filter(t=>t.due.slice(0,10)===k&&t.kind!=='event');
+ let h=cal()+`<div class="dayh"><div><h2>${d.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</h2><div class="sub" id="pstat">${esc(PSTATUS||(k===dayKey(new Date())||k===dayKey(new Date(Date.now()+864e5))?'On your wallpaper · hold and drag to move, drag the bottom edge to resize':'Hold and drag to move · tap to edit'))}</div></div><button class="btn primary" data-add="">+ Add</button></div>`;
+ if(dues.length)h+=`<div class="dues">${dues.map(t=>`<span class="due ${isDone(t)?'done':''}" style="--c:${t.kind==='exam'?'var(--accent)':COL(t.course)}">${t.kind==='exam'?'Exam':'Due'} ${t.allDay?'':dt(t.due).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})} · ${esc(t.course?t.course+' ':'')}${esc(t.title)}</span>`).join('')}</div>`;
+ h+=`<div class="tl" style="height:${(hi-lo)*PX+16}px" data-lo="${lo}">`;
+ for(let m=lo;m<=hi;m+=60)h+=`<div class="hr" style="top:${(m-lo)*PX}px"><span>${tt(m)[0].replace(':00','')} ${tt(m)[1]}</span></div>`;
+ const now=new Date(),nm=now.getHours()*60+now.getMinutes();if(k===dayKey(now)&&nm>=lo&&nm<=hi)h+=`<div class="nowl" style="top:${(nm-lo)*PX}px"></div>`;
+ h+='<div class="track">';
+ for(const b of layout(blocks)){const top=(b.start-lo)*PX,ht=(vEnd(b)-b.start)*PX-4,w=100/b._n,detail=[b.loc,b.detail].filter(Boolean).join(' · ');
+  h+=`<div class="blk ${b.fixed?'fx':'mv'} ${b.cat==='deadline'?'urg':''} ${ht<52?'tight':''}" data-b="${esc(b.id)}" style="top:${top}px;height:${ht}px;left:calc(${b._c*w}% + 2px);width:calc(${w}% - 4px)" tabindex="0" role="button" aria-label="${esc(b.title)}, ${ttext(b.start,b.end)}${b.fixed?', fixed':''}">
+  <i class="dot" style="background:${CATC[b.cat]||CATC.flex}"></i><div class="bt"><span class="tm">${ttext(b.start,b.end)}</span><b>${esc(b.title)}</b>${detail?`<small>${esc(detail)}</small>`:''}</div>${b.fixed?'<span class="lock" aria-hidden="true">🔒</span>':''}${!b.fixed&&b.end!=null?'<span class="grip" aria-hidden="true"></span>':''}</div>`;}
+ h+='</div></div>';
+ if(skipped.length)h+=`<div class="skipped">Skipped today: ${skipped.map(f=>`<button class="chip" data-restore="${esc(f.id)}">${esc(f.title)} ↺</button>`).join(' ')}</div>`;
+ return h;}
+function findBlock(id){const{blocks}=dayBlocks(PD);return blocks.find(b=>b.id===id)}
+function mutate(msg,fn){const e=entry(PD,true),prev=JSON.parse(JSON.stringify(e));fn(e);UNDO={k:PD,prev};dirty.add(PD);render();toast(msg);clearTimeout(saveT);saveT=setTimeout(save,500);}
+async function save(){if(!SYNC)return;if(saving){saveT=setTimeout(save,400);return}saving=true;stat('Saving…');const d=DOCS.schedule;
+ try{d.data.updated=new Date().toISOString();d.data.by='web';let r=await push('schedule');
+  if(r==='conflict'){const mine={};dirty.forEach(k=>mine[k]=d.data.days[k]);d.etag=null;await pull('schedule');d.data=d.data||{v:1,days:{}};Object.assign(d.data.days,mine);r=await push('schedule');}
+  if(r!=='ok')throw new Error('changed elsewhere');
+  const wall=[...dirty].some(k=>k===dayKey(new Date())||k===dayKey(new Date(Date.now()+864e5)));dirty.clear();stat(wall?'Saved · wallpaper updates within a minute':'Saved');}
+ catch(e){stat('Not saved yet ('+e.message+'), retrying…');saveT=setTimeout(save,5000)}finally{saving=false}}
+function stat(s){PSTATUS=s;const el=$('#pstat');if(el)el.textContent=s;}
+function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.append(t)}
+ t.innerHTML=`<span>${esc(msg)}</span>${UNDO?'<button data-undo="">Undo</button>':''}`;t.className='on';clearTimeout(t._h);t._h=setTimeout(()=>t.className='',4500);}
+// editor
+function openEditor(b,isNew){const fx=b.fixed,dlg=$('#ed');
+ dlg.innerHTML=`<form method="dialog"><h3>${fx?esc(b.title):isNew?'New block':'Edit block'}</h3>${fx?`<p class="sub">${ttext(b.start,b.end)}${b.loc?' · '+esc(b.loc):''}<br>${b.kind==='exam'?'Exam':'Class'} times are fixed. You can hide it from this day's plan and wallpaper.</p>`:`
+ <label>Title<input name="title" required value="${esc(b.title||'')}" autocomplete="off"></label>
+ <div class="two"><label>Start<input name="start" type="time" step="300" required value="${toInput(b.start)}"></label><label>End<input name="end" type="time" step="300" value="${toInput(b.end)}"></label></div>
+ <label>Category<select name="cat">${Object.entries(CATN).map(([k,v])=>`<option value="${k}" ${b.cat===k?'selected':''}>${v}</option>`).join('')}</select></label>
+ <label>Location<input name="loc" value="${esc(b.loc||'')}" autocomplete="off"></label>
+ <label>Detail<input name="detail" value="${esc(b.detail||'')}" autocomplete="off"></label><div id="ederr" class="miss"></div>`}
+ <div class="acts">${fx?`<button class="btn primary" value="skip">Skip this day</button>`:`<button class="btn primary" value="save">Save</button>${isNew?'':'<button class="btn" value="del">Delete</button>'}`}<button class="btn" value="cancel" formnovalidate>Cancel</button></div></form>`;
+ const f=dlg.querySelector('form');
+ f.onsubmit=e=>{const act=e.submitter?.value;if(act==='cancel')return;
+  if(act==='skip'){mutate(`Skipped ${b.title}`,en=>{en.skip=[...new Set([...(en.skip||[]),b.id])]});return}
+  if(act==='del'){mutate(`Deleted ${b.title}`,en=>{en.blocks=en.blocks.filter(x=>x.id!==b.id)});return}
+  const v=Object.fromEntries(new FormData(f)),s=fromInput(v.start);let en=fromInput(v.end);
+  if(en!=null&&en<=s){e.preventDefault();$('#ederr').textContent='End must be after start.';return}
+  const nb={id:b.id||'b'+crypto.getRandomValues(new Uint32Array(1))[0].toString(16),title:v.title.trim(),start:s,end:en,cat:v.cat,loc:v.loc.trim(),detail:v.detail.trim()};
+  mutate(isNew?`Added ${nb.title}`:`Saved ${nb.title}`,x=>{const i=x.blocks.findIndex(y=>y.id===nb.id);if(i<0)x.blocks.push(nb);else x.blocks[i]=nb});};
+ dlg.showModal();}
+// drag: mouse drags right away; touch needs a short hold so the page still scrolls
+function dragStart(e){const el=e.target.closest('.blk.mv');if(!el||view!=='plan'||e.button>0)return;const b=findBlock(el.dataset.b);if(!b)return;
+ DRAG={el,b,mode:e.target.closest('.grip')?'resize':'move',y0:e.clientY,lo:+el.closest('.tl').dataset.lo,armed:e.pointerType==='mouse',moved:false,ns:b.start,ne:b.end};
+ if(!DRAG.armed)DRAG.timer=setTimeout(()=>{if(DRAG){DRAG.armed=true;DRAG.el.classList.add('lift');navigator.vibrate?.(8)}},220);}
+function dragMove(e){if(!DRAG)return;const dy=e.clientY-DRAG.y0;
+ if(!DRAG.armed){if(Math.abs(dy)>8){clearTimeout(DRAG.timer);DRAG=null}return}
+ if(!DRAG.moved&&Math.abs(dy)<4)return;DRAG.moved=true;DRAG.el.classList.add('lift');const b=DRAG.b,dm=Math.round(dy/PX/15)*15;
+ if(DRAG.mode==='move'){DRAG.ns=Math.min(Math.max(0,b.start+dm),1680);DRAG.ne=b.end==null?null:DRAG.ns+(b.end-b.start)}
+ else{DRAG.ns=b.start;DRAG.ne=Math.max(b.start+15,b.end+dm)}
+ DRAG.el.style.top=(DRAG.ns-DRAG.lo)*PX+'px';DRAG.el.style.height=((Math.max(DRAG.ne??DRAG.ns,DRAG.ns+Math.ceil(40/PX)))-DRAG.ns)*PX-4+'px';
+ DRAG.el.querySelector('.tm').textContent=ttext(DRAG.ns,DRAG.ne);}
+function dragEnd(){if(!DRAG)return;clearTimeout(DRAG.timer);const D=DRAG;DRAG=null;D.el.classList.remove('lift');
+ if(!D.moved)return;suppress=true;setTimeout(()=>suppress=false,50);
+ if(D.ns===D.b.start&&D.ne===D.b.end){render();return}
+ mutate(`${D.b.title} → ${ttext(D.ns,D.ne)}`,en=>{const x=en.blocks.find(y=>y.id===D.b.id);if(x){x.start=D.ns;x.end=D.ne}});}
+document.addEventListener('pointerdown',dragStart);document.addEventListener('pointermove',dragMove);
+document.addEventListener('pointerup',dragEnd);document.addEventListener('pointercancel',()=>{if(DRAG){clearTimeout(DRAG.timer);DRAG.el.classList.remove('lift');DRAG=null;render()}});
+document.addEventListener('touchmove',e=>{if(DRAG&&DRAG.armed)e.preventDefault()},{passive:false});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('.blk'))e.preventDefault()});
+document.addEventListener('click',e=>{if(view!=='plan')return;
+ const dy=e.target.closest('[data-day]');if(dy){PD=dy.dataset.day;PMON=PD.slice(0,7);PSTATUS='';render();return}
+ const mo=e.target.closest('[data-mon]');if(mo){const[y,m]=PMON.split('-').map(Number),d=new Date(y,m-1+ +mo.dataset.mon,1);PMON=dayKey(d).slice(0,7);render();return}
+ if(e.target.closest('[data-undo]')){if(UNDO){const d=DOCS.schedule.data;d.days[UNDO.k]=UNDO.prev;dirty.add(UNDO.k);UNDO=null;render();toast('Undone');clearTimeout(saveT);saveT=setTimeout(save,300)}return}
+ const rs=e.target.closest('[data-restore]');if(rs){const id=rs.dataset.restore;mutate('Restored',en=>{en.skip=(en.skip||[]).filter(x=>x!==id)});return}
+ if(e.target.closest('[data-add]')){const n=new Date(),nm=n.getHours()*60+n.getMinutes(),s=PD===dayKey(n)?Math.ceil((nm+1)/30)*30:9*60;openEditor({start:s,end:s+60,cat:'flex'},true);return}
+ const bl=e.target.closest('.blk');if(bl){if(suppress)return;const b=findBlock(bl.dataset.b);if(b)openEditor(b,false);return}
+ const tr=e.target.closest('.track');if(tr&&e.target===tr){const lo=+tr.closest('.tl').dataset.lo,s=lo+Math.floor((e.clientY-tr.getBoundingClientRect().top)/PX/15)*15;openEditor({start:s,end:s+60,cat:'flex'},true)}});
+document.addEventListener('keydown',e=>{if(view==='plan'&&e.key==='Enter'&&e.target.classList?.contains('blk')){const b=findBlock(e.target.dataset.b);if(b)openEditor(b,false)}});
 // ---------- pomodoro ----------
 const P=Object.assign({len:'50/10',phase:'focus',end:null,left:null,task:null,log:{}},store.get('todo-pomo',{}));
 const mins=()=>P.len.split('/').map(Number),total=()=>(P.phase==='focus'?mins()[0]:mins()[1])*60;
@@ -186,5 +350,5 @@ $('#go').onclick=()=>{if(P.end){P.left=remaining();P.end=null}else{P.end=Date.no
 $('#reset').onclick=()=>{P.end=null;P.left=null;P.phase='focus';savePomo();drawPomo();};
 $('#skip').onclick=()=>{P.phase=P.phase==='focus'?'break':'focus';P.end=null;P.left=null;savePomo();drawPomo();};
 setInterval(()=>{if(P.end&&remaining()<=0)finish();drawPomo();},500);drawPomo();
-setInterval(()=>{if(document.visibilityState==='visible'&&DATA)render()},60000);
+setInterval(()=>{if(document.visibilityState==='visible'&&DATA&&!DRAG&&!$('#ed').open)render()},60000);
 </script></body></html>
