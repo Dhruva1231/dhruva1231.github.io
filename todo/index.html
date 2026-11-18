@@ -51,6 +51,10 @@ section h2.red{color:var(--accent)}
 .icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--dim)}
 .icon:hover{background:var(--bg);color:var(--ink)}
 .empty{color:var(--faint);font-size:14px;padding:6px 2px}
+#tabs{display:flex;margin-bottom:10px}#tabs button{flex:1}#tabs small{opacity:.7;margin-left:4px}
+.task.missed{opacity:.6;border-style:dashed}.task.missed .check{border-style:dashed}.miss{color:var(--accent)}
+.mini.missed{opacity:.5;border-left-style:dashed}
+.note{font-size:13px;color:var(--dim);margin:14px 2px 0}
 details summary{cursor:pointer;list-style:none}details summary::-webkit-details-marker{display:none}
 /* week */
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:6px}
@@ -85,9 +89,10 @@ details summary{cursor:pointer;list-style:none}details summary::-webkit-details-
  <div class="dots" id="dots"></div>
 </div>
 
+<div class="seg" id="tabs" role="group" aria-label="Status"></div>
 <div class="filters" id="filters"></div>
 <div id="view"></div>
-<div class="foot">Coursework comes from bCourses, Ed, Gradescope and course sites and checks itself off when you submit. Checks you make here stay on this device.</div>
+<div class="foot">Coursework comes from bCourses, Ed, Gradescope and course sites and checks itself off when you submit. Missed = Gradescope or bCourses no longer accepts it. Checks you make here stay on this device.</div>
 </main>
 <script>
 const ITER=600000;let DATA=null;
@@ -114,39 +119,50 @@ function when(t){const d=dt(t.due),now=new Date(),days=Math.round((new Date(dayK
  const dd=days===0?'Today':days===1?'Tomorrow':days===-1?'Yesterday':d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'});
  let rel='';if(!t.allDay&&days===0){const m=Math.round((d-now)/6e4);rel=m>0?(m<60?`in ${m} min`:`in ${Math.floor(m/60)}h ${m%60}m`):'passed';}
  else if(days>1&&days<14)rel=`in ${days}d`;return[dd+(tm?' · '+tm:''),rel];}
-let view=store.get('todo-view','list'),filter=store.get('todo-filter','all');
+let view=store.get('todo-view','list'),filter=store.get('todo-filter','all'),tab=store.get('todo-tab','todo');
+// missed: coursework you can no longer submit (Gradescope's late due date, or bCourses' lock date, has passed)
+const isMissed=t=>t.auto&&t.kind==='task'&&!isDone(t)&&t.closes&&dt(t.closes)<new Date();
+const isPast=t=>t.kind!=='task'&&dt(t.due)<new Date();
+const tabOf=t=>isDone(t)||isPast(t)?'done':isMissed(t)?'missed':'todo';
+const fmt=s=>{const d=dt(s);return d.getFullYear()>new Date().getFullYear()?d.toLocaleDateString([],{month:'short',year:'numeric'}):d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})+' '+d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})};
 function render(){if(!DATA)return;
  const g=new Date(DATA.generated+':00');$('#sync').textContent=`Updated ${g.toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})} · ${DATA.tasks.filter(t=>!isDone(t)&&dt(t.due)>=new Date()).length} open`;
  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===view));
  const courses=[...new Set(DATA.tasks.map(t=>t.course||'Personal'))].sort();
  $('#filters').innerHTML=['all',...courses].map(c=>`<button class="chip" data-f="${esc(c)}" aria-pressed="${c===filter}">${c==='all'?'All':`<i style="background:${COL(c)}"></i>${esc(c)}`}</button>`).join('');
  const tasks=DATA.tasks.filter(t=>filter==='all'||(t.course||'Personal')===filter);
- $('#view').innerHTML=view==='week'?week(tasks):list(tasks);}
-function row(t){const[w,rel]=when(t),done=isDone(t),c=COL(t.course);
- const src=t.auto?(t.status==='done'?'submitted ✓':t.status==='unknown'?'status unknown':'not submitted'):'';
- return `<div class="task ${done?'done':''} ${t.kind==='exam'?'exam':''}">
+ const n={todo:0,done:0,missed:0};tasks.forEach(t=>n[tabOf(t)]++);
+ $('#tabs').hidden=view==='week';
+ $('#tabs').innerHTML=[['todo','To do'],['done','Done'],['missed','Missed']].map(([k,l])=>`<button data-tab="${k}" aria-pressed="${k===tab}">${l}<small>${n[k]}</small></button>`).join('');
+ $('#view').innerHTML=view==='week'?week(tasks):tab==='done'?flat(tasks.filter(t=>tabOf(t)==='done'),'Nothing done yet.')
+  :tab==='missed'?'<p class="note">Past the last day Gradescope or bCourses accepts submissions. Did it some other way? Check it off.</p>'+flat(tasks.filter(t=>tabOf(t)==='missed'),'Nothing missed. 🎉')
+  :list(tasks.filter(t=>tabOf(t)==='todo'));}
+function flat(ts,empty){ts.sort((a,b)=>b.due.localeCompare(a.due));return `<section>${ts.map(row).join('')||`<div class="empty">${empty}</div>`}</section>`;}
+function row(t){const[w,rel]=when(t),done=isDone(t),c=COL(t.course),miss=isMissed(t);
+ const src=t.auto&&t.kind==='task'?(t.status==='done'?'submitted ✓':t.status==='unknown'?'status unknown':'not submitted'):'';
+ const late=!done&&!miss&&t.auto&&t.closes&&dt(t.due)<new Date()?`<span class="miss">late OK until ${fmt(t.closes)}</span>`:miss?`<span class="miss">${t.closes===t.due?'closed at deadline':'closed '+fmt(t.closes)}</span>`:'';
+ return `<div class="task ${done?'done':''} ${miss?'missed':''} ${t.kind==='exam'?'exam':''}">
  <button class="check" data-t="${esc(t.id)}" aria-label="${done?'Mark not done':'Mark done'}: ${esc(t.title)}">${done?'✓':''}</button>
  <div><div class="ttl">${esc(t.title)}</div><div class="meta">${t.course?`<span class="ctag" style="color:${c}">${esc(t.course)}</span>`:''}
  <span>${w}</span>${rel?`<span>${rel}</span>`:''}${t.kind==='exam'?'<span class="badge" style="color:var(--accent)">exam</span>':''}${t.kind==='event'?'<span class="badge">event</span>':''}
- ${src?`<span>${src}${t.source&&t.source!=='plan'?' · '+esc(t.source.replace('_',' ')):''}</span>`:''}</div></div>
+ ${late}${src?`<span>${src}${t.source&&t.source!=='plan'?' · '+esc(t.source.replace('_',' ')):''}</span>`:''}</div></div>
  <div class="right">${t.url?`<a class="icon" href="${esc(t.url)}" target="_blank" rel="noopener" aria-label="Open link">↗</a>`:''}
- ${!done&&t.kind!=='event'?`<button class="icon" data-focus="${esc(t.id)}" aria-label="Focus on this task">◎</button>`:''}</div></div>`;}
+ ${!done&&!miss&&!isPast(t)&&t.kind!=='event'?`<button class="icon" data-focus="${esc(t.id)}" aria-label="Focus on this task">◎</button>`:''}</div></div>`;}
 function list(ts){const now=new Date(),today=dayKey(now),tom=dayKey(new Date(Date.now()+864e5)),wk=dayKey(new Date(Date.now()+7*864e5));
- const B={Overdue:[],Today:[],Tomorrow:[],'Next 7 days':[],Later:[]},D=[];
- for(const t of ts){if(isDone(t)){D.push(t);continue}const d=dt(t.due),k=dayKey(d);
-  if(d<now&&t.kind!=='task')D.push(t);
-  else if(d<now&&(k<today||t.auto))B.Overdue.push(t);
+ const B={Overdue:[],Today:[],Tomorrow:[],'Next 7 days':[],Later:[]};
+ for(const t of ts){const d=dt(t.due),k=dayKey(d);
+  if(d<now&&(k<today||t.auto))B.Overdue.push(t);
   else if(k===today)B.Today.push(t);else if(k===tom)B.Tomorrow.push(t);else if(k<=wk)B['Next 7 days'].push(t);else B.Later.push(t);}
  let h='';for(const[k,v]of Object.entries(B)){if(!v.length&&k!=='Today')continue;
   h+=`<section><h2 class="${k==='Overdue'?'red':''}"><span>${k}</span><span>${v.length}</span></h2>${v.length?v.map(row).join(''):'<div class="empty">Nothing due today.</div>'}</section>`;}
- D.sort((a,b)=>b.due.localeCompare(a.due));
- h+=`<section><details><summary><h2><span>Done &amp; past ▸</span><span>${D.length}</span></h2></summary>${D.map(row).join('')}</details></section>`;return h;}
+ return h;}
 function week(ts){let h='<div class="week">';for(let i=0;i<7;i++){const d=new Date(Date.now()+i*864e5),k=dayKey(d);
   const items=ts.filter(t=>dayKey(dt(t.due))===k);
-  h+=`<div class="day ${i===0?'today':''}"><h3>${d.toLocaleDateString([],{weekday:'short',month:'numeric',day:'numeric'})}</h3>${items.map(t=>`<div class="mini ${isDone(t)?'done':''}" data-t="${esc(t.id)}" style="border-color:${COL(t.course)}">${esc(t.title)}<small>${t.allDay?'':dt(t.due).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}${t.course?' · '+esc(t.course):''}</small></div>`).join('')||'<div class="empty">—</div>'}</div>`;}
+  h+=`<div class="day ${i===0?'today':''}"><h3>${d.toLocaleDateString([],{weekday:'short',month:'numeric',day:'numeric'})}</h3>${items.map(t=>`<div class="mini ${isDone(t)?'done':''} ${isMissed(t)?'missed':''}" data-t="${esc(t.id)}" style="border-color:${COL(t.course)}">${esc(t.title)}<small>${t.allDay?'':dt(t.due).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}${t.course?' · '+esc(t.course):''}</small></div>`).join('')||'<div class="empty">—</div>'}</div>`;}
  return h+'</div>';}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t){toggle(t.dataset.t);return}
  const f=e.target.closest('[data-focus]');if(f){P.task=f.dataset.focus;savePomo();drawPomo();window.scrollTo({top:0,behavior:'smooth'});return}
+ const tb=e.target.closest('[data-tab]');if(tb){tab=tb.dataset.tab;store.set('todo-tab',tab);render();return}
  const v=e.target.closest('[data-view]');if(v){view=v.dataset.view;store.set('todo-view',view);render();return}
  const c=e.target.closest('[data-f]');if(c){filter=c.dataset.f;store.set('todo-filter',filter);render();return}
  const l=e.target.closest('[data-len]');if(l){P.len=l.dataset.len;if(!P.end){P.left=null}savePomo();drawPomo();}});
