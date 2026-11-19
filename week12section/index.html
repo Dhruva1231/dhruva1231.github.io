@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Data C104 Week 12</title>
+<meta name="description" content="Audio mini-lecture for DATA C104 Week 12 (Ethics as Institutions): L30 AI Ethics, L31 Professional Ethical Codes, Winner, Claude's Constitution, Russell, Munn.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0}
+:root{
+  --bg:#f3f4ef; --surface:#fffefa; --ink:#1c2420; --muted:#5e6a63; --line:#d9ddd3;
+  --accent:#2d5c4c; --accent-soft:#e1ebe4; --warn:#a4492b; --warn-soft:#f4e3da;
+  --display:"Newsreader",Georgia,serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1d2420; --ink:#e7ebe5; --muted:#9aa69f; --line:#323b36;
+  --accent:#86c2a9; --accent-soft:#233a31; --warn:#e59a7c; --warn-soft:#3d2820; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1d2420; --ink:#e7ebe5; --muted:#9aa69f; --line:#323b36;
+  --accent:#86c2a9; --accent-soft:#233a31; --warn:#e59a7c; --warn-soft:#3d2820; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:17px/1.65 var(--body)}
+.wrap{max-width:740px;margin:0 auto;padding-block:32px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:600 clamp(30px,6vw,44px)/1.1 var(--display);margin:8px 0 8px;text-wrap:balance}
+h2{font:600 clamp(24px,4.5vw,30px)/1.2 var(--display);margin:56px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+h3{font:600 20px/1.3 var(--display);margin:32px 0 6px}
+h4{font:600 15px/1.3 var(--body);margin:20px 0 4px;color:var(--accent)}
+p,li{text-wrap:pretty}
+.sub{color:var(--muted);margin:0 0 20px;max-width:62ch}
+a{color:var(--accent)}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 20px;margin:24px 0}
+nav.toc ol{margin:6px 0 0;padding-left:20px}
+nav.toc li{margin:2px 0}
+.meta{font:13px/1.5 var(--mono);color:var(--muted);margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 20px;margin:16px 0}
+.card.key{border-left:4px solid var(--accent)}
+.card.note{background:var(--warn-soft);border-color:var(--warn)}
+.card p:first-child,.card ul:first-child{margin-top:0}
+.card p:last-child,.card ul:last-child{margin-bottom:0}
+.label{font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:8px}
+.card.note .label{color:var(--warn)}
+dl{margin:8px 0}
+dt{font-weight:600;margin-top:12px}
+dd{margin:2px 0 0 0;color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600}
+.tablewrap{overflow-x:auto}
+ul,ol{padding-left:22px}
+li{margin:4px 0}
+.q li{margin:10px 0}
+footer{margin-top:64px;font:13px/1.6 var(--mono);color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+</style>
+<style>
+audio{width:100%;margin:8px 0 4px}
+.ch{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)}
+.ch button{font:500 13px/1 var(--mono);background:var(--accent-soft);color:var(--accent);border:0;border-radius:4px;padding:6px 8px;cursor:pointer;min-width:58px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="eyebrow">DATA C104 · Section Thu 11/19 · Week 12</div>
+<h1>Ethics as Institutions</h1>
+<p class="sub">A 14-minute audio mini-lecture for section. It covers L30 (AI Ethics) and L31 (Professional Ethical Codes) and the four required readings: Winner, Claude's Constitution, Russell and Munn.</p>
+
+<div class="card key">
+<audio id="a" controls preload="metadata" src="lecture.m4a"></audio>
+<div class="meta">Tap a part to jump. Speed can be changed in the player menu.</div>
+<div id="chapters"></div>
+</div>
+
+<h2>The week in one sentence</h2>
+<p>This week looked at two shortcuts to ethics: writing values into machines (L30, value alignment) and writing rules for professionals (L31, codes). Both treat ethics as something an individual holds, a preference or a duty. Neither treats it as something people work out together about how to live.</p>
+
+<h2>Cheat sheet</h2>
+<div class="card"><h4>L30 · AI Ethics</h4>Value alignment merges making AI <em>moral</em> with making it <em>do what we want</em>. It smuggles in <strong>preference utilitarianism</strong>: the good = values = revealed preferences = reward function. The result is a "thin concept of society." Case: Grok, which raises the question of whose values count.</div>
+<div class="card"><h4>L31 · Professional Ethical Codes</h4>Codes are modern (AMA 1847). They come from professionalization and from things going wrong (Cambridge Analytica, 2018). Limits: principles conflict, thinking isn't doing, work travels, "society" is abstract, and codes invite ethics-washing and ethics theater. Codes assign individual responsibility.</div>
+<div class="card"><h4>Winner · Brandy, Cigars, and Human Values</h4>"Values" talk turns moral questions into private tastes (the "values supermarket"), which produces an <strong>eclipse of reasons</strong>. Example: the retired weapons engineer giving a "technology and human values" speech over brandy and cigars.</div>
+<div class="card"><h4>Claude's Constitution (pp. 2–9)</h4>It favors "cultivating good values and judgment over strict rules." Priority order: broadly safe, broadly ethical, guidelines, helpful. Example: a rigid "always recommend professional help" rule could teach Claude to care more about covering itself than about the person.</div>
+<div class="card"><h4>Russell · Human Compatible ch. 7</h4>The standard model optimizes a fixed objective, which is dangerous. Beneficial machines: (1) they aim only to satisfy human preferences, (2) they are uncertain what those preferences are, (3) they learn them from behavior. A humble machine accepts being switched off. Example: the robot that cooks the cat.</div>
+<div class="card"><h4>Munn · The Uselessness of AI Ethics (§§1, 2, 5)</h4>AI ethics principles are meaningless, isolated and toothless, which leaves a principles/practice gap. Example: in the McNamara et al. study, telling developers to consider the ACM code made no difference.</div>
+<div class="card"><h4>Tools</h4><strong>Agency</strong>: who gets to act and decide. <strong>Power</strong>: the uneven ability to shape others' choices. Bonus, co-production: the Toolkit says "ethical codes are co-produced with professions."</div>
+
+<h2>Warm-up formula</h2>
+<p>Answer the question in your first sentence. Define the key term. Give one example, told exactly. End with one line linking to a tool or another reading.</p>
+</main>
+<script>
+const chapters=[["The big idea",0.023],["L30 · AI Ethics",0.066],["L31 · Codes",0.265],["Winner",0.408],["Claude's Constitution",0.543],["Russell",0.67],["Munn",0.783],["Connections",0.858],["Recap",0.924]];
+const a=document.getElementById('a'),box=document.getElementById('chapters');
+function build(){box.innerHTML='';chapters.forEach(([t,f])=>{const d=document.createElement('div');d.className='ch';const b=document.createElement('button');const s=Math.round(f*(a.duration||865));b.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');b.onclick=()=>{a.currentTime=s;a.play()};d.append(b,document.createTextNode(t));box.append(d)})}
+build();a.addEventListener('loadedmetadata',build);
+</script>
+</body>
+</html>
