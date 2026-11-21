@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Day 1 — Sat Nov 21</title>
+<style>
+:root {
+  --bg: #fafaf7; --surface: #ffffff; --surface-2: #f2f1ec; --text: #1c1b18;
+  --muted: #5d5a52; --border: #e2e0d8; --accent: #2f6b3f; --warn: #8a5a00; --warn-soft: #fbf0d9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141412; --surface: #1d1c1a; --surface-2: #262522; --text: #f1efe9;
+    --muted: #a9a59b; --border: #35332f; --accent: #7cc48f; --warn: #f0c060; --warn-soft: #352a12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141412; --surface: #1d1c1a; --surface-2: #262522; --text: #f1efe9;
+  --muted: #a9a59b; --border: #35332f; --accent: #7cc48f; --warn: #f0c060; --warn-soft: #352a12;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 680px; margin: 0 auto; padding: 20px 16px 48px; }
+h1 { font-size: clamp(1.6rem, 6vw, 2.1rem); line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.02em; }
+h2 { font-size: 1.1rem; margin: 32px 0 10px; }
+.muted { color: var(--muted); }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.row { display: grid; grid-template-columns: 74px 1fr; gap: 12px; }
+.time { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent); }
+.verify { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 2px 8px; font-size: 0.8rem; }
+ul { margin: 6px 0 0; padding-left: 18px; }
+li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Day 1: Saturday, Nov 21</h1>
+    <p class="muted">Land in Atlanta, get to Duluth, then a short hike near Helen.</p>
+  </header>
+
+  <h2>Morning</h2>
+  <div class="card row">
+    <div class="time">6:35 AM</div>
+    <div>Land at ATL (Southwest, via LAS).</div>
+  </div>
+  <div class="card row">
+    <div class="time">~7:15 AM</div>
+    <div>Bags. Take MARTA to Sandy Springs.</div>
+  </div>
+  <div class="card row">
+    <div class="time">~9:00 AM</div>
+    <div>Pickup at Sandy Springs. <span class="verify">pickup contact not confirmed</span></div>
+  </div>
+  <div class="card row">
+    <div class="time">~9:30 AM</div>
+    <div>Duluth house. Shower and get ready.</div>
+  </div>
+  <div class="card row">
+    <div class="time">~11:00 AM</div>
+    <div>Leave for the trail. Drive to Helen is about 1.5 hours (estimate).</div>
+  </div>
+
+  <h2>Hike</h2>
+  <div class="card">
+    <h3>Anna Ruby Falls <span class="verify">not yet verified</span></h3>
+    <p class="muted">Short, easy out-and-back near Helen. Chosen because of the red-eye and an afternoon start.</p>
+    <ul>
+      <li>Check length, parking fee, and current hours before leaving.</li>
+      <li>Fallback: Duke Creek (specs not yet checked).</li>
+    </ul>
+  </div>
+
+  <h2>Weather</h2>
+  <div class="card">
+    <p>Forecast for north Georgia: no rain expected, highs in the low 70s, cold morning (estimate). Check the forecast again that morning.</p>
+  </div>
+
+  <h2>Tonight</h2>
+  <div class="card">
+    <ul>
+      <li>Lodging near Helen is not confirmed. Check the Quality Inn Downtown Helen booking.</li>
+      <li>Sunset is around 5:30 PM. Plan to be back at the car by about 4:30 PM.</li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>
