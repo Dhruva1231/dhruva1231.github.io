@@ -114,10 +114,46 @@
       "caption": null
     }
   ],
+  "lake-dock": [
+    {
+      "src": "lake-dock/IMG_9276 2.jpg",
+      "caption": null
+    },
+    {
+      "src": "lake-dock/IMG_9282.jpg",
+      "caption": null
+    },
+    {
+      "src": "lake-dock/IMG_9284.jpg",
+      "caption": null
+    },
+    {
+      "src": "lake-dock/IMG_9287.jpg",
+      "caption": null
+    }
+  ],
   "newfound-gap": [
     {
       "src": "newfound-gap/IMG_3616.jpg",
       "live": "newfound-gap/IMG_3616.mp4",
+      "caption": null
+    }
+  ],
+  "overlook-hike": [
+    {
+      "src": "overlook-hike/IMG_0444.jpg",
+      "caption": null
+    },
+    {
+      "src": "overlook-hike/IMG_0449.jpg",
+      "caption": null
+    },
+    {
+      "src": "overlook-hike/IMG_0451.jpg",
+      "caption": null
+    },
+    {
+      "src": "overlook-hike/IMG_0456.jpg",
       "caption": null
     }
   ],
@@ -135,6 +171,24 @@
       "caption": null
     }
   ],
+  "rock-falls": [
+    {
+      "src": "rock-falls/IMG_9297 2.jpg",
+      "caption": null
+    },
+    {
+      "src": "rock-falls/IMG_9299 2.jpg",
+      "caption": null
+    },
+    {
+      "src": "rock-falls/IMG_9313.jpg",
+      "caption": null
+    },
+    {
+      "src": "rock-falls/IMG_9318.jpg",
+      "caption": null
+    }
+  ],
   "steaks": [
     {
       "src": "steaks/IMG_2389.jpg",
@@ -142,5 +196,134 @@
       "caption": null
     }
   ],
-  "tallulah-rim": []
+  "sunset-drive": [
+    {
+      "src": "sunset-drive/IMG_5586.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-drive/IMG_5593-poster.jpg",
+      "video": "sunset-drive/IMG_5593.mp4",
+      "duration": 20,
+      "aspect": 1.78,
+      "caption": null
+    },
+    {
+      "src": "sunset-drive/IMG_5595.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-drive/IMG_5600.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-drive/IMG_5608.jpg",
+      "caption": null
+    }
+  ],
+  "sunset-overlook": [
+    {
+      "src": "sunset-overlook/IMG_0478.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-overlook/IMG_0485.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-overlook/IMG_0490.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-overlook/IMG_5878.jpg",
+      "caption": null
+    }
+  ],
+  "sunset-trees": [
+    {
+      "src": "sunset-trees/IMG_5876.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-trees/IMG_5879.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-trees/IMG_0500.jpg",
+      "caption": null
+    },
+    {
+      "src": "sunset-trees/IMG_0505.jpg",
+      "caption": null
+    }
+  ],
+  "tallulah-rim": [],
+  "waterfall-1121": [
+    {
+      "src": "waterfall-1121/IMG_0381.jpg",
+      "caption": null
+    },
+    {
+      "src": "waterfall-1121/IMG_0376.jpg",
+      "caption": null
+    },
+    {
+      "src": "waterfall-1121/IMG_0377.jpg",
+      "caption": null
+    },
+    {
+      "src": "waterfall-1121/IMG_0378.jpg",
+      "caption": null
+    }
+  ],
+  "waterfall-video": [
+    {
+      "src": "waterfall-video/IMG_9312 2-poster.jpg",
+      "video": "waterfall-video/IMG_9312 2.mp4",
+      "duration": 6,
+      "aspect": 0.56,
+      "caption": null
+    },
+    {
+      "src": "waterfall-video/IMG_5622-poster.jpg",
+      "video": "waterfall-video/IMG_5622.mp4",
+      "duration": 2,
+      "aspect": 0.56,
+      "caption": null
+    },
+    {
+      "src": "waterfall-video/IMG_5623-poster.jpg",
+      "video": "waterfall-video/IMG_5623.mp4",
+      "duration": 11,
+      "aspect": 0.56,
+      "caption": null
+    }
+  ],
+  "waterfall-video-2": [
+    {
+      "src": "waterfall-video-2/IMG_9263-poster.jpg",
+      "video": "waterfall-video-2/IMG_9263.mp4",
+      "duration": 17,
+      "aspect": 0.56,
+      "caption": null
+    }
+  ],
+  "woods-hike": [
+    {
+      "src": "woods-hike/IMG_0424.jpg",
+      "caption": null
+    },
+    {
+      "src": "woods-hike/IMG_0426.jpg",
+      "caption": null
+    },
+    {
+      "src": "woods-hike/IMG_5628.jpg",
+      "caption": null
+    },
+    {
+      "src": "woods-hike/IMG_0432.jpg",
+      "caption": null
+    }
+  ]
 }
